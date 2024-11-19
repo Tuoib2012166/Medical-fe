@@ -6,7 +6,6 @@ import Header from './header';
 import Banner from './banner';
 import MainContent from './mainContent';
 import Footer from './footer';
-import QuickActions from './quickActions';
 import useUserStore from '../../store/userStore';
 
 function Homepage() {
@@ -15,7 +14,6 @@ function Homepage() {
       <Header />
       <Banner />
       <MainContent />
-      <QuickActions />
       <Footer />
       <ToastContainer />
     </div>

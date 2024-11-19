@@ -34,6 +34,8 @@ import BS_BKhanh from './components/user/doctors/BS_BKhanh';
 import BS_Xuyen from './components/user/doctors/BS_Xuyen';
 import BS_Tan from './components/user/doctors/BS_Tan';
 import UserForm from './components/user/UserForm';
+import MedicalRecords from './components/user/MedicalRecords';
+import FollowUpAppointments from './components/user/FollowUpAppointments';
 
 function App() {
   return (
@@ -75,6 +77,8 @@ function App() {
           <Route path="/hantramrang" element={<HanTramRang />} />
           <Route path="/chamsocrangmieng" element={<ChamSocRangMieng />} />
           <Route path="/UserForm" element={<UserForm />} />
+          <Route path="/MedicalRecords" element={<MedicalRecords />} />
+          <Route path="/FollowUpAppointments" element={<FollowUpAppointments />} />
         </Routes>
         <TopScroll />
       </div>

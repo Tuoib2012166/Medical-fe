@@ -1,103 +1,125 @@
 import React from 'react';
-import { Form, Input, Select, Button, DatePicker } from 'antd';
+import { TextField, Button, MenuItem, Container, Box, Typography } from '@mui/material';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Header from './header';
 import Footer from './footer';
 
-const { Option } = Select;
-
 const UserForm = ({ onSubmit }) => {
-  const [form] = Form.useForm();
+  const [formValues, setFormValues] = React.useState({
+    fullname: '',
+    phone: '',
+    address: '',
+    gender: 'Nam',
+    birthYear: null,
+  });
 
-  const handleFinish = (values) => {
-    onSubmit(values); // Truyền các giá trị vào callback
+  const handleChange = (field) => (event) => {
+    setFormValues({
+      ...formValues,
+      [field]: event.target ? event.target.value : event,
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit(formValues);
   };
 
   return (
-    <div style={styles.container}>
+    <div>
       <Header />
-      <div style={styles.formContainer}>
-        <Form
-          form={form}
-          onFinish={handleFinish}
-          initialValues={{
-            fullname: '',
-            phone: '',
-            address: '',
-            gender: 'Nam',
-            birthYear: null,
-          }}
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+      }}
+    >
+      
+      <Box
+        component="form"
+        sx={{
+          width: '100%',
+          padding: 3,
+          backgroundColor: 'white',
+          borderRadius: 2,
+          boxShadow: 3,
+        }}
+        onSubmit={handleSubmit}
+      >
+        <Typography variant="h4" mb={2}>
+          Cập nhật thông tin
+        </Typography>
+        <TextField
+          label="Họ và Tên"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={formValues.fullname}
+          onChange={handleChange('fullname')}
+          required
+        />
+        <TextField
+          label="Số điện thoại"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={formValues.phone}
+          onChange={handleChange('phone')}
+          required
+        />
+        <TextField
+          label="Địa chỉ"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={formValues.address}
+          onChange={handleChange('address')}
+          required
+        />
+        <TextField
+          label="Giới tính"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          select
+          value={formValues.gender}
+          onChange={handleChange('gender')}
+          required
         >
-          <Form.Item
-            label="Họ và Tên"
-            name="fullname"
-            rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Số điện thoại"
-            name="phone"
-            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Địa chỉ"
-            name="address"
-            rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Giới tính"
-            name="gender"
-            rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
-          >
-            <Select>
-              <Option value="Nam">Nam</Option>
-              <Option value="Nữ">Nữ</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
+          <MenuItem value="Nam">Nam</MenuItem>
+          <MenuItem value="Nữ">Nữ</MenuItem>
+        </TextField>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DesktopDatePicker
             label="Năm sinh"
-            name="birthYear"
-            rules={[{ required: true, message: 'Vui lòng nhập năm sinh!' }]}
-          >
-            <DatePicker picker="year" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Cập nhật
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-      <Footer />
+            views={['year']}
+            value={formValues.birthYear}
+            onChange={handleChange('birthYear')}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth margin="normal" required />
+            )}
+          />
+        </LocalizationProvider>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Cập nhật
+        </Button>
+      </Box>
+    </Container>
+    <Footer />
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',  // Đảm bảo căn giữa toàn bộ màn hình
-  },
-  formContainer: {
-    width: '100%',
-    maxWidth: '600px',  // Giới hạn chiều rộng của form
-    padding: '20px',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-  }
 };
 
 export default UserForm;
