@@ -1,0 +1,68 @@
+/* Các icon và text trong sidebar */
+.sidebar .MuiListItem-root {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+/* Màu mặc định của icon và text */
+.sidebar .MuiListItemText-primary,
+.sidebar .MuiListItemIcon {
+    color: #703131;
+    /* Màu chữ và icon mặc định */
+}
+
+.sidebar .MuiListItem-root {
+    background-color: #95d1f8;
+    /* Màu nền hover */
+}
+
+/* Khi hover vào item trong sidebar */
+.sidebar .MuiListItem-root:hover {
+    background-color: #1b8dda;
+    /* Màu nền hover */
+}
+
+.sidebar .MuiListItem-root:hover .MuiListItemText-primary,
+.sidebar .MuiListItem-root:hover .MuiListItemIcon {
+    color: #ffffff;
+    /* Màu chữ và icon khi hover */
+}
+
+/* Thay đổi màu icon */
+.sidebar .MuiListItemIcon {
+    color: #da1313;
+    /* Màu icon mặc định */
+    transition: color 0.3s ease;
+}
+
+.sidebar .MuiListItem-root:hover .MuiListItemIcon {
+    color: #1A73E8;
+    /* Màu icon khi hover */
+}
+
+/* Chỉnh sửa màu chữ */
+.sidebar .MuiListItemText-primary {
+    color: #000000;
+    /* Màu chữ mặc định */
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.sidebar .MuiListItem-root:hover .MuiListItemText-primary {
+    color: #ffffff;
+    /* Màu chữ khi hover */
+}
+
+/* Màu cho nút đóng sidebar */
+.sidebar .MuiIconButton-root {
+    color: #333;
+    /* Màu nút đóng mặc định */
+    transition: color 0.3s ease;
+}
+
+.sidebar .MuiIconButton-root:hover {
+    color: #4a5057;
+    /* Màu nút đóng khi hover */
+}

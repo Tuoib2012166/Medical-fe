@@ -1,0 +1,44 @@
+.admin-sidebar {
+    background: linear-gradient(to bottom, #6c63ff, #3f3d56);
+    color: white;
+    width: 250px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    h4 {
+        text-align: center;
+        margin: 0;
+        padding: 1rem 0;
+    }
+
+    .admin-sidebar-item {
+        cursor: pointer;
+        border-radius: 5px;
+        padding: 1rem 1rem;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .pt-3 {
+        padding-top: 1rem;
+    }
+
+    .pb-2 {
+        padding-bottom: 0.5rem;
+    }
+}

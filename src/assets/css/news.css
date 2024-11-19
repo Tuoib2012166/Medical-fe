@@ -1,0 +1,85 @@
+/* Đặt lại margin và padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Styles cho phần kiến thức */
+#knowledge {
+    max-width: 800px;
+    /* Đặt chiều rộng tối đa cho khung nội dung */
+    margin: 0 auto;
+    /* Căn giữa khung */
+    padding: 20px;
+    /* Thêm padding bên trong khung */
+    background-color: #f9f9f9;
+    /* Màu nền nhẹ */
+    border: 1px solid #ddd;
+    /* Thêm viền xung quanh khung */
+    border-radius: 8px;
+    /* Bo góc */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Đổ bóng nhẹ để tạo chiều sâu */
+}
+
+/* Căn trái chữ và thay đổi màu sắc cho h1, h2, h3 */
+#knowledge h1,
+#knowledge h2,
+#knowledge h3 {
+    color: #007bff;
+    /* Thay đổi màu chữ thành xanh */
+    margin-bottom: 15px;
+    /* Khoảng cách giữa các phần tử */
+    text-align: left;
+    /* Căn trái chữ */
+}
+
+#knowledge h2 {
+    font-size: 2em;
+    /* Làm cho h2 lớn hơn */
+}
+
+#knowledge h3 {
+    font-size: 1.5em;
+    /* Làm cho h3 lớn hơn */
+}
+
+/* Căn trái hình ảnh */
+#knowledge img {
+    display: block;
+    /* Làm cho hình ảnh thành phần tử khối */
+    margin: 20px auto;
+    /* Căn giữa hình ảnh với margin tự động */
+}
+
+/* Kiểu danh sách */
+#knowledge ul {
+    list-style-type: none;
+    /* Xóa dấu đầu dòng */
+    padding: 0;
+    /* Xóa padding */
+}
+
+#knowledge ul li {
+    text-align: left;
+    /* Căn trái các mục trong danh sách */
+    margin: 10px 0;
+    /* Khoảng cách giữa các mục danh sách */
+}
+
+/* Để giữ màu sắc mặc định cho các đoạn văn */
+#knowledge p {
+    color: inherit;
+    text-align: left;
+    /* Giữ văn bản căn trái */
+    /* Giữ màu sắc mặc định cho đoạn văn */
+}
+#knowledge img {
+    width: 100%;
+    /* Đảm bảo hình ảnh chiếm 100% chiều rộng của khung */
+    height: 350px;
+    /* Giữ tỷ lệ khung hình */
+    margin: 20px 0;
+    /* Thêm khoảng cách trên và dưới cho hình ảnh */
+}

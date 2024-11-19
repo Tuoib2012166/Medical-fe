@@ -1,0 +1,29 @@
+.top-scroll {
+    position: fixed;
+    bottom: 20px;
+    right: 100px; /* Giảm giá trị để di chuyển nút sang trái */
+    width: 40px;
+    height: 40px;
+    background-color: #007bff;
+    /* Màu nền */
+    color: white;
+    /* Màu chữ */
+    border-radius: 50%;
+    /* Hình tròn */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0;
+    /* Ẩn khi không hiển thị */
+    transition: opacity 0.3s ease;
+    /* Hiệu ứng chuyển động */
+    z-index: 1000;
+    /* Để nút nổi bật hơn */
+}
+
+.top-scroll.visible {
+    opacity: 1;
+    /* Hiển thị khi cuộn xuống */
+}

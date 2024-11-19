@@ -1,0 +1,176 @@
+
+.hero {
+    text-align: center; /* Căn giữa toàn bộ nội dung trong hero */
+    background-color: #007bff; /* Màu nền cho phần hero */
+}
+
+.hero h1 {
+    font-size: 36px; /* Kích thước chữ cho tiêu đề */
+    color: #ffffff; /* Màu chữ cho tiêu đề */
+    margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+}
+
+.hero-description {
+    font-size: 18px; /* Kích thước chữ cho mô tả */
+    color: #000000; /* Màu chữ cho mô tả */
+    background-color: #007bff; /* Màu nền cho mô tả */
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block; /* Để văn bản chỉ chiếm không gian cần thiết */
+    margin-top: 20px; /* Khoảng cách trên mô tả */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Hiệu ứng bóng cho văn bản */
+    overflow: hidden; /* Để ẩn phần ngoài khung */
+    white-space: nowrap; /* Không cho dòng xuống hàng */
+    animation: marquee 10s linear infinite; /* Thay đổi 10s cho tốc độ chạy */
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(100%); /* Bắt đầu từ bên phải */
+    }
+    100% {
+        transform: translateX(-100%); /* Kết thúc bên trái */
+    }
+}
+
+
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    background-color: #45a0f5;
+}
+
+.hero p {
+    font-size: 24px;
+    margin-bottom: 20;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+}
+
+.services h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.service-items {
+    display: flex;
+    justify-content: space-around;
+}
+
+.service-item {
+    text-align: center;
+    max-width: 300px;
+}
+
+.service-item img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.news-section {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+.news-section h2 {
+    font-size: 28px;
+    color: #0a74da;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.news-section .logo {
+    width: 200px;
+    height: auto;
+    margin-left: 10px;
+    border-radius: 5px;
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.news-section p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+.news-section ul {
+    text-align: justify;
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.news-section ul li {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+.Doctor {
+    width: 100%; 
+    max-width: 600px; 
+    height: auto; 
+    display: block; 
+    margin: 20px auto;
+}
+
+.team {
+    padding: 50px 20px;
+    background-color: #fff;
+}
+
+.team h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.team-items {
+    display: flex;
+    justify-content: space-around;
+}
+
+.team-member {
+    text-align: center;
+    max-width: 300px;
+}
+
+.team-member img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.contact {
+    padding: 50px 20px;
+    background-color: #f4f4f4;
+}
+
+.contact h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 36px;
+    font-weight: bold;
+    color: #006eff;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}

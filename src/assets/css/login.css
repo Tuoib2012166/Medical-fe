@@ -1,0 +1,12 @@
+/* Cập nhật style cho section đăng nhập */
+.login {
+    max-width: 500px;
+    margin: auto;
+    padding: 50px 0;
+    background-color: hsl(200, 90%, 88%);
+    /* Thay đổi màu nền */
+    border-radius: 8px;
+    /* Bo góc cho section */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Thêm hiệu ứng shadow */
+}

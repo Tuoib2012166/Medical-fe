@@ -1,0 +1,73 @@
+#price-list {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 900px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #dddddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+/* Căn chỉnh toàn bộ bố cục */
+.container {
+    display: flex;
+    margin-top: 60px; /* Khoảng trống bên dưới header (điều chỉnh nếu cần) */
+}
+
+/* CSS cho Sidebar */
+.sidebar {
+    width: 250px; /* Đặt độ rộng cố định cho Sidebar */
+    background-color: #f8f8f8;
+    padding-top: 20px;
+    flex-shrink: 0; /* Đảm bảo Sidebar không co lại */
+    overflow-y: auto; /* Nếu nội dung dài hơn thì có thanh cuộn */
+    position: sticky;
+    top: 60px; /* Để Sidebar nằm dưới Header */
+}
+
+/* CSS cho phần nội dung chính */
+.main-content {
+    flex-grow: 1; /* Cho phép main-content chiếm không gian còn lại */
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+/* Đảm bảo footer nằm cuối trang */
+footer {
+    padding: 20px;
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+}
+.highlight {
+    background-color: red !important;
+}
+
