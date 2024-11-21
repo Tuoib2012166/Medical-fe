@@ -16,18 +16,33 @@ const Sidebar = () => {
             </IconButton>
 
             {/* Sidebar Drawer */}
-            <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
+            <Drawer
+                anchor="left"
+                open={open}
+                onClose={() => setOpen(false)}
+                sx={{
+                    width: 240,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: 240,
+                        backgroundColor: '#2E3B55',
+                        color: '#fff',
+                        border: 'none',
+                        boxShadow: '4px 0 8px rgba(0, 0, 0, 0.1)',
+                    },
+                }}
+            >
                 <div className="sidebar">
                     {/* Close button */}
-                    <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', top: 10, right: 10 }} className="close-btn">
+                    <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', top: 20, right: 20 }} className="close-btn">
                         <CloseIcon />
                     </IconButton>
-                    
+
                     <List>
                         {/* Quản trị */}
                         <ListItem button component={Link} to="/doctor" selected={location.pathname === '/doctor'}>
                             <ListItemIcon>
-                                <DashboardIcon />
+                                <DashboardIcon sx={{ color: '#fff' }} />
                             </ListItemIcon>
                             <ListItemText primary="Quản trị" />
                         </ListItem>
@@ -35,7 +50,7 @@ const Sidebar = () => {
                         {/* Quản lý bệnh án */}
                         <ListItem button component={Link} to="/doctor/medical-records" selected={location.pathname === '/doctor/medical-records'}>
                             <ListItemIcon>
-                                <MedicalServicesIcon />
+                                <MedicalServicesIcon sx={{ color: '#fff' }} />
                             </ListItemIcon>
                             <ListItemText primary="Quản lý bệnh án" />
                         </ListItem>
@@ -43,7 +58,7 @@ const Sidebar = () => {
                         {/* Danh sách đặt lịch */}
                         <ListItem button component={Link} to="/doctor/appointments" selected={location.pathname === '/doctor/appointments'}>
                             <ListItemIcon>
-                                <EventNoteIcon />
+                                <EventNoteIcon sx={{ color: '#fff' }} />
                             </ListItemIcon>
                             <ListItemText primary="Danh sách đặt lịch" />
                         </ListItem>
@@ -51,7 +66,7 @@ const Sidebar = () => {
                         {/* Lịch tái khám */}
                         <ListItem button component={Link} to="/doctor/follow-up-appointments" selected={location.pathname === '/doctor/follow-up-appointments'}>
                             <ListItemIcon>
-                                <ScheduleIcon />
+                                <ScheduleIcon sx={{ color: '#fff' }} />
                             </ListItemIcon>
                             <ListItemText primary="Lịch tái khám" />
                         </ListItem>

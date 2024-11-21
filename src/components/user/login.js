@@ -1,17 +1,32 @@
 import React, { useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
-import "antd/dist/reset.css";
-import { Form, Input, Button, Spin, message as antdMessage } from "antd";
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  CircularProgress,
+  Link,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { RingLoader } from 'react-spinners';
 
 function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
+  const onFinish = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const values = {
+      username: formData.get("username"),
+      password: formData.get("password"),
+    };
+
     setLoading(true);
 
     axios
@@ -39,9 +54,11 @@ function Login() {
         }
       })
       .catch((err) => {
-        antdMessage.error(
-          err.response?.data || "Có lỗi xảy ra. Vui lòng thử lại!"
-        );
+        Swal.fire({
+          title: "Lỗi",
+          text: err.response?.data || "Có lỗi xảy ra. Vui lòng thử lại!",
+          icon: "error",
+        });
       })
       .finally(() => setLoading(false));
   };
@@ -49,51 +66,55 @@ function Login() {
   return (
     <>
       <Header />
-      <section id="login">
-        <div className="logo-container" style={{ textAlign: "center", marginBottom: "20px" }}>
-          <img src="img/logo.png" alt="Logo" style={{ width: "300px" }} />
-        </div>
-        <h2 style={{ textAlign: "center" }}>Đăng nhập</h2>
-        <Form
-          name="login"
-          onFinish={onFinish}
-          layout="vertical"
-          style={{ maxWidth: "400px", margin: "0 auto" }}
+      <Container maxWidth="sm" sx={{ mt: 5, mb: 5 }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            mb: 3,
+          }}
         >
-          <Form.Item
-            label="Tài khoản"
-            name="username"
-            // rules={[
-            //   { required: true, message: "Tài khoản không được để trống" },
-            //   { min: 4, message: "Tài khoản phải có ít nhất 4 ký tự" },
-            // ]}
-          >
-            <Input placeholder="Nhập tài khoản" />
-          </Form.Item>
-
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            // rules={[{ required: true, message: "Mật khẩu không được để trống" }]}
-          >
-            <Input.Password placeholder="Nhập mật khẩu" />
-          </Form.Item>
-
-          <Form.Item>
+          <img src="img/logo.png" alt="Logo" style={{ width: "150px" }} />
+        </Box>
+        <Typography variant="h4" align="center" gutterBottom>
+          Đăng nhập
+        </Typography>
+        <form onSubmit={onFinish}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <TextField
+              label="Tài khoản"
+              name="username"
+              fullWidth
+              required
+              variant="outlined"
+            />
+            <TextField
+              label="Mật khẩu"
+              name="password"
+              type="password"
+              fullWidth
+              required
+              variant="outlined"
+            />
             <Button
-              type="primary"
-              htmlType="submit"
-              block
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
               disabled={loading}
+              sx={{ py: 1.5 }}
             >
-              {loading ? <Spin /> : "Đăng nhập"}
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng nhập"}
             </Button>
-          </Form.Item>
-        </Form>
-        <p style={{ textAlign: "center" }}>
-          Bạn chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
-        </p>
-      </section>
+          </Box>
+        </form>
+        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+          Bạn chưa có tài khoản?{" "}
+          <Link href="/register" underline="hover">
+            Đăng ký ngay
+          </Link>
+        </Typography>
+      </Container>
+      
       <Footer />
     </>
   );

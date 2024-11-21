@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Radio, Spin } from 'antd';
+import { TextField, Button, RadioGroup, FormControl, FormControlLabel, Radio, CircularProgress } from '@mui/material';
 import Swal from 'sweetalert2';
 import Header from './header';
 import Footer from './footer';
@@ -54,93 +54,113 @@ const Register = () => {
       <Header />
       <section id="register" style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
         <img src="img/logo.png" alt="Logo" style={{ width: "300px" }} />
-        <h3>Đăng ký tài khoản</h3>
-        <Form
-          layout="vertical"
-          onValuesChange={handleFormChange}
-          onFinish={handleSubmit}
-          initialValues={formData}
-        >
-          <Form.Item
-            label="Tài khoản"
-            name="username"
-            rules={[{ required: true, message: 'Vui lòng nhập tài khoản!' }]}
-          >
-            <Input placeholder="Nhập tài khoản" />
-          </Form.Item>
+        <h4>Đăng ký tài khoản</h4>
+        
+        {/* Form */}
+        <form onChange={handleFormChange} onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Tài khoản"
+              name="username"
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item
-            label="Họ và tên"
-            name="fullname"
-            rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
-          >
-            <Input placeholder="Nhập họ và tên" />
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Họ và tên"
+              name="fullname"
+              value={formData.fullname}
+              onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item
-            label="Số điện thoại"
-            name="phone"
-            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
-          >
-            <Input placeholder="Nhập số điện thoại" />
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Số điện thoại"
+              name="phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item
-            label="Địa chỉ"
-            name="address"
-            rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}
-          >
-            <Input placeholder="Nhập địa chỉ" />
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Địa chỉ"
+              name="address"
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item label="Giới tính" name="gender">
-            <Radio.Group>
-              <Radio value={1}>Nam</Radio>
-              <Radio value={0}>Nữ</Radio>
-            </Radio.Group>
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <FormControl component="fieldset" required>
+              <RadioGroup
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              >
+                <FormControlLabel value={1} control={<Radio />} label="Nam" />
+                <FormControlLabel value={0} control={<Radio />} label="Nữ" />
+              </RadioGroup>
+            </FormControl>
+          </div>
 
-          <Form.Item
-            label="Năm sinh"
-            name="birthYear"
-            rules={[{ required: true, message: 'Vui lòng nhập năm sinh!' }]}
-          >
-            <Input placeholder="Nhập năm sinh" />
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Năm sinh"
+              name="birthYear"
+              value={formData.birthYear}
+              onChange={(e) => setFormData({ ...formData, birthYear: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
-          >
-            <Input.Password placeholder="Nhập mật khẩu" />
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Mật khẩu"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item
-            label="Xác nhận mật khẩu"
-            name="confirmPassword"
-            dependencies={['password']}
-            rules={[
-              { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Mật khẩu không khớp!'));
-                },
-              }),
-            ]}
-          >
-            <Input.Password placeholder="Xác nhận mật khẩu" />
-          </Form.Item>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Xác nhận mật khẩu"
+              name="confirmPassword"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              fullWidth
+              required
+            />
+          </div>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block disabled={loading}>
-              {loading ? <Spin /> : 'Đăng ký'}
+          <div>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Đăng ký'}
             </Button>
-          </Form.Item>
-        </Form>
+          </div>
+        </form>
       </section>
       <Footer />
     </>

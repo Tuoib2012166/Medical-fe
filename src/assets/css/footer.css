@@ -2,7 +2,7 @@
 
 /* Footer container */
 footer {
-    background-color: #68cdf5;
+    background-color: #007bc2;
 }
 
 footer .container {
@@ -12,7 +12,7 @@ footer .container {
 /* Footer heading */
 footer h5 {
     letter-spacing: 2px;
-    color: #00d9ff;
+    color: #ffae00;
     margin-bottom: 1.5rem;
 }
 

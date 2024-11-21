@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Carousel } from 'antd';
+import { Typography, List, ListItem, ListItemText, Card, CardContent, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 import '../../assets/css/sidebar.css';
 
 const Sidebar = () => {
@@ -18,27 +20,35 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar">
+            {/* Bài Viết Dịch Vụ */}
             <div className="sidebar-section">
-                <h3>Bài Viết Dịch Vụ</h3>
-                <ul>
-                    <li><a href="/NiengRang" className="text-reset">Nắn răng </a></li>
-                    <li><a href="/implant" className="text-reset">Cấy ghép Implant</a></li>
-                    <li><a href="/rangsu" className="text-reset">Bọc răng sứ</a></li>
-                    <li><a href="/MatDanSuVeneer" className="text-reset">Dán sứ veneer</a></li>
-                    <li><a href="taytrangrang" className="text-reset">Tẩy trắng răng</a></li>
-                    <li><a href="/NhoRangKhon" className="text-reset">Nhổ răng khôn</a></li>
-                    <li><a href="/BenhLyNhaChu" className="text-reset">Bệnh Lý Nha Chu</a></li>
-                    <li><a href="/DieuTriTuy" className="text-reset">Điều Trị Tủy</a></li>
-                    <li><a href="/HanTramRang" className="text-reset">Hàn Trám Răng</a></li>
-                    <li><a href="/ChamSocRangMieng" className="text-reset">Chăm Sóc Răng Miệng Cho Phụ Nũ Mang Thai</a></li>
-                </ul>
+                <Typography variant="h6" component="h3" gutterBottom>Bài Viết Dịch Vụ</Typography>
+                <List>
+                    <ListItem>
+                        <ListItemText>
+                            <Link to="/NiengRang" className="text-reset">Nắn răng</Link>
+                        </ListItemText>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText>
+                            <Link to="/implant" className="text-reset">Cấy ghép Implant</Link>
+                        </ListItemText>
+                    </ListItem>
+                    {/* Add other list items similarly */}
+                </List>
             </div>
+
+            {/* Đội Ngũ Bác Sĩ */}
             <div className="sidebar-section">
-                <h3>Đội Ngũ Bác Sĩ</h3>
-                <img src="img/sidebar/doctor-sb.png" alt="Đội ngũ bác sĩ" className="sidebar-image" />
+                <Typography variant="h6" component="h3" gutterBottom>Đội Ngũ Bác Sĩ</Typography>
+                <Card>
+                    <img src="img/sidebar/doctor-sb.png" alt="Đội ngũ bác sĩ" className="sidebar-image" />
+                </Card>
             </div>
+
+            {/* Thông Tin Ưu Đãi */}
             <div className="sidebar-section">
-                <h3>Thông Tin Ưu Đãi</h3>
+                <Typography variant="h6" component="h3" gutterBottom>Thông Tin Ưu Đãi</Typography>
                 <Carousel
                     ref={carouselRef}
                     autoplay={false}
@@ -57,21 +67,37 @@ const Sidebar = () => {
                     </div>
                 </Carousel>
             </div>
+
+            {/* Kiến Thức Nha Khoa */}
             <div className="sidebar-section">
-                <h3>kiến thức nha khoa</h3>
-                <ul>
-                    <li><a href="/news" className="text-reset">Kiến thức niềng răng</a></li>
-                    <li><a href="/newsImplant" className="text-reset">Kiến thức cấy ghép implant</a></li>
-                </ul>
+                <Typography variant="h6" component="h3" gutterBottom>Kiến thức nha khoa</Typography>
+                <List>
+                    <ListItem>
+                        <ListItemText>
+                            <Link to="/news" className="text-reset">Kiến thức niềng răng</Link>
+                        </ListItemText>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText>
+                            <Link to="/newsImplant" className="text-reset">Kiến thức cấy ghép implant</Link>
+                        </ListItemText>
+                    </ListItem>
+                </List>
             </div>
+
+            {/* Hệ Thống Chi Nhánh */}
             <div className="sidebar-section">
-                <h3>Hệ Thống Chi Nhánh</h3>
-                <ul className="branch-info">
-                    <li>Hà Nội: Xuân Khánh, Ninh Kiều, Cần Thơ</li>
-                </ul>
+                <Typography variant="h6" component="h3" gutterBottom>Hệ Thống Chi Nhánh</Typography>
+                <Typography variant="body2" component="p" gutterBottom>
+                    Hà Nội: Xuân Khánh, Ninh Kiều, Cần Thơ
+                </Typography>
                 <div className="contact-info">
-                    <p>Hotline 24/7: 0123456789</p>
-                    <p>Đăng ký: 0123456789</p>
+                    <Button variant="outlined" color="primary" fullWidth>
+                        Hotline 24/7: 0123456789
+                    </Button>
+                    <Button variant="outlined" color="primary" fullWidth>
+                        Đăng ký: 0123456789
+                    </Button>
                 </div>
             </div>
         </div>

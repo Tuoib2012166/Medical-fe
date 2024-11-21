@@ -13,6 +13,7 @@ const FollowUpAppointments = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
+    
 
     useEffect(() => {
         fetchAppointments();
@@ -119,12 +120,12 @@ const FollowUpAppointments = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Bệnh nhân</TableCell>
-                            <TableCell>Bác sĩ</TableCell>
-                            <TableCell>Ngày tái khám</TableCell>
-                            <TableCell>Giờ tái khám</TableCell>
-                            <TableCell>Ghi chú</TableCell>
-                            <TableCell>Hành động</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Bệnh nhân</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Bác sĩ</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày tái khám</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Giờ tái khám</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ghi chú</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hành động</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

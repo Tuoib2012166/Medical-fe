@@ -1,0 +1,13 @@
+/* Định vị lại icon của Landbot */
+.landbot-icon {
+    position: fixed;
+    /* Giữ vị trí cố định */
+    bottom: 20px;
+    /* Cách mép dưới 20px */
+    right: 20px;
+    /* Cách mép phải 20px */
+    z-index: 1000;
+    /* Đảm bảo nó nằm trên các phần tử khác */
+    cursor: move;
+    /* Con trỏ sẽ hiển thị biểu tượng di chuyển */
+}

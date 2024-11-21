@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import DatePicker from 'react-datepicker'; // Import thư viện DatePicker
+import "react-datepicker/dist/react-datepicker.css"; // Import CSS cho DatePicker
 import useUserStore from "../../store/userStore";
 
 const AppointmentList = () => {
     const [appointments, setAppointments] = useState([]);
     const [services, setServices] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date()); // Mặc định là ngày hôm nay
     const { user, setUser } = useUserStore();
 
     useEffect(() => {
@@ -47,6 +50,15 @@ const AppointmentList = () => {
         fetchUserData();
     }, [setUser]);
 
+    // Hàm lọc các cuộc hẹn theo ngày đã chọn
+    const filteredAppointments = selectedDate
+        ? appointments.filter(appointment => {
+              const appointmentDate = new Date(appointment.appointment_date);
+              const selected = new Date(selectedDate);
+              return appointmentDate.toDateString() === selected.toDateString();
+          })
+        : appointments;
+
     const checkForDuplicates = (appointment, index) => {
         return appointments.some((otherAppointment, otherIndex) =>
             otherIndex !== index &&
@@ -81,26 +93,39 @@ const AppointmentList = () => {
     return (
         <div>
             <h3>Danh sách đặt lịch</h3>
+
+            {/* Chọn ngày tái khám */}
+            <div>
+                <DatePicker
+                    selected={selectedDate}
+                    onChange={date => setSelectedDate(date)} // Cập nhật ngày khi người dùng chọn
+                    dateFormat="yyyy/MM/dd"
+                    placeholderText="Chọn ngày"
+                    isClearable
+                    minDate={new Date()} // Giới hạn ngày chọn là ngày hôm nay hoặc các ngày sau
+                />
+            </div>
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Họ và tên</TableCell>
-                            <TableCell>Số điện thoại</TableCell>
-                            <TableCell>Địa chỉ</TableCell>
-                            <TableCell>Giới tính</TableCell>
-                            <TableCell>Năm sinh</TableCell>
-                            <TableCell>Ngày hẹn</TableCell>
-                            <TableCell>Giờ hẹn</TableCell>
-                            <TableCell>Bác sĩ</TableCell>
-                            <TableCell>Nội dung</TableCell>
-                            <TableCell>Ngày tạo</TableCell>
-                            <TableCell>Trạng thái</TableCell>
-                            <TableCell>Chấp nhận/ Từ chối</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Họ và tên</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Số điện thoại</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Địa chỉ</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Giới tính</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Năm sinh</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày hẹn</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Giờ hẹn</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Bác sĩ</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nội dung</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày tạo</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Trạng thái</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Chấp nhận/ Từ chối</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {appointments.map((appointment, index) => (
+                        {filteredAppointments.map((appointment, index) => (
                             <TableRow key={appointment.id}>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.fullname}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.phone}</TableCell>

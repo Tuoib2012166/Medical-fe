@@ -66,8 +66,8 @@ function Footer() {
                         <h5 className="mb-3">Opening Hours</h5>
                         <table className="table">
                             <tbody>
-                                <tr><td>Mon - Fri:</td><td>8am - 9pm</td></tr>
-                                <tr><td>Sat - Sun:</td><td>8am - 1am</td></tr>
+                                <tr><td>Mon - Fri:</td><td>8:00 - 17:00</td></tr>
+                                <tr><td>Sat - Sun:</td><td>8:00 - 17:00</td></tr>
                             </tbody>
                         </table>
                     </div>

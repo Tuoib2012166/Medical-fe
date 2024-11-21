@@ -65,7 +65,7 @@ const DoctorHeader = () => {
                 onClick={handleProfileMenuOpen}
                 className="profile-button"
               >
-                Hello <span className="profile-name">{userProfile.fullname}</span>
+                <span className="profile-name">{userProfile.fullname}</span>
               </Button>
               <IconButton
                 color="inherit"

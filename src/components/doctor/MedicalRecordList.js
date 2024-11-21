@@ -530,17 +530,17 @@ const MedicalRecordList = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">Tên Bệnh nhân</TableCell>
-                            <TableCell align="center">Tên Bác sĩ</TableCell>
-                            <TableCell align="center">Chẩn đoán</TableCell>
-                            <TableCell align="center">Điều trị</TableCell>
-                            <TableCell align="center">Ngày ghi nhận</TableCell>
-                            <TableCell align="center">Địa chỉ</TableCell>
-                            <TableCell align="center">Số điện thoại</TableCell>
-                            <TableCell align="center">Giới tính</TableCell>
-                            <TableCell align="center">Năm sinh</TableCell>
-                            <TableCell align="center">Chuyên khoa</TableCell>
-                            <TableCell align="center">Hành động</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }} >Tên Bệnh nhân</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Tên Bác sĩ</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Chẩn đoán</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Điều trị</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày ghi nhận</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Địa chỉ</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Số điện thoại</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Giới tính</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Năm sinh</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Chuyên khoa</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Hành động</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
