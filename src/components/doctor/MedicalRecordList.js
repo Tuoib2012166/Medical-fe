@@ -29,7 +29,6 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 const MedicalRecordList = () => {
     // Khai báo các state để lưu trữ dữ liệu và trạng thái của các yếu tố trong component
     const [records, setRecords] = useState([]); // Lưu trữ danh sách bệnh án
-    const [doctors, setDoctors] = useState([]); // Lưu trữ danh sách bác sĩ
     const [patients, setPatients] = useState([]); // Lưu trữ danh sách bệnh nhân
     const [editingRecord, setEditingRecord] = useState(null); // Lưu trữ bản ghi đang chỉnh sửa
     const { user } = useUserStore(); // Lấy thông tin người dùng từ store
@@ -59,7 +58,6 @@ const MedicalRecordList = () => {
     // Dùng useEffect để fetch dữ liệu khi component được render lần đầu
     useEffect(() => {
         fetchRecords(); // Lấy dữ liệu bệnh án
-        fetchDoctors(); // Lấy dữ liệu bác sĩ
         fetchPatients(); // Lấy dữ liệu bệnh nhân
         fetchSpecialties(); // Lấy danh sách chuyên khoa
     }, []);
@@ -85,10 +83,32 @@ const MedicalRecordList = () => {
     };
 
     // Hàm lấy dữ liệu bệnh án từ API
-    const fetchRecords = async () => {
+    const fetchRecords = async (patient_id) => {
         try {
-            const response = await axios.get('http://localhost:8080/medical-records'); // Gọi API lấy bệnh án
+            const response = await axios.get(`http://localhost:8080/medical-records?patient_id=${patient_id}`); // Gọi API lấy bệnh án
             if (Array.isArray(response.data)) {
+                // Extract the first record from the array
+                const record = response.data[0];
+
+                // Update formData with the first record
+                setFormData({
+                    patient_id: record.patient_id || '',
+                    doctor_id: record.doctor_id || '',
+                    fullname: record.fullname || '',
+                    diagnosis: record.diagnosis || '',
+                    treatment: record.treatment || '',
+                    address: record.address || '',
+                    phone: record.phone || '',
+                    gender: record.gender || '',
+                    birth_year: record.birth_year || '',
+                    specialty: record.specialty || '',
+                    service: record.service || '',
+                    quantity: record.quantity || '',
+                    unit_price: record.unit_price || '',
+                    total_price: record.total_price || '',
+                    prescription: record.prescription || '',
+                });
+                console.log("formData: ", formData)
                 setRecords(response.data); // Cập nhật danh sách bệnh án nếu dữ liệu hợp lệ
             } else {
                 setRecords([]); // Nếu dữ liệu không hợp lệ, cập nhật state là mảng rỗng
@@ -98,21 +118,11 @@ const MedicalRecordList = () => {
             toast.error('Không thể lấy dữ liệu bệnh án'); // Thông báo lỗi khi không thể gọi API
         }
     };
-
-    // Hàm lấy danh sách bác sĩ từ API
-    const fetchDoctors = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/doctors`); // Gọi API lấy bác sĩ
-            setDoctors(response.data); // Cập nhật danh sách bác sĩ
-        } catch (error) {
-            toast.error('Không thể lấy dữ liệu bác sĩ'); // Thông báo lỗi nếu không thể lấy dữ liệu
-        }
-    };
-
-    // Hàm lấy danh sách bệnh nhân từ API
+   
+    // // Hàm lấy danh sách bệnh nhân từ API
     const fetchPatients = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/patients'); // Gọi API lấy bệnh nhân
+            const response = await axios.get(`http://localhost:8080/appointments`); // Gọi API lấy bệnh nhân
             setPatients(response.data); // Cập nhật danh sách bệnh nhân
         } catch (error) {
             toast.error('Không thể lấy dữ liệu bệnh nhân'); // Thông báo lỗi khi không thể gọi API
@@ -162,44 +172,29 @@ const MedicalRecordList = () => {
             const id = specialties.filter(x => x.name === value)[0].id
             fetchServices(id)
         }
-        // Cập nhật giá trị trường hiện tại
-        setFormData({ ...formData, [name]: value });
+        
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (name === 'service') {
+            const service = services.find(x => x.id === value);
+            const total_price = formData.quantity || 1 * service.price;
+            setFormData({...formData, [name]: value, total_price})
+        }
 
-        // Nếu thay đổi `patient_id`, gọi API lấy thông tin cuộc hẹn
+        if (name === 'quantity') {
+            const service = services.find(x => x.id === formData.service);
+            const total_price = value * service.price;
+            setFormData({...formData, [name]: value, total_price})
+        }
+
         if (name === 'patient_id') {
             try {
-                const response = await axios.get(`http://localhost:8080/appointments?benhNhanId=${formData.patient_id}&doctorId=${user.profile.id}`);
-                console.log(response.data, "isadksadsa")
-                if (response.data) {
-                    // Điền thông tin từ cuộc hẹn vào form
-                    setFormData({
-                        ...formData,
-                        patient_id: value, // Đảm bảo patient_id vẫn giữ giá trị mới
-                        doctor_id: response.data[0].doctor_id || '',
-                        diagnosis: response.data[0].diagnosis || '',
-                        treatment: response.data[0].treatment || '',
-                        // record_date: response.data[0].appointment_date || new Date(),
-                        address: response.data[0].address || '',
-                        phone: response.data[0].phone || '',
-                        gender: response.data[0].gender || '',
-                        birth_year: response.data[0].birth_year || '',
-                        specialty: response.data[0].specialty || '',
-                        service: response.data[0].service || '',
-                        quantity: response.data[0].quantity || '',
-                        unit_price: response.data[0].unit_price || '',
-                        total_price: response.data[0].total_price || '',
-                        prescription: response.data[0].prescription || ''
-                    });
-                } else {
-                    toast.error('Không tìm thấy thông tin cuộc hẹn của bệnh nhân');
-                }
+                fetchRecords(value);
             } catch (error) {
                 toast.error('Không thể lấy dữ liệu cuộc hẹn của bệnh nhân');
             }
         }
     };
 
-    console.log("formDate: ", formData)
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Ngăn trình duyệt reload trang
@@ -213,11 +208,12 @@ const MedicalRecordList = () => {
             if (formData.record_date) {
                 formData.record_date = new Date()
             }
+
             // Gửi toàn bộ dữ liệu formData
             await axios({
                 method,
                 url,
-                data: formData,
+                data: {...formData},
             });
 
             toast.success(`${editingRecord ? 'Cập nhật' : 'Thêm'} bệnh án thành công`);
@@ -236,7 +232,6 @@ const MedicalRecordList = () => {
                 service: '',
                 quantity: '',
                 unit_price: '',
-                total_price: '',
                 prescription: ''
             });
             setShowForm(false);
@@ -246,9 +241,6 @@ const MedicalRecordList = () => {
             toast.error('Không thể gửi biểu mẫu');
         }
     };
-
-
-
 
     return (
         <div>
@@ -268,17 +260,19 @@ const MedicalRecordList = () => {
                                         labelId="patient_id"
                                         id="patient_id"
                                         name="patient_id"
-                                        value={formData.patient_id}
+                                        value={formData.patient_id} // Ensure `value` is valid
                                         onChange={handleChange}
                                         required
                                     >
                                         <MenuItem value="">
                                             <em>Chọn Bệnh nhân</em>
                                         </MenuItem>
-                                        {patients.map(patient => (
-                                            <MenuItem key={patient.id} value={patient.id}>
+                                        {patients.map((patient) => (
+                                            <MenuItem key={patient.patient_id} value={patient.patient_id}>
                                                 {patient.fullname}
                                             </MenuItem>
+
+
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -289,7 +283,7 @@ const MedicalRecordList = () => {
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={user.profile.fullname}
+                                    value={user.profile?.fullname}
                                     InputProps={{
                                         readOnly: true,
                                     }}
@@ -454,7 +448,7 @@ const MedicalRecordList = () => {
                                     type="number"
                                     fullWidth
                                     name="quantity"
-                                    value={formData.quantity || ''}
+                                    value={formData.quantity || 1}
                                     onChange={handleChange}
                                     required
                                     margin="normal"
@@ -560,6 +554,10 @@ const MedicalRecordList = () => {
                                 <TableCell align="center">{record.gender}</TableCell>
                                 <TableCell align="center">{record.birth_year}</TableCell>
                                 <TableCell align="center">{record.specialty}</TableCell>
+                                <TableCell align="center">{record.service_name}</TableCell>
+                                <TableCell align="center">{record.unit_price}</TableCell>
+                                <TableCell align="center">{record.quantity}</TableCell>
+                                <TableCell align="center">{record.total_price}</TableCell>
                                 <TableCell align="center">
                                     <IconButton color="primary" onClick={() => handleEdit(record)} title="Sửa">
                                         <EditIcon />
