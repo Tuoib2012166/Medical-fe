@@ -24,18 +24,11 @@ import BenhLyNhaChu from './components/user/svNews/BenhLyNhaChu'; // Import comp
 import DieuTriTuy from './components/user/svNews/DieuTriTuy'; // Import component Điều Trị Tủy
 import HanTramRang from './components/user/svNews/HanTramRang'; // Import component Hàn Trám Răng
 import ChamSocRangMieng from './components/user/svNews/ChamSocRangMieng'; // Import component Chăm Sóc Răng Miệng
-import BS_Khanh from './components/user/doctors/BS_Khanh';
 import DoctorDetail from './components/user/doctors/DoctorDetail';
-import BS_Trang from './components/user/doctors/BS_Trang';
-import BS_HoaiAnh from './components/user/doctors/BS_Anh';
-import BS_Duc from './components/user/doctors/BS_Duc';
-import BS_Quoc from './components/user/doctors/BS_Quoc';
-import BS_BKhanh from './components/user/doctors/BS_BKhanh';
-import BS_Xuyen from './components/user/doctors/BS_Xuyen';
-import BS_Tan from './components/user/doctors/BS_Tan';
 import UserForm from './components/user/UserForm';
 import MedicalRecords from './components/user/MedicalRecords';
 import FollowUpAppointments from './components/user/FollowUpAppointments';
+
 
 function App() {
   return (
@@ -65,20 +58,10 @@ function App() {
           <Route path="/dieutrituy" element={<DieuTriTuy />} />
           <Route path="/hantramrang" element={<HanTramRang />} />
           <Route path="/chamsocrangmieng" element={<ChamSocRangMieng />} />
-          <Route path="/:doctorName" element={<DoctorDetail />} />
-          <Route path="/bs.đinh-ngọc-khánh" element={<BS_Khanh />} /> 
-          <Route path="/bs.mai-thị-trang" element={<BS_Trang />} /> 
-          <Route path="/bs.lê-thị-hoài-anh" element={<BS_HoaiAnh />} />
-          <Route path="/bs.đỗ-văn-đức" element={<BS_Duc />} />
-          <Route path="/bs.phạm-ngọc-quốc" element={<BS_Quoc />} />
-          <Route path="/bs.nguyễn-gia-bảo-khánh" element={<BS_BKhanh/>} />
-          <Route path="/bs.đặng-thị-hà-xuyên" element={<BS_Xuyen />} />
-          <Route path="/bs.nguyễn-hữu-tân" element={<BS_Tan />} />
-          <Route path="/hantramrang" element={<HanTramRang />} />
-          <Route path="/chamsocrangmieng" element={<ChamSocRangMieng />} />
           <Route path="/UserForm" element={<UserForm />} />
           <Route path="/MedicalRecords" element={<MedicalRecords />} />
           <Route path="/FollowUpAppointments" element={<FollowUpAppointments />} />
+          <Route path="/:doctorName" element={<DoctorDetail />} />
         </Routes>
         <TopScroll />
       </div>

@@ -102,7 +102,7 @@ const AppointmentList = () => {
                     dateFormat="yyyy/MM/dd"
                     placeholderText="Chọn ngày"
                     isClearable
-                    minDate={new Date()} // Giới hạn ngày chọn là ngày hôm nay hoặc các ngày sau
+                    
                 />
             </div>
 

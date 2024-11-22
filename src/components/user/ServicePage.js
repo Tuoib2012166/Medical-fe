@@ -10,10 +10,10 @@ function Sevicepage() {
         <div>
             <Header />
             <div className="container">
-                <Sidebar />
+            
                 <div className="main-content">
                     {/* Nội dung bảng giá dịch vụ */}
-
+                    
 
                     <ServiceList />
                 </div>

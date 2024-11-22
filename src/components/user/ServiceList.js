@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
+import { Grid, Card, CardContent, CardMedia, Typography, Paper } from '@mui/material';
 import '../../assets/css/serviceList.css'; 
 
 function ServiceList() {
@@ -58,17 +59,28 @@ function ServiceList() {
     };
 
     return (
-        <section id="service-list">
-            <h1>Danh Sách Dịch Vụ</h1>
-            <div className="service-cards">
+        <Paper sx={{ padding: 4, marginTop: 4 }}>
+            <Typography variant="h4" gutterBottom align="center">
+                Danh Sách Dịch Vụ
+            </Typography>
+            <Grid container spacing={4} justifyContent="center">
                 {services.map((service, index) => (
-                    <div className="service-card" key={index} onClick={() => handleServiceClick(service)}>
-                        <h2>{service.name}</h2>
-                        <img src={`http://localhost:8080/${service.image}`} alt={`Image of ${service.name}`} />
-                    </div>
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Card sx={{ boxShadow: 3, borderRadius: 2, cursor: 'pointer' }} onClick={() => handleServiceClick(service)}>
+                            <CardMedia
+                                component="img"
+                                height="200"
+                                image={`http://localhost:8080/${service.image}`}
+                                alt={`Image of ${service.name}`}
+                            />
+                            <CardContent>
+                                <Typography variant="h6" align="center">{service.name}</Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 ))}
-            </div>
-        </section>
+            </Grid>
+        </Paper>
     );
 }
 
