@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, TextField, Select, MenuItem, Grid, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-
+import { MdEdit, MdDelete } from 'react-icons/md';
 const DoctorList = () => {
     const [doctors, setDoctors] = useState([]);
     const [specialties, setSpecialties] = useState([]);
@@ -273,14 +273,14 @@ const DoctorList = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Họ và Tên</TableCell>
-                            <TableCell>Dịch vụ</TableCell>
-                            <TableCell>Số Điện Thoại</TableCell>
-                            <TableCell>Nơi Làm Việc</TableCell>
-                            <TableCell>Năm Sinh</TableCell>
-                            <TableCell>Hình Ảnh</TableCell>
-                            <TableCell>Hành Động</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Username</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Họ và Tên</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Số Điện Thoại</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nơi Làm Việc</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Năm Sinh</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hình Ảnh</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hành Động</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -296,8 +296,8 @@ const DoctorList = () => {
                                     <img src={`http://localhost:8080/${doctor.image}`} alt="Doctor" style={{ width: '40px', height: '40px', objectFit: 'cover' }} />
                                 </TableCell>
                                 <TableCell>
-                                    <Button variant="outlined" color="primary" onClick={() => handleEditDoctor(doctor)}>Sửa</Button>
-                                    <Button variant="outlined" color="secondary" onClick={() => {
+                                    <Button startIcon={<MdEdit />} variant="outlined" color="primary" onClick={() => handleEditDoctor(doctor)}>Sửa</Button>
+                                    <Button startIcon={<MdDelete />} variant="outlined" color="secondary" onClick={() => {
                                         if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
                                             handleDeleteDoctor(doctor.id);
                                         }

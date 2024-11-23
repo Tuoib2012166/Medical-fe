@@ -72,10 +72,9 @@ const AppointmentList = () => {
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày hẹn</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Giờ hẹn</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Bác sĩ</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ</TableCell>   
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nội dung</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày tạo</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Trạng thái</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hành động</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -85,37 +84,10 @@ const AppointmentList = () => {
                                 <TableCell>{new Date(appointment.appointment_date).toLocaleDateString('en-GB')}</TableCell>
                                 <TableCell>{appointment.appointment_time}</TableCell>
                                 <TableCell>{appointment.doctor_name}</TableCell>
+                                <TableCell>{appointment.specialty}</TableCell>
                                 <TableCell>{appointment.content}</TableCell>
                                 <TableCell>{new Date(appointment.created_at).toLocaleDateString('en-GB')}</TableCell>
-                                <TableCell>
-                                    {appointment.status === 'accept' 
-                                        ? 'Đã xác nhận' 
-                                        : appointment.status === 'reject' 
-                                        ? 'Đã từ chối' 
-                                        : 'Đang chờ'}
-                                </TableCell>
-                                <TableCell>
-                                    {appointment.status === 'pending' && (
-                                        <>
-                                            <Tooltip title="Xác nhận">
-                                                <IconButton
-                                                    onClick={() => confirmAppointment(appointment.id)}
-                                                    color="success"
-                                                >
-                                                    <CheckCircle />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Từ chối">
-                                                <IconButton
-                                                    onClick={() => rejectAppointment(appointment.id)}
-                                                    color="error"
-                                                >
-                                                    <Cancel />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </>
-                                    )}
-                                </TableCell>
+                                
                             </TableRow>
                         ))}
                     </TableBody>

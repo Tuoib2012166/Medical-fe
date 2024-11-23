@@ -36,10 +36,6 @@ const PatientList = () => {
         // Kiểm tra họ và tên (không chứa số và ký tự đặc biệt)
         const nameRegex = /^[a-zA-Zàáảãạâầấẩẫậăằắẳẵặđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựýỳỷỹỵ\s]+$/;
 
-        if (!nameRegex.test(user.fullname)) {
-            errors.fullname = "Họ và tên không được chứa số và ký tự đặc biệt.";
-        }
-
         // Kiểm tra số điện thoại (đúng định dạng)
         const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
         if (!phoneRegex.test(user.phone)) {
@@ -215,12 +211,12 @@ const PatientList = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Tên</TableCell>
-                            <TableCell>Số điện thoại</TableCell>
-                            <TableCell>Năm sinh</TableCell>
-                            <TableCell>Địa chỉ</TableCell>
-                            <TableCell>Hành động</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Username</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Tên</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Số điện thoại</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Năm sinh</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Địa chỉ</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hành động</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

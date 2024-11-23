@@ -87,7 +87,6 @@ function Appointments() {
                   "Bác sĩ",
                   "Dịch vụ",
                   "Nội dung",
-                  "Trạng thái",
                   "Ngày tạo",
                 ].map((head, index) => (
                   <TableCell key={index} sx={{ color: "white", fontWeight: "bold" }}>
@@ -118,13 +117,7 @@ function Appointments() {
                   <TableCell>{appointment.doctor_name}</TableCell>
                   <TableCell>{appointment.specialty}</TableCell>
                   <TableCell>{appointment.content}</TableCell>
-                  <TableCell>
-                    {appointment.status === "accept"
-                      ? "Đã xác nhận"
-                      : appointment.status === "reject"
-                      ? "Đã bị từ chối"
-                      : "Đang chờ"}
-                  </TableCell>
+                
                   <TableCell>
                     {new Date(appointment.created_at).toLocaleString("en-GB")}
                   </TableCell>

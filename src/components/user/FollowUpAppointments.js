@@ -24,15 +24,10 @@ function FollowUpAppointments() {
   useEffect(() => {
     const fetchFollowUpAppointments = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/follow-up-appointments");
-        
-        // Lọc lịch tái khám theo id người dùng (bệnh nhân)
-        const filteredFollowUpAppointments = response.data.filter(
-          (appointment) => appointment.patient_id === user.profile.id
-        );
+        const response = await axios.get(`http://localhost:8080/follow-up-appointments?patient_id=${user.profile.id}`);
         
         // Cập nhật dữ liệu vào state
-        setFollowUpAppointments(filteredFollowUpAppointments);
+        setFollowUpAppointments(response.data);
       } catch (error) {
         console.error("Error fetching follow-up appointments:", error);
       }

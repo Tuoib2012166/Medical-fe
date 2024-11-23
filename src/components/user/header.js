@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import useUserStore from '../../store/userStore';
-import { AppBar, Toolbar, Button, IconButton, Box, Menu, MenuItem, Avatar } from '@mui/material';
+import { AppBar, Toolbar, Button, IconButton, Box, Menu, MenuItem, Avatar, Typography, Divider } from '@mui/material';
 import { ListAlt, MedicalServices, Person, ExitToApp, AccessTime, LocalHospital, AttachMoney, AccountBox, Login , PersonAdd } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -17,6 +17,11 @@ function Header() {
   const [, , removeCookie] = useCookies(['token']);
   const setUser = useUserStore((state) => state.setUser);
   const isFirstRender = useRef(true);
+  
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,7 +79,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="static" className="app-bar" sx={{ backgroundColor: 'white', boxShadow: 3 }}>
+    <AppBar position="static" className="app-bar" sx={{ backgroundColor: '#0099FF', boxShadow: 3 }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/" style={{ display: 'inline-block' }}>
@@ -137,26 +142,83 @@ function Header() {
             onClose={handleMenuClose}
             MenuListProps={{ 'aria-labelledby': 'basic-button' }}
           >
-            {isUserLoggedIn && (
-              <>
-                <h8 className="name-hello">{userProfile.fullname}</h8>
-                <MenuItem onClick={handleMenuClose} className="menu-item">
-                  <ListAlt /> <Link to="/appointments" style={{ textDecoration: 'none', color: 'black' }}>Danh sách đặt lịch</Link>
-                </MenuItem>
-                <MenuItem onClick={handleMenuClose} className="menu-item">
-                  <AccessTime /> <Link to="/FollowUpAppointments" style={{ textDecoration: 'none', color: 'black' }}>Lịch tái khám</Link>
-                </MenuItem>
-                <MenuItem onClick={handleMenuClose} className="menu-item">
-                  <MedicalServices /> <Link to="/MedicalRecords" style={{ textDecoration: 'none', color: 'black' }}>Xem hồ sơ bệnh án</Link>
-                </MenuItem>
-                <MenuItem onClick={handleMenuClose} className="menu-item">
-                  <Person /> <Link to="/UserForm" style={{ textDecoration: 'none', color: 'black' }}>Thông tin cá nhân</Link>
-                </MenuItem>
-                <MenuItem onClick={handleLogout} className="menu-item">
-                  <ExitToApp /> Đăng xuất
-                </MenuItem>
-              </>
-            )}
+            {/* Kiểm tra trạng thái đăng nhập */}
+        {isUserLoggedIn ? (
+          <>
+            <IconButton
+              edge="end"
+              aria-label="account menu"
+              aria-controls="account-menu"
+              aria-haspopup="true"
+              onClick={handleMenuOpen}
+              color="inherit"
+            >
+              <Avatar alt={userProfile.fullname} src={userProfile.avatar || '/default-avatar.png'} />
+            </IconButton>
+            <Menu
+              id="account-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'account-menu',
+              }}
+            >
+              {/* Lời chào và thông tin người dùng */}
+              <Box display="flex" alignItems="center" padding="10px" gap="10px">
+                <Avatar alt={userProfile.fullname} src={userProfile.avatar || '/default-avatar.png'} />
+                <Typography variant="subtitle1" className="name-hello">
+                  Xin chào, {userProfile.fullname}
+                </Typography>
+              </Box>
+              <Divider />
+
+              {/* Menu Item */}
+              <MenuItem onClick={handleMenuClose}>
+                <ListAlt color="primary" />
+                <Link to="/appointments" style={{ textDecoration: 'none', color: 'black', marginLeft: '10px' }}>
+                  Danh sách đặt lịch
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose}>
+                <AccessTime color="primary" />
+                <Link to="/FollowUpAppointments" style={{ textDecoration: 'none', color: 'black', marginLeft: '10px' }}>
+                  Lịch tái khám
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose}>
+                <MedicalServices color="primary" />
+                <Link to="/MedicalRecords" style={{ textDecoration: 'none', color: 'black', marginLeft: '10px' }}>
+                  Xem hồ sơ bệnh án
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose}>
+                <Person color="primary" />
+                <Link to="/UserForm" style={{ textDecoration: 'none', color: 'black', marginLeft: '10px' }}>
+                  Thông tin cá nhân
+                </Link>
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={handleLogout}>
+                <ExitToApp color="error" />
+                <Typography style={{ marginLeft: '10px', color: 'red' }}>Đăng xuất</Typography>
+              </MenuItem>
+            </Menu>
+          </>
+        ) : (
+          <>
+            <Button color="inherit" startIcon={<Login />}>
+              <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+                Đăng nhập
+              </Link>
+            </Button>
+            <Button color="inherit" startIcon={<PersonAdd />}>
+              <Link to="/register" style={{ textDecoration: 'none', color: 'inherit' }}>
+                Đăng ký
+              </Link>
+            </Button>
+          </>
+        )}
           </Menu>
       </Box>
       </Toolbar>

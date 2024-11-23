@@ -9,7 +9,7 @@ function NhoRangKhon() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+       
         <div className="main-content">
           {/* Nội dung bảng giá dịch vụ */}
           <h4>Nhổ răng khôn mọc ngầm – Những điều cần biết</h4>

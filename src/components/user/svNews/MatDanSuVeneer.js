@@ -9,7 +9,7 @@ function MatDanSuVeneer() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+       
         <div className="main-content">
             <h4>Mặt dán sứ Veneer – Phục hình răng đẹp hoàn hảo, bảo tồn răng thật tối đa</h4>
             <p>Răng sứ Veneer là mặt dán sứ bọc dùng để bọc bên ngoài bề mặt răng nhằm che lấp các khuyết điểm khi răng bị tổn thương cấu trúc hoặc xỉn màu, ố vàng và đem đến cho khách hàng một hàm răng đều, đẹp, trắng sáng bền vững theo thời gian.</p>    

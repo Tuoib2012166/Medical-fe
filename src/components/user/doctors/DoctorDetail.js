@@ -44,6 +44,13 @@ function DoctorDetail() {
   return (
     <div>
         <Header />
+        <Typography
+                variant="h4"
+                align="center"
+                sx={{ marginTop: 2, fontWeight: "bold" }}
+              >
+                Thông tin bác sĩ
+              </Typography>
     <Box sx={{ padding: 4 }}>
       <Card sx={{ maxWidth: 900, margin: "auto" }}>
         <CardContent>

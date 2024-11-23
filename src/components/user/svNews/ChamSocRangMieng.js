@@ -9,7 +9,7 @@ function ChamSocRangMieng() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+      
         <div className="main-content">
             <h4>Chăm sóc răng miệng cho phụ nữ mang thai</h4>
             <p>Mang thai là một giai đoạn quan trọng của người phụ nữ. Các bà bầu phải quan tâm đến sức khỏe toàn diện, trong đó không thể bỏ qua việc chăm sóc răng miệng để có một thai kỳ khỏe mạnh.</p>

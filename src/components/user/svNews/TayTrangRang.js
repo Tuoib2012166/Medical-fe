@@ -9,7 +9,7 @@ function TayTrangRang() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+       
         <div className="main-content">
           {/* Nội dung bảng giá dịch vụ */}
           <h4>Tẩy trắng răng là gì? Tẩy trắng răng có tốt không?</h4>

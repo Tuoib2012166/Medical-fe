@@ -9,7 +9,7 @@ function HanTramRang() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+        
         <div className="main-content">
              <h4>Hàn Trám Răng Là Gì?</h4>
             <p>Hàn trám răng là kỹ thuật mà bác sĩ sẽ sử dụng vật liệu trám bít để khôi phục lại hình dáng và chức năng của răng. Phương pháp này được sử dụng phổ biến trong nha khoa bởi mang lại ý nghĩa cả về thẩm mỹ lẫn điều trị và phòng ngừa bệnh lý răng miệng.</p>

@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .MuiDialog-paper {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

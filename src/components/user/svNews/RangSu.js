@@ -9,7 +9,7 @@ function RangSu() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+       
         <div className="main-content">
           {/* Nội dung bảng giá dịch vụ */}
           <h4>1. Bọc răng sứ thẩm mỹ là gì?</h4>

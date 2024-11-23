@@ -117,11 +117,10 @@ const AppointmentList = () => {
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Năm sinh</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày hẹn</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Giờ hẹn</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Bác sĩ</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nội dung</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày tạo</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Trạng thái</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Chấp nhận/ Từ chối</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -134,24 +133,10 @@ const AppointmentList = () => {
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.birth_year}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{new Date(appointment.appointment_date).toLocaleDateString('en-GB')}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.appointment_time}</TableCell>
+                                <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.specialty}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.doctor_name}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{appointment.content}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{new Date(appointment.appointment_date).toLocaleString('en-GB')}</TableCell>
-                                <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>
-                                    {appointment.status === 'accept' ? 'Đã xác nhận' : appointment.status === 'reject' ? 'Đã từ chối' : 'Đang chờ'}
-                                </TableCell>
-                                <TableCell>
-                                    {appointment.status !== 'accept' && appointment.status !== 'reject' && (
-                                        <>
-                                            <IconButton onClick={() => confirmAppointment(appointment.id)} style={{ color: 'green', marginRight: '10px' }}>
-                                                <CheckIcon />
-                                            </IconButton>
-                                            <IconButton onClick={() => rejectAppointment(appointment.id)} style={{ color: 'red' }}>
-                                                <CloseIcon />
-                                            </IconButton>
-                                        </>
-                                    )}
-                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

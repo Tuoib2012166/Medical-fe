@@ -16,15 +16,40 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
+
   const [loading, setLoading] = useState(false);
 
-  const handleFormChange = (changedValues, allValues) => {
-    setFormData(allValues);
+  // Hàm xử lý thay đổi của từng input
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = () => {
+  // Kiểm tra mật khẩu và xác nhận mật khẩu có khớp hay không
+  const validateForm = () => {
+    const { password, confirmPassword } = formData;
+    if (password !== confirmPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Mật khẩu không khớp',
+        text: 'Vui lòng kiểm tra lại mật khẩu.',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  // Hàm gửi form
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Ngừng hành vi mặc định của form
+    if (!validateForm()) return; // Nếu form không hợp lệ, không gửi dữ liệu
+
     setLoading(true);
 
+    // Gửi dữ liệu đăng ký tới API
     fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -53,17 +78,17 @@ const Register = () => {
     <>
       <Header />
       <section id="register" style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
-        <img src="img/logo.png" alt="Logo" style={{ width: "300px" }} />
-        <h4>Đăng ký tài khoản</h4>
-        
+        <img src="img/logo.png" alt="Logo" style={{ width: '300px' }} />
+        <h4 >Đăng ký tài khoản</h4>
+
         {/* Form */}
-        <form onChange={handleFormChange} onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <TextField
               label="Tài khoản"
               name="username"
               value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />
@@ -74,7 +99,7 @@ const Register = () => {
               label="Họ và tên"
               name="fullname"
               value={formData.fullname}
-              onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />
@@ -85,7 +110,7 @@ const Register = () => {
               label="Số điện thoại"
               name="phone"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />
@@ -96,7 +121,7 @@ const Register = () => {
               label="Địa chỉ"
               name="address"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />
@@ -105,8 +130,9 @@ const Register = () => {
           <div style={{ marginBottom: '20px' }}>
             <FormControl component="fieldset" required>
               <RadioGroup
+                name="gender"
                 value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                onChange={handleInputChange}
               >
                 <FormControlLabel value={1} control={<Radio />} label="Nam" />
                 <FormControlLabel value={0} control={<Radio />} label="Nữ" />
@@ -119,7 +145,7 @@ const Register = () => {
               label="Năm sinh"
               name="birthYear"
               value={formData.birthYear}
-              onChange={(e) => setFormData({ ...formData, birthYear: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />
@@ -131,7 +157,7 @@ const Register = () => {
               name="password"
               type="password"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />
@@ -143,7 +169,7 @@ const Register = () => {
               name="confirmPassword"
               type="password"
               value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              onChange={handleInputChange}
               fullWidth
               required
             />

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Carousel } from 'antd';
-import { Typography, List, ListItem, ListItemText, Card, CardContent, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { List, ListItem, ListItemText, Typography, Box, Divider } from '@mui/material';
 import '../../assets/css/sidebar.css';
 
 const Sidebar = () => {
@@ -19,36 +18,51 @@ const Sidebar = () => {
     }, [autoplayInterval]);
 
     return (
-        <div className="sidebar">
-            {/* Bài Viết Dịch Vụ */}
-            <div className="sidebar-section">
-                <Typography variant="h6" component="h3" gutterBottom>Bài Viết Dịch Vụ</Typography>
+        <Box className="sidebar" sx={{ width: 250, padding: 2, backgroundColor: '#f4f4f4', height: '100vh' }}>
+           
+            <Box className="sidebar-section">
+                <Typography variant="h6" gutterBottom>Bài Viết Dịch Vụ</Typography>
                 <List>
-                    <ListItem>
-                        <ListItemText>
-                            <Link to="/NiengRang" className="text-reset">Nắn răng</Link>
-                        </ListItemText>
+                    <ListItem button component="a" href="/NiengRang">
+                        <ListItemText primary="Nắn răng - Chỉnh nha" />
                     </ListItem>
-                    <ListItem>
-                        <ListItemText>
-                            <Link to="/implant" className="text-reset">Cấy ghép Implant</Link>
-                        </ListItemText>
+                    <ListItem button component="a" href="/implant">
+                        <ListItemText primary="Cấy ghép Implant" />
                     </ListItem>
-                    {/* Add other list items similarly */}
+                    <ListItem button component="a" href="/rangsu">
+                        <ListItemText primary="Bọc răng sứ" />
+                    </ListItem>
+                    <ListItem button component="a" href="/MatDanSuVeneer">
+                        <ListItemText primary="Dán sứ veneer" />
+                    </ListItem>
+                    <ListItem button component="a" href="#cuoi-ho-lợi">
+                        <ListItemText primary="Cười hở lợi" />
+                    </ListItem>
+                    <ListItem button component="a" href="/NhoRangKhon">
+                        <ListItemText primary="Nhổ răng khôn" />
+                    </ListItem>
+                    <ListItem button component="a" href="/BenhLyNhaChu">
+                        <ListItemText primary="Bệnh Lý Nha Chu" />
+                    </ListItem>
+                    <ListItem button component="a" href="/DieuTriTuy">
+                        <ListItemText primary="Điều Trị Tủy" />
+                    </ListItem>
+                    <ListItem button component="a" href="/HanTramRang">
+                        <ListItemText primary="Hàn Trám Răng" />
+                    </ListItem>
+                    <ListItem button component="a" href="/ChamSocRangMieng">
+                        <ListItemText primary="Chăm Sóc Răng Miệng Cho Phụ Nữ Mang Thai" />
+                    </ListItem>
                 </List>
-            </div>
+            </Box>
 
-            {/* Đội Ngũ Bác Sĩ */}
-            <div className="sidebar-section">
-                <Typography variant="h6" component="h3" gutterBottom>Đội Ngũ Bác Sĩ</Typography>
-                <Card>
-                    <img src="img/sidebar/doctor-sb.png" alt="Đội ngũ bác sĩ" className="sidebar-image" />
-                </Card>
-            </div>
+            <Box className="sidebar-section">
+                <Typography variant="h6" gutterBottom>Đội Ngũ Bác Sĩ</Typography>
+                <img src="img/sidebar/doctor-sb.png" alt="Đội ngũ bác sĩ" className="sidebar-image" style={{ width: '100%', borderRadius: '8px' }} />
+            </Box>
 
-            {/* Thông Tin Ưu Đãi */}
-            <div className="sidebar-section">
-                <Typography variant="h6" component="h3" gutterBottom>Thông Tin Ưu Đãi</Typography>
+            <Box className="sidebar-section">
+                <Typography variant="h6" gutterBottom>Thông Tin Ưu Đãi</Typography>
                 <Carousel
                     ref={carouselRef}
                     autoplay={false}
@@ -66,41 +80,40 @@ const Sidebar = () => {
                         <img src='./img/sidebar/sale3.jpg' alt="banner cua trang chu" style={{ width: "100%", height: "100%" }} />
                     </div>
                 </Carousel>
-            </div>
+            </Box>
 
-            {/* Kiến Thức Nha Khoa */}
-            <div className="sidebar-section">
-                <Typography variant="h6" component="h3" gutterBottom>Kiến thức nha khoa</Typography>
+            <Box className="sidebar-section">
+                <Typography variant="h6" gutterBottom>Kiến Thức Nha Khoa</Typography>
                 <List>
-                    <ListItem>
-                        <ListItemText>
-                            <Link to="/news" className="text-reset">Kiến thức niềng răng</Link>
-                        </ListItemText>
+                    <ListItem button component="a" href="/news">
+                        <ListItemText primary="Kiến thức niềng răng" />
                     </ListItem>
-                    <ListItem>
-                        <ListItemText>
-                            <Link to="/newsImplant" className="text-reset">Kiến thức cấy ghép implant</Link>
-                        </ListItemText>
+                    <ListItem button component="a" href="/newsImplant">
+                        <ListItemText primary="Kiến thức cấy ghép implant" />
                     </ListItem>
                 </List>
-            </div>
+            </Box>
 
-            {/* Hệ Thống Chi Nhánh */}
-            <div className="sidebar-section">
-                <Typography variant="h6" component="h3" gutterBottom>Hệ Thống Chi Nhánh</Typography>
-                <Typography variant="body2" component="p" gutterBottom>
-                    Hà Nội: Xuân Khánh, Ninh Kiều, Cần Thơ
-                </Typography>
-                <div className="contact-info">
-                    <Button variant="outlined" color="primary" fullWidth>
-                        Hotline 24/7: 0123456789
-                    </Button>
-                    <Button variant="outlined" color="primary" fullWidth>
-                        Đăng ký: 0123456789
-                    </Button>
-                </div>
-            </div>
-        </div>
+            <Box className="sidebar-section">
+                <Typography variant="h6" gutterBottom>Hệ Thống Chi Nhánh</Typography>
+                <List>
+                    <ListItem>
+                        <ListItemText primary="Hà Nội: Thanh Xuân - Cầu Giấy - Hai Bà Trưng" />
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText primary="TP. Hồ Chí Minh: Quận 10 - Bình Thạnh" />
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText primary="Thành phố Lào Cai" />
+                    </ListItem>
+                </List>
+                <Divider sx={{ margin: '10px 0' }} />
+                <Box>
+                    <Typography variant="body2" color="textSecondary">Hotline 24/7: 0123456789</Typography>
+                    <Typography variant="body2" color="textSecondary">Đăng ký: 0123456789</Typography>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

@@ -12,7 +12,7 @@ function Pricelist() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('http://localhost:8080/listServices');
+        const response = await fetch('http://localhost:8080/Services');
         const data = await response.json();
         setServices(data);
       } catch (error) {
@@ -27,6 +27,7 @@ function Pricelist() {
     <div>
       <Header />
       <div className="container">
+        
         <div className="main-content">
           {/* Bảng giá dịch vụ */}
           <section id="price-list">
@@ -34,7 +35,7 @@ function Pricelist() {
             <Paper sx={{ overflow: 'hidden' }}>
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow>``
                     <TableCell><Typography variant="h6">DỊCH VỤ</Typography></TableCell>
                     <TableCell><Typography variant="h6">MÔ TẢ</Typography></TableCell>
                     <TableCell><Typography variant="h6">GIÁ DỊCH VỤ VNĐ (Giá chưa bao gồm Thuế GTGT)</Typography></TableCell>

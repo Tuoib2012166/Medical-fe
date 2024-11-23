@@ -9,7 +9,7 @@ function DieuTriTuy() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+        
         <div className="main-content">
             <h4>Điều trị tủy răng an toàn, bảo tồn răng thật</h4>
             <p>Tủy răng đóng vai trò quan trọng trong việc nuôi dưỡng răng chắc khỏe. Thế nên, chúng ta cần điều trị tủy răng kịp thời để tránh những hậu quả ảnh hưởng đến sức khỏe răng miệng.</p>

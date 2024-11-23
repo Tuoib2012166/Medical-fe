@@ -9,7 +9,7 @@ function Implant() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+        
         <div className="main-content">
             <h4>Cấy Ghép Implant Là Gì?</h4>
             <p>Cấy ghép Implant (hay cắm Implant) là phương pháp dùng một trụ chân răng nhân tạo bằng Titanium đặt vào trong xương hàm tại vị trí răng đã mất. Trụ chân răng này sẽ thay thế chân răng thật, sau đó dùng răng sứ gắn lên trụ răng Implant tạo thành răng hoàn chỉnh. Đến thời điểm hiện tại, cấy implant vẫn là phương pháp phục hồi răng mất hiện đại mang lại hiệu quả cao nhất hiện nay. Không chỉ khôi phục vẻ ngoài tự tin, implant còn giúp người bệnh khôi phục khả năng ăn nhai và ngăn ngừa các bệnh lý về răng miệng, tiêu xương vô cùng hiệu quả.</p>    

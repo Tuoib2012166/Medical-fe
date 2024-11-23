@@ -9,7 +9,7 @@ function NiengRang() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+        
         <div className="main-content">
             <h4>Niềng răng là gì?</h4>
             <p>Niềng răng là kỹ thuật nha khoa sử dụng các loại khí cụ chỉnh nha nhằm dịch chuyển và kéo răng về đúng vị trí trên cung hàm. Kỹ thuật này thường được áp dụng trong các trường hợp răng mọc lệch, khấp khểnh hoặc không đúng vị trí gây mất tương quan giữa 2 hàm giúp răng đều và đẹp hơn. </p> 

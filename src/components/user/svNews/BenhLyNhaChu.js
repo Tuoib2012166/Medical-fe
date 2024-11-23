@@ -9,7 +9,7 @@ function BenhLyNhaChu() {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+        
         <div className="main-content">
             <h4>Bệnh Nha Chu Là Gì?</h4>
             <p>Bệnh nha chu là một bệnh nhiễm trùng nướu làm tổn thương mô mềm và phá hủy xương xung quanh răng. Trường hợp nhiễm trùng trở nên nghiêm trọng có thể khiến răng bị lỏng hoặc dẫn đến mất răng.</p>
