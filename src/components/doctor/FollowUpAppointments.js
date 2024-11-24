@@ -3,27 +3,41 @@ import axios from 'axios';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Button, TextField, MenuItem, Select, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Snackbar, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import useUserStore from '../../store/userStore';
+
+const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" }));
+const todayString = today.toISOString().split("T")[0]; // "YYYY-MM-DD" format
 
 const FollowUpAppointments = () => {
     const [appointments, setAppointments] = useState([]);
     const [patients, setPatients] = useState([]);
-    const [doctors, setDoctors] = useState([]);
-    const [form, setForm] = useState({ id: '', patientName: '', followUpDate: '', time: '', notes: '', doctorId: '' });
+    const [form, setForm] = useState({ id: '', patientName: '', followUpDate: todayString, time: '', notes: '', doctorId: '' });
     const [isEditing, setIsEditing] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
-    
+    const { user } = useUserStore();
+
+    const [bookedTimes, setBookedTimes] = useState([]);
 
     useEffect(() => {
-        fetchAppointments();
-        fetchPatients();
-        fetchDoctors();
-    }, []);
+        if (user.profile) {
+            fetchAppointments();
+            fetchPatients();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user.profile) {
+            fetchAppointments();
+        }
+    }, [user, form.followUpDate]);
 
     const fetchAppointments = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/follow-up-appointments', { withCredentials: true });
+            const response = await axios.get(`http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${form.followUpDate}`, { withCredentials: true });
+            const hours = response.data.map(i => i.time);
+            setBookedTimes(hours)
             setAppointments(response.data);
         } catch (error) {
             console.error('Error fetching follow-up appointments:', error);
@@ -32,19 +46,10 @@ const FollowUpAppointments = () => {
 
     const fetchPatients = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/patients', { withCredentials: true });
+            const response = await axios.get(`http://localhost:8080/patients?doctorId=${user?.profile?.id}`, { withCredentials: true });
             setPatients(response.data);
         } catch (error) {
             console.error('Error fetching patients:', error);
-        }
-    };
-
-    const fetchDoctors = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/doctors', { withCredentials: true });
-            setDoctors(response.data);
-        } catch (error) {
-            console.error('Error fetching doctors:', error);
         }
     };
 
@@ -61,11 +66,16 @@ const FollowUpAppointments = () => {
             return;
         }
         try {
+            let data = {
+                ...form,
+                doctor_id: user.profile.id,
+                doctorId: user.profile.id
+            };
             if (isEditing) {
-                await axios.put(`http://localhost:8080/follow-up-appointments/${form.id}`, form, { withCredentials: true });
+                await axios.put(`http://localhost:8080/follow-up-appointments/${form.id}`, data, { withCredentials: true });
                 setSnackbarMessage('Lịch tái khám đã được cập nhật');
             } else {
-                await axios.post('http://localhost:8080/follow-up-appointments', form, { withCredentials: true });
+                await axios.post('http://localhost:8080/follow-up-appointments', data, { withCredentials: true });
                 setSnackbarMessage('Lịch tái khám đã được thêm mới');
             }
             fetchAppointments();
@@ -103,10 +113,22 @@ const FollowUpAppointments = () => {
         setOpenDialog(false);
     };
 
-    // Tạo danh sách giờ từ 8h đến 17h
+    // Generate available times from 8 AM to 5 PM
     const availableTimes = Array.from({ length: 10 }, (_, i) => {
-        const hour = i + 8; // Bắt đầu từ 8h đến 17h
-        return `${hour < 10 ? '0' : ''}${hour}:00`;
+        const hour = i + 8; // Start from 8 AM to 5 PM
+        return `${hour.toString().padStart(2, '0')}:00`;
+    });
+
+    const filteredAvailableTimes = availableTimes.filter(time => {
+        // If we're selecting today
+        if (form.followUpDate === todayString) {
+            return !appointments.some(
+                appointment => appointment.follow_up_date === form.followUpDate && appointment.time === time
+            );
+        }
+
+        // If no appointments for tomorrow, show all available times
+        return true; // Allow all times if no appointments exist for the selected date (tomorrow)
     });
 
     return (
@@ -185,20 +207,15 @@ const FollowUpAppointments = () => {
                             </Select>
                         </FormControl>
 
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel>Bác sĩ</InputLabel>
-                            <Select
-                                name="doctorId"
-                                value={form.doctorId}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <MenuItem value="">Chọn bác sĩ</MenuItem>
-                                {doctors.map(doctor => (
-                                    <MenuItem key={doctor.id} value={doctor.id}>{doctor.fullname}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <TextField
+                            label="Bác sĩ"
+                            name="doctorId"
+                            value={form.doctorId || user?.profile?.fullname}
+                            onChange={handleInputChange}
+                            required
+                            fullWidth
+                            margin="normal"
+                        />
 
                         <TextField
                             label="Ngày tái khám"
@@ -210,21 +227,28 @@ const FollowUpAppointments = () => {
                             fullWidth
                             margin="normal"
                             InputLabelProps={{ shrink: true }}
-                            inputProps={{ min: new Date().toISOString().split('T')[0] }} // Chỉ nhận ngày hiện tại hoặc tương lai
                         />
 
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel>Giờ tái khám</InputLabel>
+                        <FormControl fullWidth>
+                            <InputLabel>Chọn giờ</InputLabel>
                             <Select
                                 name="time"
                                 value={form.time}
                                 onChange={handleInputChange}
-                                required
+                                label="Chọn giờ"
                             >
-                                <MenuItem value="">Chọn giờ</MenuItem>
-                                {availableTimes.map(time => (
-                                    <MenuItem key={time} value={time}>{time}</MenuItem>
-                                ))}
+                                {[...Array(24).keys()].map((hour) => {
+                                    const hourString = hour < 10 ? `0${hour}:00` : `${hour}:00`; // Format the hour
+                                    return (
+                                        <MenuItem
+                                            key={hourString}
+                                            value={hourString}
+                                            disabled={bookedTimes.includes(hourString)}  // Disable if the time is booked
+                                        >
+                                            {hourString}
+                                        </MenuItem>
+                                    );
+                                })}
                             </Select>
                         </FormControl>
 
@@ -233,10 +257,8 @@ const FollowUpAppointments = () => {
                             name="notes"
                             value={form.notes}
                             onChange={handleInputChange}
-                            multiline
                             fullWidth
                             margin="normal"
-                            rows={4}
                         />
 
                         <DialogActions>

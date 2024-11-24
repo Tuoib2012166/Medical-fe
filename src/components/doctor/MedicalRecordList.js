@@ -30,7 +30,6 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 const MedicalRecordList = () => {
     // Khai báo các state để lưu trữ dữ liệu và trạng thái của các yếu tố trong component
     const [records, setRecords] = useState([]); // Lưu trữ danh sách bệnh án
-    const [doctors, setDoctors] = useState([]); // Lưu trữ danh sách bác sĩ
     const [patients, setPatients] = useState([]); // Lưu trữ danh sách bệnh nhân
     const [editingRecord, setEditingRecord] = useState(null); // Lưu trữ bản ghi đang chỉnh sửa
     const { user } = useUserStore(); // Lấy thông tin người dùng từ store
@@ -62,10 +61,9 @@ const MedicalRecordList = () => {
     // Dùng useEffect để fetch dữ liệu khi component được render lần đầu
     useEffect(() => {
         fetchRecords(); // Lấy dữ liệu bệnh án
-        fetchDoctors(); // Lấy dữ liệu bác sĩ
         fetchPatients(); // Lấy dữ liệu bệnh nhân
         fetchSpecialties(); // Lấy danh sách chuyên khoa
-    }, []);
+    }, [user]);
 
     const handleView = (record) => {
     setViewingRecord(record); // Lưu bản ghi vào state
@@ -100,7 +98,7 @@ const MedicalRecordList = () => {
     // Hàm lấy dữ liệu bệnh án từ API
     const fetchRecords = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/medical-records'); // Gọi API lấy bệnh án
+            const response = await axios.get(`http://localhost:8080/medical-records?doctorId=${user?.profile.id}`); // Gọi API lấy bệnh án
             if (Array.isArray(response.data)) {
                 setRecords(response.data); // Cập nhật danh sách bệnh án nếu dữ liệu hợp lệ
             } else {
@@ -112,20 +110,11 @@ const MedicalRecordList = () => {
         }
     };
 
-    // Hàm lấy danh sách bác sĩ từ API
-    const fetchDoctors = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/doctors`); // Gọi API lấy bác sĩ
-            setDoctors(response.data); // Cập nhật danh sách bác sĩ
-        } catch (error) {
-            toast.error('Không thể lấy dữ liệu bác sĩ'); // Thông báo lỗi nếu không thể lấy dữ liệu
-        }
-    };
-
     // Hàm lấy danh sách bệnh nhân từ API
     const fetchPatients = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/patients'); // Gọi API lấy bệnh nhân
+            const response = await axios.get(`http://localhost:8080/patients?doctorId=${user?.profile?.id}`); // Gọi API lấy bệnh nhân
+            console.log('run inside here: ', response.data)
             setPatients(response.data); // Cập nhật danh sách bệnh nhân
         } catch (error) {
             toast.error('Không thể lấy dữ liệu bệnh nhân'); // Thông báo lỗi khi không thể gọi API
@@ -185,7 +174,7 @@ const MedicalRecordList = () => {
         if (name === 'service') {
             const service = services.find(x => x.id === value);
             const total_price = formData.quantity || 1 * service.price;
-            setFormData({...formData, [name]: value, total_price})
+            setFormData({...formData, [name]: value, total_price, unit_price: service.price})
         }
 
         if (name === 'quantity') {

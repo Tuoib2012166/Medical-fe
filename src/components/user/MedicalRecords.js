@@ -32,69 +32,30 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 const MedicalRecordList = () => {
     // Khai báo các state để lưu trữ dữ liệu và trạng thái của các yếu tố trong component
     const [records, setRecords] = useState([]); // Lưu trữ danh sách bệnh án
-    const [doctors, setDoctors] = useState([]); // Lưu trữ danh sách bác sĩ
-    const [patients, setPatients] = useState([]); // Lưu trữ danh sách bệnh nhân
-    const [editingRecord, setEditingRecord] = useState(null); // Lưu trữ bản ghi đang chỉnh sửa
     const { user } = useUserStore(); // Lấy thông tin người dùng từ store
-    const [specialties, setSpecialties] = useState([]); // Lưu trữ danh sách chuyên khoa
-    const [services, setServices] = useState([]); // Lưu trữ danh sách dịch vụ
     const [viewingRecord, setViewingRecord] = useState(null); // Lưu bản ghi đang xem
-
-
-    // Khai báo state cho form dữ liệu nhập vào
-    const [formData, setFormData] = useState({
-        patient_id: '',
-        doctor_id: '',
-        diagnosis: '',
-        treatment: '',
-        record_date: '',
-        address: '',
-        phone: '',
-        gender: '',
-        birth_year: '',
-        specialty: '',
-        service: '',
-        quantity: '',
-        unit_price: '',
-        total_price: '',
-        prescription: ''
-    });
-    const [showForm, setShowForm] = useState(false); // Trạng thái hiển thị form
 
     // Dùng useEffect để fetch dữ liệu khi component được render lần đầu
     useEffect(() => {
         fetchRecords(); // Lấy dữ liệu bệnh án
-        fetchDoctors(); // Lấy dữ liệu bác sĩ
-        fetchPatients(); // Lấy dữ liệu bệnh nhân
-        fetchSpecialties(); // Lấy danh sách chuyên khoa
     }, []);
 
     const handleView = (record) => {
-    setViewingRecord(record); // Lưu bản ghi vào state
+        setViewingRecord(record); // Lưu bản ghi vào state
     };
 
     const closeViewModal = () => {
         setViewingRecord(null); // Xóa dữ liệu khi đóng modal
     };
-    
 
 
-    // Hàm lấy danh sách chuyên khoa từ API
-    const fetchSpecialties = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/specialties'); // Gọi API lấy chuyên khoa
-            setSpecialties(response.data); // Cập nhật state specialties với dữ liệu trả về
-        } catch (error) {
-            toast.error('Không thể lấy danh sách chuyên khoa'); // Thông báo lỗi nếu không lấy được dữ liệu
-        }
-    };
 
-    // Hàm lấy danh sách dịch vụ khi người dùng chọn chuyên khoa
+
 
     // Hàm lấy dữ liệu bệnh án từ API
     const fetchRecords = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/medical-records'); // Gọi API lấy bệnh án
+            const response = await axios.get(`http://localhost:8080/medical-records?patientId=${user.profile.id}`); // Gọi API lấy bệnh án
             if (Array.isArray(response.data)) {
                 setRecords(response.data); // Cập nhật danh sách bệnh án nếu dữ liệu hợp lệ
             } else {
@@ -106,40 +67,17 @@ const MedicalRecordList = () => {
         }
     };
 
-    // Hàm lấy danh sách bác sĩ từ API
-    const fetchDoctors = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/doctors`); // Gọi API lấy bác sĩ
-            setDoctors(response.data); // Cập nhật danh sách bác sĩ
-        } catch (error) {
-            toast.error('Không thể lấy dữ liệu bác sĩ'); // Thông báo lỗi nếu không thể lấy dữ liệu
-        }
-    };
-
-    // Hàm lấy danh sách bệnh nhân từ API
-    const fetchPatients = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/patients'); // Gọi API lấy bệnh nhân
-            setPatients(response.data); // Cập nhật danh sách bệnh nhân
-        } catch (error) {
-            toast.error('Không thể lấy dữ liệu bệnh nhân'); // Thông báo lỗi khi không thể gọi API
-        }
-    };
-
-
-    console.log("formDate: ", formData)
-
     return (
         <div>
             <Header />
             <Typography
-            variant="h4"
-            gutterBottom
-            align="center"
-            sx={{ fontWeight: "bold", color: "primary.main" }}
-          >
-            Hồ sơ bệnh án
-          </Typography>
+                variant="h4"
+                gutterBottom
+                align="center"
+                sx={{ fontWeight: "bold", color: "primary.main" }}
+            >
+                Hồ sơ bệnh án
+            </Typography>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -181,11 +119,11 @@ const MedicalRecordList = () => {
                                 <TableCell align="center">{record.total_price}</TableCell>
                                 <TableCell align="center">{record.prescription}</TableCell>
                                 <TableCell align="center">
-                                
-                                <IconButton color="info" onClick={() => handleView(record)} title="Xem">
-                                    <i className="fas fa-eye"></i> {/* Icon mắt xem */}
-                                </IconButton>
-                            </TableCell>
+
+                                    <IconButton color="info" onClick={() => handleView(record)} title="Xem">
+                                        <i className="fas fa-eye"></i> {/* Icon mắt xem */}
+                                    </IconButton>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -194,93 +132,93 @@ const MedicalRecordList = () => {
                     <DialogTitle className="dialog-title" variant="h5">Thông tin Bệnh án</DialogTitle>
                     <DialogContent className="dialog-content">
                         {viewingRecord && (
-                        <div>
-                            {/* Header thông tin phòng khám */}
-                            <div className="clinic-header">
-                            <img  />
-                            <div className="clinic-info">
-                                <h3>NHA KHOA DENTAL CARE</h3>
-                                <p>Địa chỉ: AN Khánh, Ninh Kiều, Cần Thơ</p>
-                                <p>Điện thoại: 0123.456.789</p>
-                                <p>Website: https://dentalcare.vn</p>
-                            </div>
-                            </div>
-
-                            {/* Thông tin bệnh nhân */}
-                            <div className="patient-info">
-                            <p><strong>Tên Bệnh nhân:</strong> {viewingRecord.patient_name}</p>
-                            <p><strong>Tên Bác sĩ:</strong> {viewingRecord.doctor_name}</p>
-                            <p><strong>Chẩn đoán:</strong> {viewingRecord.diagnosis}</p>
-                            <p><strong>Điều trị:</strong> {viewingRecord.treatment}</p>
-                            <p><strong>Ngày ghi nhận:</strong> {new Date(viewingRecord.record_date).toLocaleDateString()}</p>
-                            <p><strong>Địa chỉ:</strong> {viewingRecord.address}</p>
-                            <p><strong>Số điện thoại:</strong> {viewingRecord.phone}</p>
-                            </div>
-
-                            {/* Bảng dịch vụ */}
-                            <table className="service-table">
-                            <thead>
-                                <tr>
-                                <th>STT</th>
-                                <th>Dịch vụ</th>
-                                <th>Số lượng</th>
-                                <th>Đơn giá</th>
-                                <th>Giảm giá</th>
-                                <th>Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
-                                <tr>
-                                <td>1</td>
-                                <td>{viewingRecord.service_name}</td>
-                                <td>{viewingRecord.quantity}</td>
-                                <td>{viewingRecord.unit_price}</td>
-                                <td>{viewingRecord.discount || 0}</td>
-                                <td>{viewingRecord.total_price}</td>
-                                </tr>
-                            </tbody>
-                            </table>
-
-                            {/* Đơn thuốc */}
-                            <div className="prescription">
-                            <p><strong>Đơn thuốc</strong></p>
-                            <p>{viewingRecord.prescription}</p>
-                            </div>
-
-                            {/* Phim X-Quang */}
-                            <div className="xray">
-                            <h6>Phim chụp X-Quang:</h6>
-                            <img src="https://implantvietnam.info/stmresource/files/kien-thuc-implant/tim-hieu-ve-chup-x-quang-rang-tac-dung-quy-trinh.jpg" alt="Xray" className="xray-img" />
-                            </div>
-
-                            {/* Chữ ký */}
-                            <div className="signatures">
                             <div>
-                                <p>Khách hàng</p>
-                                <p>(Ký, họ tên)</p>
+                                {/* Header thông tin phòng khám */}
+                                <div className="clinic-header">
+                                    <img />
+                                    <div className="clinic-info">
+                                        <h3>NHA KHOA DENTAL CARE</h3>
+                                        <p>Địa chỉ: AN Khánh, Ninh Kiều, Cần Thơ</p>
+                                        <p>Điện thoại: 0123.456.789</p>
+                                        <p>Website: https://dentalcare.vn</p>
+                                    </div>
+                                </div>
+
+                                {/* Thông tin bệnh nhân */}
+                                <div className="patient-info">
+                                    <p><strong>Tên Bệnh nhân:</strong> {viewingRecord.patient_name}</p>
+                                    <p><strong>Tên Bác sĩ:</strong> {viewingRecord.doctor_name}</p>
+                                    <p><strong>Chẩn đoán:</strong> {viewingRecord.diagnosis}</p>
+                                    <p><strong>Điều trị:</strong> {viewingRecord.treatment}</p>
+                                    <p><strong>Ngày ghi nhận:</strong> {new Date(viewingRecord.record_date).toLocaleDateString()}</p>
+                                    <p><strong>Địa chỉ:</strong> {viewingRecord.address}</p>
+                                    <p><strong>Số điện thoại:</strong> {viewingRecord.phone}</p>
+                                </div>
+
+                                {/* Bảng dịch vụ */}
+                                <table className="service-table">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Dịch vụ</th>
+                                            <th>Số lượng</th>
+                                            <th>Đơn giá</th>
+                                            <th>Giảm giá</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
+                                        <tr>
+                                            <td>1</td>
+                                            <td>{viewingRecord.service_name}</td>
+                                            <td>{viewingRecord.quantity}</td>
+                                            <td>{viewingRecord.unit_price}</td>
+                                            <td>{viewingRecord.discount || 0}</td>
+                                            <td>{viewingRecord.total_price}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                {/* Đơn thuốc */}
+                                <div className="prescription">
+                                    <p><strong>Đơn thuốc</strong></p>
+                                    <p>{viewingRecord.prescription}</p>
+                                </div>
+
+                                {/* Phim X-Quang */}
+                                <div className="xray">
+                                    <h6>Phim chụp X-Quang:</h6>
+                                    <img src="https://implantvietnam.info/stmresource/files/kien-thuc-implant/tim-hieu-ve-chup-x-quang-rang-tac-dung-quy-trinh.jpg" alt="Xray" className="xray-img" />
+                                </div>
+
+                                {/* Chữ ký */}
+                                <div className="signatures">
+                                    <div>
+                                        <p>Khách hàng</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                    <div>
+                                        <p>Nhân viên thu ngân</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                    <div>
+                                        <p>Bác sĩ điều trị</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p>Nhân viên thu ngân</p>
-                                <p>(Ký, họ tên)</p>
-                            </div>
-                            <div>
-                                <p>Bác sĩ điều trị</p>
-                                <p>(Ký, họ tên)</p>
-                            </div>
-                            </div>
-                        </div>
                         )}
                     </DialogContent>
                     <DialogActions className="dialog-actions">
                         <Button onClick={closeViewModal} color="secondary">
-                        Đóng
+                            Đóng
                         </Button>
                         <Button onClick={() => window.print()} color="primary">
-                        In
+                            In
                         </Button>
                     </DialogActions>
-                    </Dialog>
+                </Dialog>
             </TableContainer>
             <Footer />
         </div>
