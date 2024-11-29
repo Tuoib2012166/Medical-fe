@@ -19,10 +19,27 @@ const DoctorList = () => {
         introduction: '',
         biography: '',
         certifications: '',
-        main_workplace: '',
-        working_hours: '',
+        main_workplace: 'Cần Thơ', // Giá trị mặc định
+        working_hours: '8:00 - 17:00', // Giá trị mặc định
     });
     const [showAddForm, setShowAddForm] = useState(false);
+
+    const [sortDirection, setSortDirection] = useState('asc'); // 'asc' hoặc 'desc'
+
+    const handleSortBySpecialty = () => {
+    const direction = sortDirection === 'asc' ? 'desc' : 'asc';
+    setSortDirection(direction);
+    const sortedDoctors = [...doctors].sort((a, b) => {
+        if (direction === 'asc') {
+            return a.specialty_name.localeCompare(b.specialty_name);
+        } else {
+            return b.specialty_name.localeCompare(a.specialty_name);
+        }
+    });
+    setDoctors(sortedDoctors);
+};
+
+
 
     useEffect(() => {
         fetchDoctors();
@@ -70,6 +87,7 @@ const DoctorList = () => {
             setShowAddForm(false);
         } catch (error) {
             console.error('Error adding doctor:', error);
+            alert('Không thêm được bác sĩ! Username đã tồn tại.');
         }
     };
 
@@ -97,13 +115,18 @@ const DoctorList = () => {
     };
 
     const handleDeleteDoctor = async (id) => {
-        try {
-            await axios.delete(`http://localhost:8080/doctors/${id}`);
-            fetchDoctors(); // Làm mới danh sách
-        } catch (error) {
-            console.error('Error deleting doctor:', error);
-        }
-    };
+    const confirmed = window.confirm('Bạn có chắc chắn muốn xóa bác sĩ này không?');
+    if (!confirmed) return;
+
+    try {
+        await axios.delete(`http://localhost:8080/doctors/${id}`);
+        fetchDoctors(); // Làm mới danh sách
+    } catch (error) {
+        console.error('Error deleting doctor:', error);
+        alert('Không xóa được bác sĩ! Vui lòng thử lại.');
+    }
+};
+
 
     return (
         <div>
@@ -154,7 +177,7 @@ const DoctorList = () => {
                                     sx={{ mb: 2 }}
                                 />
                                 <FormControl fullWidth required sx={{ mb: 2 }}>
-                                    <InputLabel>Chuyên Khoa</InputLabel>
+                                    <InputLabel>Dịch vụ chuyên môn</InputLabel>
                                     <Select
                                         name="specialty"
                                         value={newDoctor.specialty}
@@ -261,8 +284,8 @@ const DoctorList = () => {
                             </Grid>
                         </Grid>
                         <DialogActions>
-                            <Button type="submit" color="primary">Thêm</Button>
-                            <Button onClick={() => setShowAddForm(false)} color="secondary">Hủy</Button>
+                            <Button type="submit" variant="contained" color="primary">Thêm</Button>
+                            <Button onClick={() => setShowAddForm(false)} variant="contained" color="secondary">Hủy</Button>
                         </DialogActions>
                     </form>
                 </DialogContent>
@@ -275,7 +298,13 @@ const DoctorList = () => {
                         <TableRow>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Username</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Họ và Tên</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ</TableCell>
+                            <TableCell
+                                style={{ backgroundColor: '#007bff', color: 'white', cursor: 'pointer' }}
+                                onClick={handleSortBySpecialty}
+                            >
+                                Dịch vụ
+                                {sortDirection === 'asc' ? ' ↑' : ' ↓'}
+                            </TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Số Điện Thoại</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nơi Làm Việc</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Năm Sinh</TableCell>
@@ -296,12 +325,22 @@ const DoctorList = () => {
                                     <img src={`http://localhost:8080/${doctor.image}`} alt="Doctor" style={{ width: '40px', height: '40px', objectFit: 'cover' }} />
                                 </TableCell>
                                 <TableCell>
-                                    <Button startIcon={<MdEdit />} variant="outlined" color="primary" onClick={() => handleEditDoctor(doctor)}>Sửa</Button>
-                                    <Button startIcon={<MdDelete />} variant="outlined" color="secondary" onClick={() => {
-                                        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này không?')) {
-                                            handleDeleteDoctor(doctor.id);
-                                        }
-                                    }}>Xóa</Button>
+                                    <Button 
+                                    variant="contained" 
+                                    color="primary"  
+                                    onClick={() => handleEditDoctor(doctor)}
+                                    startIcon={<MdEdit />} // Thêm icon chỉnh sửa
+                                >
+                                    Sửa
+                                </Button>
+                                <Button 
+                                    variant="contained" 
+                                    color="secondary" 
+                                    onClick={() => handleDeleteDoctor(doctor.id)}
+                                    startIcon={<MdDelete />} // Thêm icon xóa
+                                >
+                                    Xóa
+                                </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -456,8 +495,8 @@ const DoctorList = () => {
                         </Grid>
                     </Grid>
                     <DialogActions>
-                        <Button type="submit" color="primary">Lưu</Button>
-                        <Button onClick={() => setEditingDoctor(null)} color="secondary">Hủy</Button>
+                        <Button type="submit" variant="contained" color="primary">Lưu</Button>
+                        <Button onClick={() => setEditingDoctor(null)} variant="contained" color="secondary">Hủy</Button>
                     </DialogActions>
                 </form>
                 </DialogContent>

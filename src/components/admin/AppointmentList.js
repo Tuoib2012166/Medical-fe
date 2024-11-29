@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from '@mui/material';
-import { CheckCircle, Cancel } from '@mui/icons-material';
-import DatePicker from 'react-datepicker'; // Import DatePicker
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
 const AppointmentList = () => {
@@ -21,33 +20,26 @@ const AppointmentList = () => {
 
         fetchAppointments();
     }, []);
+    const handleDeleteAppointment = async (id) => {
+    const confirmed = window.confirm('Bạn có chắc chắn muốn xóa lịch hẹn này không?');
+    if (!confirmed) return;
 
-    const confirmAppointment = async (id) => {
-        try {
-            await axios.put(`http://localhost:8080/appointments/${id}/confirm`);
-            setAppointments(appointments.map(appointment =>
-                appointment.id === id ? { ...appointment, status: 'accept' } : appointment
-            ));
-        } catch (error) {
-            console.error('Error confirming appointment:', error);
-        }
-    };
+    try {
+        await axios.delete(`http://localhost:8080/appointments/${id}`);
+        setAppointments(appointments.filter(appointment => appointment.id !== id)); // Cập nhật danh sách sau khi xóa
+    } catch (error) {
+        console.error('Error deleting appointment:', error);
+        alert('Không thể xóa lịch hẹn! Vui lòng thử lại.');
+    }
+};
 
-    const rejectAppointment = async (id) => {
-        try {
-            await axios.put(`http://localhost:8080/appointments/${id}/reject`);
-            setAppointments(appointments.map(appointment =>
-                appointment.id === id ? { ...appointment, status: 'reject' } : appointment
-            ));
-        } catch (error) {
-            console.error('Error rejecting appointment:', error);
-        }
-    };
 
     // Filter appointments by selected date
-    const filteredAppointments = appointments.filter(appointment =>
-        new Date(appointment.appointment_date).toLocaleDateString('en-GB') === selectedDate.toLocaleDateString('en-GB')
-    );
+    const filteredAppointments = selectedDate 
+        ? appointments.filter(appointment =>
+            new Date(appointment.appointment_date).toLocaleDateString('en-GB') === selectedDate.toLocaleDateString('en-GB')
+          )
+        : appointments; // If no date is selected, show all appointments
 
     return (
         <div>
@@ -59,7 +51,7 @@ const AppointmentList = () => {
                     dateFormat="yyyy/MM/dd"
                     placeholderText="Chọn ngày"
                     isClearable
-                     // Limit to today's date or later
+                    // Limit to today's date or later
                 />
             </div>
 
@@ -75,22 +67,37 @@ const AppointmentList = () => {
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ</TableCell>   
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nội dung</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày tạo</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hành động</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredAppointments.map((appointment) => (
-                            <TableRow key={appointment.id}>
-                                <TableCell>{appointment.fullname}</TableCell>
-                                <TableCell>{new Date(appointment.appointment_date).toLocaleDateString('en-GB')}</TableCell>
-                                <TableCell>{appointment.appointment_time}</TableCell>
-                                <TableCell>{appointment.doctor_name}</TableCell>
-                                <TableCell>{appointment.specialty}</TableCell>
-                                <TableCell>{appointment.content}</TableCell>
-                                <TableCell>{new Date(appointment.created_at).toLocaleDateString('en-GB')}</TableCell>
-                                
-                            </TableRow>
-                        ))}
-                    </TableBody>
+                    {filteredAppointments.map((appointment) => (
+                        <TableRow key={appointment.id}>
+                            <TableCell>{appointment.fullname}</TableCell>
+                            <TableCell>{new Date(appointment.appointment_date).toLocaleDateString('en-GB')}</TableCell>
+                            <TableCell>{appointment.appointment_time}</TableCell>
+                            <TableCell>{appointment.doctor_name}</TableCell>
+                            <TableCell>{appointment.specialty}</TableCell>
+                            <TableCell>{appointment.content}</TableCell>
+                            <TableCell>{new Date(appointment.created_at).toLocaleDateString('en-GB')}</TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => handleDeleteAppointment(appointment.id)}
+                                    style={{
+                                        backgroundColor: 'red',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '5px 10px',
+                                        cursor: 'pointer',
+                                        borderRadius: '5px',
+                                    }}
+                                >
+                                    Xóa
+                                </button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
                 </Table>
             </TableContainer>
         </div>

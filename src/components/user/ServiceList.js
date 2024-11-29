@@ -59,22 +59,24 @@ function ServiceList() {
     };
 
     return (
-        <Paper sx={{ padding: 4, marginTop: 4 }}>
+        <Paper sx={{ padding: 2, marginTop: 4 }}>
             <Typography variant="h4" gutterBottom align="center">
                 Danh Sách Dịch Vụ
             </Typography>
-            <Grid container spacing={4} justifyContent="center">
+            <Grid container spacing={2} justifyContent="center">
                 {services.map((service, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={index}>
-                        <Card sx={{ boxShadow: 3, borderRadius: 2, cursor: 'pointer' }} onClick={() => handleServiceClick(service)}>
+                    <Grid item xs={12} sm={6} md={3} key={index}>
+                        <Card sx={{ boxShadow: 3, borderRadius: 2, cursor: 'pointer', height: '100%' }} onClick={() => handleServiceClick(service)}>
                             <CardMedia
                                 component="img"
-                                height="200"
+                                height="150"  // Giảm chiều cao của ảnh
                                 image={`http://localhost:8080/${service.image}`}
                                 alt={`Image of ${service.name}`}
                             />
-                            <CardContent>
-                                <Typography variant="h6" align="center">{service.name}</Typography>
+                            <CardContent sx={{ padding: 1 }}>
+                                <Typography variant="h6" align="center" noWrap>
+                                    {service.name}
+                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>

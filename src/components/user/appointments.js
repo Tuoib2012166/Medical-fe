@@ -10,16 +10,23 @@ import {
   TableRow,
   Paper,
   Typography,
-  Button,
   Box,
 } from "@mui/material";
 import Header from "./header";
 import Footer from "./footer";
 import useUserStore from "../../store/userStore";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function Appointments() {
   const [appointments, setAppointments] = useState([]);
   const { user, setUser } = useUserStore();
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Selected date state
+
+  // Get current time to disable past times in DatePicker
+  const currentDateTime = new Date();
+  const currentHour = currentDateTime.getHours();
+  const currentMinute = currentDateTime.getMinutes();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -51,6 +58,13 @@ function Appointments() {
     }
   }, [user]);
 
+  // Disable past time slots in the DatePicker
+  const isTimeDisabled = (time) => {
+    const timeInMinutes = time.getHours() * 60 + time.getMinutes();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+    return timeInMinutes < currentTimeInMinutes;
+  };
+
   return (
     <div>
       <Header />
@@ -65,6 +79,23 @@ function Appointments() {
             Danh Sách Đặt Lịch
           </Typography>
         </Box>
+
+        {/* DatePicker component */}
+        <div style={{ marginBottom: "20px", textAlign: "center" }}>
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            showTimeSelect
+            timeIntervals={15}
+            minDate={new Date()} // Disable past dates
+            minTime={new Date(currentDateTime.setMinutes(currentMinute + 1))} // Disable times before current time
+            dateFormat="yyyy/MM/dd HH:mm"
+            timeCaption="Giờ"
+            placeholderText="Chọn thời gian"
+            filterTime={isTimeDisabled} // Disable past hours
+          />
+        </div>
+
         <TableContainer
           component={Paper}
           sx={{
@@ -117,7 +148,6 @@ function Appointments() {
                   <TableCell>{appointment.doctor_name}</TableCell>
                   <TableCell>{appointment.specialty}</TableCell>
                   <TableCell>{appointment.content}</TableCell>
-                
                   <TableCell>
                     {new Date(appointment.created_at).toLocaleString("en-GB")}
                   </TableCell>

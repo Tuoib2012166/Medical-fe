@@ -14,7 +14,7 @@ const DoctorHeader = () => {
   const navigate = useNavigate();
 
   const handleRefresh = () => {
-    window.location.reload(); // Làm mới trang
+    window.location.reload();
   };
 
   const handleProfileMenuOpen = (event) => {
@@ -26,53 +26,76 @@ const DoctorHeader = () => {
   };
 
   const handleLogout = () => {
-    // Clear the cookie token using react-cookie
     removeCookie('token', { path: '/' });
-
-    // Remove token from localStorage
     localStorage.removeItem('token');
-
-    // Clear user state
     clearUser();
-
-    // Redirect to home page
     navigate('/');
   };
 
   return (
-    <AppBar position="sticky" className="appbar">
-      <Toolbar className="toolbar">
+    <AppBar position="sticky" className="appbar" sx={{ boxShadow: 6 }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '0 30px' }}>
         {/* Logo - Bên trái */}
-        <Box className="logo-container">
-          
-          <Typography variant="h6" className="logo-text">
+        <Box sx={{ display: 'flex', alignItems: 'center', transition: 'all 0.3s ease' }}>
+          <Typography variant="h6" className="logo-text" sx={{ fontWeight: 'bold', color: '#fff', fontFamily: 'Poppins' }}>
             Doctor Dashboard
           </Typography>
         </Box>
 
         {/* Các nút và thông tin người dùng - Bên phải */}
-        <Box className="user-info-container">
-          <IconButton color="inherit" onClick={handleRefresh} className="refresh-icon">
-            <RefreshIcon />
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            color="inherit"
+            onClick={handleRefresh}
+            sx={{
+              marginRight: 2,
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                transform: 'scale(1.1)',
+                transition: 'all 0.3s ease',
+              },
+            }}
+          >
+            <RefreshIcon sx={{ fontSize: 28 }} />
           </IconButton>
 
           {userProfile ? (
             <>
               <Button
-                variant="text"
-                color="inherit"
+                variant="contained"
+                color="primary"
                 startIcon={<PersonIcon />}
                 onClick={handleProfileMenuOpen}
-                className="profile-button"
+                sx={{
+                  color: '#fff',
+                  marginRight: 2,
+                  textTransform: 'none',
+                  borderRadius: 20,
+                  padding: '8px 16px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  '&:hover': {
+                    backgroundColor: '#1565c0',
+                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
+                    transform: 'scale(1.05)',
+                    transition: 'all 0.3s ease',
+                  },
+                }}
               >
-                Hello - <span className="profile-name">{userProfile.fullname}</span>
+                Hello, <span style={{ fontWeight: 'bold' }}>{userProfile.fullname}</span>
               </Button>
+
               <IconButton
                 color="inherit"
                 onClick={handleLogout}
-                className="logout-icon"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    transform: 'scale(1.1)',
+                    transition: 'all 0.3s ease',
+                  },
+                }}
               >
-                <LogoutIcon />
+                <LogoutIcon sx={{ fontSize: 28 }} />
               </IconButton>
             </>
           ) : (
@@ -80,6 +103,18 @@ const DoctorHeader = () => {
               variant="outlined"
               color="inherit"
               onClick={() => navigate('/login')}
+              sx={{
+                color: '#fff',
+                borderColor: '#fff',
+                padding: '8px 16px',
+                textTransform: 'none',
+                borderRadius: 20,
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  transform: 'scale(1.05)',
+                  transition: 'all 0.3s ease',
+                },
+              }}
             >
               Login
             </Button>

@@ -420,7 +420,7 @@ const MedicalRecordList = () => {
                                     margin="normal"
                                 />
 
-                                {/* DV */}
+                                {/* Dịch vụ chính */}
                                 <FormControl fullWidth margin="normal">
                                     <InputLabel id="specialty">Dịch vụ</InputLabel>
                                     <Select
@@ -442,7 +442,7 @@ const MedicalRecordList = () => {
                                     </Select>
                                 </FormControl>
 
-                                {/* Dịch vụ */}
+                                {/* Dịch vụ phụ */}
                                 <FormControl fullWidth margin="normal">
                                     <InputLabel id="service">Dịch vụ phụ</InputLabel>
                                     <Select
@@ -599,12 +599,12 @@ const MedicalRecordList = () => {
                     </TableBody>
                 </Table>
                 <Dialog open={!!viewingRecord} onClose={closeViewModal}>
-                    <DialogTitle className="dialog-title" variant="h5">Thông tin Bệnh án</DialogTitle>
+                    <DialogTitle className="dialog-title" variant="h4" style={{ textAlign: 'center' }}>Thông tin Bệnh án</DialogTitle>
                     <DialogContent className="dialog-content">
                         {viewingRecord && (
                         <div>
                             {/* Header thông tin phòng khám */}
-                            <div className="clinic-header">
+                            <div className="clinic-header" style={{ textAlign: 'right' }}>
                             <img  />
                             <div className="clinic-info">
                                 <h3>NHA KHOA DENTAL CARE</h3>
@@ -657,10 +657,10 @@ const MedicalRecordList = () => {
                             </div>
 
                             {/* Phim X-Quang */}
-                            <div className="xray">
+                            {/* <div className="xray">
                             <h6>Phim chụp X-Quang:</h6>
                             <img src="https://implantvietnam.info/stmresource/files/kien-thuc-implant/tim-hieu-ve-chup-x-quang-rang-tac-dung-quy-trinh.jpg" alt="Xray" className="xray-img" />
-                            </div>
+                            </div> */}
 
                             {/* Chữ ký */}
                             <div className="signatures">
@@ -684,9 +684,88 @@ const MedicalRecordList = () => {
     <Button onClick={closeViewModal} color="secondary">
         Đóng
     </Button>
-    <Button onClick={() => window.print()} color="primary">
-        In
-    </Button>
+    <Button 
+    onClick={() => {
+        const modalContent = document.querySelector('.MuiDialog-container').innerHTML; // Lấy nội dung modal
+        const newWindow = window.open('', '_blank', 'width=800,height=600'); // Mở cửa sổ mới
+        
+        // Viết nội dung HTML vào cửa sổ mới
+        newWindow.document.write(`
+            <html>
+            <head>
+                <link rel="stylesheet" href="../../assets/css/admin/MedicalRecordModal.css" /> <!-- Đường dẫn CSS -->
+                <style>
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .MuiDialog-container {
+            padding: 16px;
+            border: 1px solid #ccc;
+            font-family: Arial, sans-serif;
+        }
+        /* Căn chỉnh thông tin phòng khám sát trái */
+        .clinic-header {
+            display: flex;
+            align-items: center; /* Căn giữa theo chiều dọc */
+            justify-content: right-start; /* Căn lề trái */
+        }
+        .clinic-header img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 16px;
+        }
+        .clinic-info {
+            text-align: right;
+        }
+        .clinic-info h3 {
+            margin: 0; /* Loại bỏ margin */
+        }
+        .xray-img {
+            max-width: 300px; /* Giảm kích thước ảnh X-Quang */
+            height: auto;     /* Đảm bảo giữ nguyên tỷ lệ ảnh */
+        }
+        .service-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .service-table th, .service-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+        .signatures div {
+            text-align: center;
+        }
+        /* Ẩn các nút khi in */
+        .dialog-actions {
+            display: none;
+        }
+    }
+</style>
+            </head>
+            <body>
+                ${modalContent} <!-- Nội dung modal -->
+            </body>
+            </html>
+        `);
+
+        newWindow.document.close();
+        newWindow.print(); // Kích hoạt in
+        newWindow.close(); // Đóng cửa sổ in
+    }} 
+    color="primary"
+>
+    In
+</Button>
+
+
 </DialogActions>
 
                     </Dialog>

@@ -35,7 +35,7 @@ function Pricelist() {
             <Paper sx={{ overflow: 'hidden' }}>
               <Table>
                 <TableHead>
-                  <TableRow>``
+                  <TableRow>
                     <TableCell><Typography variant="h6">DỊCH VỤ</Typography></TableCell>
                     <TableCell><Typography variant="h6">MÔ TẢ</Typography></TableCell>
                     <TableCell><Typography variant="h6">GIÁ DỊCH VỤ VNĐ (Giá chưa bao gồm Thuế GTGT)</Typography></TableCell>

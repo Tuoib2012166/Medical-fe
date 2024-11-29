@@ -175,7 +175,7 @@ const GetForm = () => {
 
   return (
     <div>
-            <h3 className="text-center mb-4">Đặt lịch ngay</h3>
+            <h4 className="text-center mb-4">Đặt lịch ngay</h4>
     <section id="contact" className="contact container mb-4">
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <input type="hidden" name="userId" value={formData.userId} />

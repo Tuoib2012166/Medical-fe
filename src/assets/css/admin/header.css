@@ -1,63 +1,82 @@
-/* AppBar với nền màu trắng và viền dưới màu xanh */
+/* Header Styles */
 .appbar {
-    background-color: #ffffff;
-    /* Màu nền trắng */
-    box-shadow: none;
-    /* Không có bóng */
-    border-bottom: 2px solid #dce0e6;
-    /* Viền dưới màu xanh */
+    background-color: #1976d2;
+    /* Màu nền của AppBar */
+    padding: 0 30px;
+    transition: all 0.3s ease-in-out;
 }
 
-/* Toolbar căn giữa nội dung */
 .toolbar {
     display: flex;
     justify-content: space-between;
-    /* Chia đều hai phần */
     align-items: center;
-    padding: 0 20px;
-    /* Thêm padding bên trái và phải để căn giữa tốt hơn */
-    width: 100%;
-}
-
-/* Logo và Tiêu đề bên trái */
-.logo-container {
-    display: flex;
-    align-items: center;
-}
-
-.logo {
-    height: 40px;
-    width: auto;
+    padding: 15px 0;
 }
 
 .logo-text {
-    margin-left: 8px;
-    color: #ffffff;
-    /* Màu xanh */
-    font-size: 1.25rem;
-    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    font-size: 28px;
+    color: white;
+    transition: color 0.3s ease;
 }
 
-/* Các nút và thông tin người dùng - Bên phải */
+.logo-text:hover {
+    color: #ffeb3b;
+    /* Hiệu ứng hover cho logo */
+}
+
 .user-info-container {
     display: flex;
     align-items: center;
 }
 
+.profile-button {
+    font-size: 16px;
+    text-transform: none;
+    color: white;
+    margin-right: 10px;
+    background-color: #1565c0;
+    border-radius: 20px;
+    padding: 8px 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.profile-name {
+    font-weight: bold;
+}
+
+.logout-icon,
 .refresh-icon {
-    margin-right: 16px;
+    color: white;
+    margin-left: 15px;
+    font-size: 28px;
 }
 
-.profile-button:hover{
-    margin-right: 16px;
-    
+.logout-icon:hover,
+.refresh-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+    transition: all 0.3s ease;
 }
 
-.logout-icon {
-    margin-left: 16px;
+button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 
-/* Đảm bảo đường dẫn tới hình ảnh logo đúng */
-img {
-    max-width: 100%;
+@media (max-width: 768px) {
+    .appbar {
+        padding: 0 20px;
+    }
+
+    .logo-text {
+        font-size: 22px;
+    }
+
+    .profile-button {
+        font-size: 14px;
+    }
 }

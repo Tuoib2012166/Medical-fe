@@ -51,6 +51,8 @@ const PatientList = () => {
         return errors;
     };
 
+    
+
     const handleEditClick = (user) => {
         setEditingUser(user);
         setFormData({ id: user.id, fullname: user.fullname, username: user.username, phone: user.phone, address: user.address, gender: user.gender, birth_year: user.birth_year });
@@ -84,41 +86,56 @@ const PatientList = () => {
         }
     };
 
+    
+
+    // Xác nhận trước khi xóa người dùng
     const handleDeleteClick = async (id) => {
-        try {
-            await axios.delete(`http://localhost:8080/patients/${id}`);
-            setUsers(users.filter(user => user.id !== id));
-        } catch (error) {
-            console.error('Lỗi khi xóa người dùng:', error);
+        const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa người dùng này?");
+        if (isConfirmed) {
+            try {
+                await axios.delete(`http://localhost:8080/patients/${id}`);
+                setUsers(users.filter(user => user.id !== id));
+            } catch (error) {
+                console.error('Lỗi khi xóa người dùng:', error);
+            }
         }
     };
 
     const handleAddUser = async (e) => {
-        e.preventDefault();
-        const validationErrors = validateUserData(newUser);
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors); // Hiển thị lỗi nếu có
-            return;
-        }
+    e.preventDefault();
 
-        try {
-            const response = await axios.post('http://localhost:8080/patients', newUser);
-            setUsers([...users, response.data]);
-            setNewUser({ username: '', password: '', fullname: '', phone: '', address: '', gender: 'Nam', birth_year: '' });
-            setShowAddUserForm(false);
-        } catch (error) {
-            console.error('Lỗi khi thêm người dùng:', error);
-        }
-    };
+    // Kiểm tra nếu username đã tồn tại
+    const isUsernameDuplicate = users.some(user => user.username === newUser.username);
+    if (isUsernameDuplicate) {
+        setErrors({ username: "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác." });
+        return;
+    }
+
+    const validationErrors = validateUserData(newUser);
+    if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors); // Hiển thị lỗi nếu có
+        return;
+    }
+
+    try {
+        const response = await axios.post('http://localhost:8080/patients', newUser);
+        setUsers([...users, response.data]); // Thêm người dùng vào danh sách
+        setNewUser({ username: '', password: '', fullname: '', phone: '', address: '', gender: 'Nam', birth_year: '' }); // Reset form
+        setShowAddUserForm(false); // Đóng Dialog
+        setErrors({}); // Xóa lỗi
+    } catch (error) {
+        console.error('Lỗi khi thêm người dùng:', error);
+    }
+};
 
     return (
         <div>
-            <h3>Quản lý người dùng</h3>
-            <Button variant="contained" color="primary" onClick={() => setShowAddUserForm(!showAddUserForm)}>Thêm người dùng</Button>
+            <h3>Quản lý bệnh nhân</h3>
+            <Button variant="contained" color="primary" onClick={() => setShowAddUserForm(!showAddUserForm)}>Thêm bệnh nhân mới</Button>
             
             {/* Dialog thêm người dùng */}
             <Dialog open={showAddUserForm} onClose={() => setShowAddUserForm(false)}>
-                <DialogTitle>Thêm người dùng mới</DialogTitle>
+                <DialogTitle>Thêm bệnh nhân mới</DialogTitle>
                 <DialogContent>
                     <form onSubmit={handleAddUser}>
                         <TextField
@@ -129,8 +146,8 @@ const PatientList = () => {
                             fullWidth
                             required
                             margin="normal"
-                            error={!!errors.username} // Chỉ hiển thị lỗi khi có lỗi
-                            helperText={errors.username}
+                            error={!!errors.username} // Hiển thị lỗi nếu có
+                            helperText={errors.username} // Nội dung thông báo lỗi
                         />
                         <TextField
                             label="Mật khẩu"
