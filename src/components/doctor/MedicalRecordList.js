@@ -113,8 +113,7 @@ const MedicalRecordList = () => {
     // Hàm lấy danh sách bệnh nhân từ API
     const fetchPatients = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/patients?doctorId=${user?.profile?.id}`); // Gọi API lấy bệnh nhân
-            console.log('run inside here: ', response.data)
+            const response = await axios.get(`http://localhost:8080/appointments?doctorId=${user.profile.id}`);
             setPatients(response.data); // Cập nhật danh sách bệnh nhân
         } catch (error) {
             toast.error('Không thể lấy dữ liệu bệnh nhân'); // Thông báo lỗi khi không thể gọi API
@@ -188,7 +187,7 @@ const MedicalRecordList = () => {
         if (name === 'patient_id') {
             try {
                 const response = await axios.get(`http://localhost:8080/appointments?benhNhanId=${formData.patient_id}&doctorId=${user.profile.id}`);
-                console.log(response.data, "isadksadsa")
+                setPatients(response.data)
                 if (response.data) {
                     // Điền thông tin từ cuộc hẹn vào form
                     setFormData({
@@ -217,8 +216,6 @@ const MedicalRecordList = () => {
             }
         }
     };
-
-    console.log("formDate: ", formData)
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Ngăn trình duyệt reload trang
@@ -295,7 +292,7 @@ const MedicalRecordList = () => {
                                             <em>Chọn Bệnh nhân</em>
                                         </MenuItem>
                                         {patients.map(patient => (
-                                            <MenuItem key={patient.id} value={patient.id}>
+                                            <MenuItem key={patient.patient_id} value={patient.patient_id}>
                                                 {patient.fullname}
                                             </MenuItem>
                                         ))}
