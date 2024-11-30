@@ -13,7 +13,7 @@ const todayString = today.toISOString().split("T")[0]; // "YYYY-MM-DD" format
 const FollowUpAppointments = () => {
     const [appointments, setAppointments] = useState([]);
     const [patients, setPatients] = useState([]);
-    const [form, setForm] = useState({ id: '', patientName: '', followUpDate: todayString, time: '', notes: '', doctorId: '' });
+    const [form, setForm] = useState({ id: '', appointment_id: '', followUpDate: todayString, time: '', notes: '', doctorId: '', patient_id: '' });
     const [isEditing, setIsEditing] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -33,9 +33,10 @@ const FollowUpAppointments = () => {
             try {
                 const response = await axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`);
                 const hours = response.data.map(i => i.hour);
+                const patientFromAppt = response.data.map(x => ({ appointment_id: x.id, fullname: x.fullname, patient_id: x.user_id }))
 
                 setBookedTimes(hours);
-                setPatients(response.data)
+                setPatients(patientFromAppt);
             } catch (error) {
                 console.error('Error fetching booked times:', error);
             }
@@ -56,15 +57,6 @@ const FollowUpAppointments = () => {
         }
     };
 
-    // const fetchPatients = async () => {
-    //     try {
-    //         const response = await axios.get(`http://localhost:8080/patients?doctorId=${user?.profile?.id}`, { withCredentials: true });
-    //         setPatients(response.data);
-    //     } catch (error) {
-    //         console.error('Error fetching patients:', error);
-    //     }
-    // };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
@@ -77,11 +69,14 @@ const FollowUpAppointments = () => {
             alert('Ngày tái khám không thể là ngày trong quá khứ');
             return;
         }
+
+        const patient_id = patients.find(x => x.appointment_id === form.appointment_id)?.patient_id
         try {
             let data = {
                 ...form,
-                doctor_id: user.profile.id,
-                doctorId: user.profile.id
+                doctor_id: +user.profile.id,
+                doctorId: +user.profile.id,
+                patient_id: patient_id
             };
             if (isEditing) {
                 await axios.put(`http://localhost:8080/follow-up-appointments/${form.id}`, data, { withCredentials: true });
@@ -90,7 +85,9 @@ const FollowUpAppointments = () => {
                 await axios.post('http://localhost:8080/follow-up-appointments', data, { withCredentials: true });
                 setSnackbarMessage('Lịch tái khám đã được thêm mới');
             }
-            setForm({ id: '', patientName: '', followUpDate: '', time: '', notes: '', doctorId: '' });
+
+
+            setForm({ id: '', appointment_id: '', followUpDate: '', time: '', notes: '', doctorId: '', patient_id: '' });
             setIsEditing(false);
             setOpenDialog(false);
             setOpenSnackbar(true);
@@ -126,7 +123,7 @@ const FollowUpAppointments = () => {
     };
 
     // Generate available times from 8 AM to 5 PM
-    console.log("bookedTimes: ", bookedTimes)
+    console.log("bookedTimes: ", patients)
     return (
         <div>
             <h3>Lịch tái khám</h3>
@@ -191,16 +188,19 @@ const FollowUpAppointments = () => {
                         <FormControl fullWidth margin="normal">
                             <InputLabel>Bệnh nhân</InputLabel>
                             <Select
-                                name="patientName"
-                                value={form.patientName}
+                                name="appointment_id" // This should be "appointment_id" to match your form state
+                                value={form.appointment_id}
                                 onChange={handleInputChange}
                                 required
                             >
                                 <MenuItem value="">Chọn bệnh nhân</MenuItem>
                                 {patients.map(patient => (
-                                    <MenuItem key={patient.id} value={patient.id}>{patient.fullname}</MenuItem>
+                                    <MenuItem key={patient.appointment_id} value={patient.appointment_id}>
+                                        {patient.fullname}
+                                    </MenuItem>
                                 ))}
                             </Select>
+
                         </FormControl>
 
                         <TextField

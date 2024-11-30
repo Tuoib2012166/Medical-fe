@@ -63,7 +63,7 @@ const MedicalRecordList = () => {
         fetchRecords(); // Lấy dữ liệu bệnh án
         fetchPatients(); // Lấy dữ liệu bệnh nhân
         fetchSpecialties(); // Lấy danh sách chuyên khoa
-    }, [user]);
+    }, [user, formData.patient_id]);
 
     const handleView = (record) => {
     setViewingRecord(record); // Lưu bản ghi vào state
