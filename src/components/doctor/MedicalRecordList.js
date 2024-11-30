@@ -41,6 +41,7 @@ const MedicalRecordList = () => {
     // Khai báo state cho form dữ liệu nhập vào
     const [formData, setFormData] = useState({
         patient_id: '',
+        appointment_id: '',
         doctor_id: '',
         diagnosis: '',
         treatment: '',
@@ -63,16 +64,16 @@ const MedicalRecordList = () => {
         fetchRecords(); // Lấy dữ liệu bệnh án
         fetchPatients(); // Lấy dữ liệu bệnh nhân
         fetchSpecialties(); // Lấy danh sách chuyên khoa
-    }, [user, formData.patient_id]);
+    }, [user]);
 
     const handleView = (record) => {
-    setViewingRecord(record); // Lưu bản ghi vào state
+        setViewingRecord(record); // Lưu bản ghi vào state
     };
 
     const closeViewModal = () => {
         setViewingRecord(null); // Xóa dữ liệu khi đóng modal
     };
-    
+
 
 
     // Hàm lấy danh sách chuyên khoa từ API
@@ -114,38 +115,13 @@ const MedicalRecordList = () => {
     const fetchPatients = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/appointments?doctorId=${user.profile.id}`);
-            setPatients(response.data); // Cập nhật danh sách bệnh nhân
+            const patientFromAppt = response.data.map(x => ({ ...x, appointment_id: x.id, patient_id: x.user_id }))
+            setPatients(patientFromAppt); // Cập nhật danh sách bệnh nhân
         } catch (error) {
             toast.error('Không thể lấy dữ liệu bệnh nhân'); // Thông báo lỗi khi không thể gọi API
         }
     };
 
-    // Phần render giao diện có thể được thêm ở đây
-
-
-
-    const handleEdit = (record) => {
-        setEditingRecord(record);
-        setFormData({
-            patient_id: record.patient_id || '',
-            doctor_id: record.doctor_id || '',
-            diagnosis: record.diagnosis || '',
-            treatment: record.treatment || '',
-            record_date: record.record_date || '',
-            address: record.address || '',
-            phone: record.phone || '',
-            gender: record.gender || '',
-            birth_year: record.birth_year || '',
-            specialty: record.specialty || '',
-            service: record.service || '',
-            quantity: record.quantity || '',
-            unit_price: record.unit_price || '',
-            total_price: record.total_price || '',
-            prescription: record.prescription || ''
-        });
-        setShowForm(true);
-    };
-    
 
 
     const handleDelete = async (id) => {
@@ -165,57 +141,30 @@ const MedicalRecordList = () => {
             fetchServices(id)
         }
 
-        
+
         // Cập nhật giá trị trường hiện tại
         setFormData({ ...formData, [name]: value });
 
-        setFormData(prev => ({ ...prev, [name]: value }));
+        // setFormData(prev => ({ ...prev, [name]: value }));
         if (name === 'service') {
             const service = services.find(x => x.id === value);
             const total_price = formData.quantity || 1 * service.price;
-            setFormData({...formData, [name]: value, total_price, unit_price: service.price})
+            setFormData({ ...formData, [name]: value, total_price, unit_price: service.price })
         }
 
         if (name === 'quantity') {
             const service = services.find(x => x.id === formData.service);
             const total_price = value * service.price;
-            setFormData({...formData, [name]: value, total_price})
+            setFormData({ ...formData, [name]: value, total_price })
         }
-        
 
-        // Nếu thay đổi `patient_id`, gọi API lấy thông tin cuộc hẹn
-        if (name === 'patient_id') {
-            try {
-                const response = await axios.get(`http://localhost:8080/appointments?benhNhanId=${formData.patient_id}&doctorId=${user.profile.id}`);
-                setPatients(response.data)
-                if (response.data) {
-                    // Điền thông tin từ cuộc hẹn vào form
-                    setFormData({
-                        ...formData,
-                        patient_id: value, // Đảm bảo patient_id vẫn giữ giá trị mới
-                        doctor_id: response.data[0].doctor_id || '',
-                        diagnosis: response.data[0].diagnosis || '',
-                        treatment: response.data[0].treatment || '',
-                        record_date: response.data[0].appointment_date || new Date(),
-                        address: response.data[0].address || '',
-                        phone: response.data[0].phone || '',
-                        gender: response.data[0].gender || '',
-                        birth_year: response.data[0].birth_year || '',
-                        specialty: response.data[0].specialty || '',
-                        service: response.data[0].service || '',
-                        quantity: response.data[0].quantity || '',
-                        unit_price: response.data[0].unit_price || '',
-                        total_price: response.data[0].total_price || '',
-                        prescription: response.data[0].prescription || ''
-                    });
-                } else {
-                    toast.error('Không tìm thấy thông tin cuộc hẹn của bệnh nhân');
-                }
-            } catch (error) {
-                toast.error('Không thể lấy dữ liệu cuộc hẹn của bệnh nhân');
-            }
+        if (name === 'appointment_id') {
+            const patient = patients.find(x => x.appointment_id == value);
+            setFormData(patient);
+        } else {
+            toast.error('Không tìm thấy thông tin cuộc hẹn của bệnh nhân');
         }
-    };
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Ngăn trình duyệt reload trang
@@ -229,11 +178,13 @@ const MedicalRecordList = () => {
             if (formData.record_date) {
                 formData.record_date = new Date()
             }
+
+            const patient_id = patients.find(x => x.appointment_id == formData.appointment_id)?.patient_id
             // Gửi toàn bộ dữ liệu formData
             await axios({
                 method,
                 url,
-                data: formData,
+                data: { ...formData, patient_id },
             });
 
             toast.success(`${editingRecord ? 'Cập nhật' : 'Thêm'} bệnh án thành công`);
@@ -263,9 +214,7 @@ const MedicalRecordList = () => {
         }
     };
 
-
-
-
+    console.log(patients)
     return (
         <div>
             <button className="btn btn-primary my-3" onClick={() => setShowForm(true)}>Thêm Bệnh án</button>
@@ -279,12 +228,12 @@ const MedicalRecordList = () => {
                             <Grid item xs={12} sm={6}>
                                 {/* Mã Bệnh nhân */}
                                 <FormControl fullWidth margin="normal">
-                                    <InputLabel id="patient_id">Mã Bệnh nhân</InputLabel>
+                                    <InputLabel id="appointment_id">Mã Bệnh nhân</InputLabel>
                                     <Select
-                                        labelId="patient_id"
-                                        id="patient_id"
-                                        name="patient_id"
-                                        value={formData.patient_id}
+                                        labelId="appointment_id"
+                                        id="appointment_id"
+                                        name="appointment_id"
+                                        value={formData.appointment_id}
                                         onChange={handleChange}
                                         required
                                     >
@@ -292,7 +241,7 @@ const MedicalRecordList = () => {
                                             <em>Chọn Bệnh nhân</em>
                                         </MenuItem>
                                         {patients.map(patient => (
-                                            <MenuItem key={patient.patient_id} value={patient.patient_id}>
+                                            <MenuItem key={patient.appointment_id} value={patient.appointment_id}>
                                                 {patient.fullname}
                                             </MenuItem>
                                         ))}
@@ -479,12 +428,12 @@ const MedicalRecordList = () => {
                                     <TextField
                                         label="Giá dịch vụ"
                                         value={
-                                            formData.service 
-                                                ? services.find(service => service.id === formData.service)?.price || '' 
+                                            formData.service
+                                                ? services.find(service => service.id === formData.service)?.price || ''
                                                 : ''
                                         }
                                         InputProps={{
-                                        
+
                                         }}
                                         variant="outlined"
                                         fullWidth
@@ -576,21 +525,21 @@ const MedicalRecordList = () => {
                                 <TableCell align="center">{record.total_price}</TableCell>
                                 <TableCell align="center">{record.prescription}</TableCell>
                                 <TableCell align="center">
-                                <IconButton
-                                    color="secondary"
-                                    onClick={() => {
-                                        if (window.confirm('Bạn có chắc chắn muốn xóa bệnh án này không?')) {
-                                            handleDelete(record.id);
-                                        }
-                                    }}
-                                    title="Xóa"
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                                <IconButton color="info" onClick={() => handleView(record)} title="Xem">
-                                    <i className="fas fa-eye"></i> {/* Icon mắt xem */}
-                                </IconButton>
-                            </TableCell>
+                                    <IconButton
+                                        color="secondary"
+                                        onClick={() => {
+                                            if (window.confirm('Bạn có chắc chắn muốn xóa bệnh án này không?')) {
+                                                handleDelete(record.id);
+                                            }
+                                        }}
+                                        title="Xóa"
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                    <IconButton color="info" onClick={() => handleView(record)} title="Xem">
+                                        <i className="fas fa-eye"></i> {/* Icon mắt xem */}
+                                    </IconButton>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -599,95 +548,95 @@ const MedicalRecordList = () => {
                     <DialogTitle className="dialog-title" variant="h4" style={{ textAlign: 'center' }}>Thông tin Bệnh án</DialogTitle>
                     <DialogContent className="dialog-content">
                         {viewingRecord && (
-                        <div>
-                            {/* Header thông tin phòng khám */}
-                            <div className="clinic-header" style={{ textAlign: 'right' }}>
-                            <img  />
-                            <div className="clinic-info">
-                                <h3>NHA KHOA DENTAL CARE</h3>
-                                <p>Địa chỉ: AN Khánh, Ninh Kiều, Cần Thơ</p>
-                                <p>Điện thoại: 0123.456.789</p>
-                                <p>Website: https://dentalcare.vn</p>
-                            </div>
-                            </div>
+                            <div>
+                                {/* Header thông tin phòng khám */}
+                                <div className="clinic-header" style={{ textAlign: 'right' }}>
+                                    <img />
+                                    <div className="clinic-info">
+                                        <h3>NHA KHOA DENTAL CARE</h3>
+                                        <p>Địa chỉ: AN Khánh, Ninh Kiều, Cần Thơ</p>
+                                        <p>Điện thoại: 0123.456.789</p>
+                                        <p>Website: https://dentalcare.vn</p>
+                                    </div>
+                                </div>
 
-                            {/* Thông tin bệnh nhân */}
-                            <div className="patient-info">
-                            <p><strong>Tên Bệnh nhân:</strong> {viewingRecord.patient_name}</p>
-                            <p><strong>Tên Bác sĩ:</strong> {viewingRecord.doctor_name}</p>
-                            <p><strong>Chẩn đoán:</strong> {viewingRecord.diagnosis}</p>
-                            <p><strong>Điều trị:</strong> {viewingRecord.treatment}</p>
-                            <p><strong>Ngày ghi nhận:</strong> {new Date(viewingRecord.record_date).toLocaleDateString()}</p>
-                            <p><strong>Địa chỉ:</strong> {viewingRecord.address}</p>
-                            <p><strong>Số điện thoại:</strong> {viewingRecord.phone}</p>
-                            </div>
+                                {/* Thông tin bệnh nhân */}
+                                <div className="patient-info">
+                                    <p><strong>Tên Bệnh nhân:</strong> {viewingRecord.patient_name}</p>
+                                    <p><strong>Tên Bác sĩ:</strong> {viewingRecord.doctor_name}</p>
+                                    <p><strong>Chẩn đoán:</strong> {viewingRecord.diagnosis}</p>
+                                    <p><strong>Điều trị:</strong> {viewingRecord.treatment}</p>
+                                    <p><strong>Ngày ghi nhận:</strong> {new Date(viewingRecord.record_date).toLocaleDateString()}</p>
+                                    <p><strong>Địa chỉ:</strong> {viewingRecord.address}</p>
+                                    <p><strong>Số điện thoại:</strong> {viewingRecord.phone}</p>
+                                </div>
 
-                            {/* Bảng dịch vụ */}
-                            <table className="service-table">
-                            <thead>
-                                <tr>
-                                <th>STT</th>
-                                <th>Dịch vụ</th>
-                                <th>Số lượng</th>
-                                <th>Đơn giá</th>
-                                <th>Giảm giá</th>
-                                <th>Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
-                                <tr>
-                                <td>1</td>
-                                <td>{viewingRecord.service_name}</td>
-                                <td>{viewingRecord.quantity}</td>
-                                <td>{viewingRecord.unit_price}</td>
-                                <td>{viewingRecord.discount || 0}</td>
-                                <td>{viewingRecord.total_price}</td>
-                                </tr>
-                            </tbody>
-                            </table>
+                                {/* Bảng dịch vụ */}
+                                <table className="service-table">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Dịch vụ</th>
+                                            <th>Số lượng</th>
+                                            <th>Đơn giá</th>
+                                            <th>Giảm giá</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
+                                        <tr>
+                                            <td>1</td>
+                                            <td>{viewingRecord.service_name}</td>
+                                            <td>{viewingRecord.quantity}</td>
+                                            <td>{viewingRecord.unit_price}</td>
+                                            <td>{viewingRecord.discount || 0}</td>
+                                            <td>{viewingRecord.total_price}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                            {/* Đơn thuốc */}
-                            <div className="prescription">
-                            <p><strong>Đơn thuốc</strong></p>
-                            <p>{viewingRecord.prescription}</p>
-                            </div>
+                                {/* Đơn thuốc */}
+                                <div className="prescription">
+                                    <p><strong>Đơn thuốc</strong></p>
+                                    <p>{viewingRecord.prescription}</p>
+                                </div>
 
-                            {/* Phim X-Quang */}
-                            {/* <div className="xray">
+                                {/* Phim X-Quang */}
+                                {/* <div className="xray">
                             <h6>Phim chụp X-Quang:</h6>
                             <img src="https://implantvietnam.info/stmresource/files/kien-thuc-implant/tim-hieu-ve-chup-x-quang-rang-tac-dung-quy-trinh.jpg" alt="Xray" className="xray-img" />
                             </div> */}
 
-                            {/* Chữ ký */}
-                            <div className="signatures">
-                            <div>
-                                <p>Khách hàng</p>
-                                <p>(Ký, họ tên)</p>
+                                {/* Chữ ký */}
+                                <div className="signatures">
+                                    <div>
+                                        <p>Khách hàng</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                    <div>
+                                        <p>Nhân viên thu ngân</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                    <div>
+                                        <p>Bác sĩ điều trị</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p>Nhân viên thu ngân</p>
-                                <p>(Ký, họ tên)</p>
-                            </div>
-                            <div>
-                                <p>Bác sĩ điều trị</p>
-                                <p>(Ký, họ tên)</p>
-                            </div>
-                            </div>
-                        </div>
                         )}
                     </DialogContent>
                     <DialogActions className="dialog-actions">
-    <Button onClick={closeViewModal} color="secondary">
-        Đóng
-    </Button>
-    <Button 
-    onClick={() => {
-        const modalContent = document.querySelector('.MuiDialog-container').innerHTML; // Lấy nội dung modal
-        const newWindow = window.open('', '_blank', 'width=800,height=600'); // Mở cửa sổ mới
-        
-        // Viết nội dung HTML vào cửa sổ mới
-        newWindow.document.write(`
+                        <Button onClick={closeViewModal} color="secondary">
+                            Đóng
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                const modalContent = document.querySelector('.MuiDialog-container').innerHTML; // Lấy nội dung modal
+                                const newWindow = window.open('', '_blank', 'width=800,height=600'); // Mở cửa sổ mới
+
+                                // Viết nội dung HTML vào cửa sổ mới
+                                newWindow.document.write(`
             <html>
             <head>
                 <link rel="stylesheet" href="../../assets/css/admin/MedicalRecordModal.css" /> <!-- Đường dẫn CSS -->
@@ -753,21 +702,21 @@ const MedicalRecordList = () => {
             </html>
         `);
 
-        newWindow.document.close();
-        newWindow.print(); // Kích hoạt in
-        newWindow.close(); // Đóng cửa sổ in
-    }} 
-    color="primary"
->
-    In
-</Button>
+                                newWindow.document.close();
+                                newWindow.print(); // Kích hoạt in
+                                newWindow.close(); // Đóng cửa sổ in
+                            }}
+                            color="primary"
+                        >
+                            In
+                        </Button>
 
 
-</DialogActions>
+                    </DialogActions>
 
-                    </Dialog>
-            </TableContainer>   
-            
+                </Dialog>
+            </TableContainer>
+
         </div>
     );
 };
