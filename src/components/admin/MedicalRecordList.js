@@ -328,96 +328,176 @@ const MedicalRecordList = () => {
                     </TableBody>
                 </Table>
                 <Dialog open={!!viewingRecord} onClose={closeViewModal}>
-                    <DialogTitle className="dialog-title" variant="h5">Thông tin Bệnh án</DialogTitle>
+                    <DialogTitle className="dialog-title" variant="h4" style={{ textAlign: 'center' }}>Thông tin Bệnh án</DialogTitle>
                     <DialogContent className="dialog-content">
                         {viewingRecord && (
-                        <div>
-                            {/* Header thông tin phòng khám */}
-                            <div className="clinic-header">
-                            <img  />
-                            <div className="clinic-info">
-                                <h3>NHA KHOA DENTAL CARE</h3>
-                                <p>Địa chỉ: AN Khánh, Ninh Kiều, Cần Thơ</p>
-                                <p>Điện thoại: 0123.456.789</p>
-                                <p>Website: https://dentalcare.vn</p>
-                            </div>
-                            </div>
+                            <div>
+                                {/* Header thông tin phòng khám */}
+                                <div className="clinic-header" style={{ textAlign: 'right' }}>
+                                    <img />
+                                    <div className="clinic-info">
+                                        <h3>NHA KHOA DENTAL CARE</h3>
+                                        <p>Địa chỉ: AN Khánh, Ninh Kiều, Cần Thơ</p>
+                                        <p>Điện thoại: 0123.456.789</p>
+                                        <p>Website: https://dentalcare.vn</p>
+                                    </div>
+                                </div>
 
-                            {/* Thông tin bệnh nhân */}
-                            <div className="patient-info">
-                            <p><strong>Tên Bệnh nhân:</strong> {viewingRecord.patient_name}</p>
-                            <p><strong>Tên Bác sĩ:</strong> {viewingRecord.doctor_name}</p>
-                            <p><strong>Chẩn đoán:</strong> {viewingRecord.diagnosis}</p>
-                            <p><strong>Điều trị:</strong> {viewingRecord.treatment}</p>
-                            <p><strong>Ngày ghi nhận:</strong> {new Date(viewingRecord.record_date).toLocaleDateString()}</p>
-                            <p><strong>Địa chỉ:</strong> {viewingRecord.address}</p>
-                            <p><strong>Số điện thoại:</strong> {viewingRecord.phone}</p>
-                            </div>
+                                {/* Thông tin bệnh nhân */}
+                                <div className="patient-info">
+                                    <p><strong>Tên Bệnh nhân:</strong> {viewingRecord.patient_name}</p>
+                                    <p><strong>Tên Bác sĩ:</strong> {viewingRecord.doctor_name}</p>
+                                    <p><strong>Chẩn đoán:</strong> {viewingRecord.diagnosis}</p>
+                                    <p><strong>Điều trị:</strong> {viewingRecord.treatment}</p>
+                                    <p><strong>Ngày ghi nhận:</strong> {new Date(viewingRecord.record_date).toLocaleDateString()}</p>
+                                    <p><strong>Địa chỉ:</strong> {viewingRecord.address}</p>
+                                    <p><strong>Số điện thoại:</strong> {viewingRecord.phone}</p>
+                                </div>
 
-                            {/* Bảng dịch vụ */}
-                            <table className="service-table">
-                            <thead>
-                                <tr>
-                                <th>STT</th>
-                                <th>Dịch vụ</th>
-                                <th>Số lượng</th>
-                                <th>Đơn giá</th>
-                                <th>Giảm giá</th>
-                                <th>Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
-                                <tr>
-                                <td>1</td>
-                                <td>{viewingRecord.service_name}</td>
-                                <td>{viewingRecord.quantity}</td>
-                                <td>{viewingRecord.unit_price}</td>
-                                <td>{viewingRecord.discount || 0}</td>
-                                <td>{viewingRecord.total_price}</td>
-                                </tr>
-                            </tbody>
-                            </table>
+                                {/* Bảng dịch vụ */}
+                                <table className="service-table">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Dịch vụ</th>
+                                            <th>Số lượng</th>
+                                            <th>Đơn giá</th>
+                                            <th>Giảm giá</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
+                                        <tr>
+                                            <td>1</td>
+                                            <td>{viewingRecord.service_name}</td>
+                                            <td>{viewingRecord.quantity}</td>
+                                            <td>{viewingRecord.unit_price}</td>
+                                            <td>{viewingRecord.discount || 0}</td>
+                                            <td>{viewingRecord.total_price}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                            {/* Đơn thuốc */}
-                            <div className="prescription">
-                            <p><strong>Đơn thuốc</strong></p>
-                            <p>{viewingRecord.prescription}</p>
-                            </div>
+                                {/* Đơn thuốc */}
+                                <div className="prescription">
+                                    <p><strong>Đơn thuốc</strong></p>
+                                    <p>{viewingRecord.prescription}</p>
+                                </div>
 
-                            {/* Phim X-Quang */}
-                            <div className="xray">
+                                {/* Phim X-Quang */}
+                                {/* <div className="xray">
                             <h6>Phim chụp X-Quang:</h6>
                             <img src="https://implantvietnam.info/stmresource/files/kien-thuc-implant/tim-hieu-ve-chup-x-quang-rang-tac-dung-quy-trinh.jpg" alt="Xray" className="xray-img" />
-                            </div>
+                            </div> */}
 
-                            {/* Chữ ký */}
-                            <div className="signatures">
-                            <div>
-                                <p>Khách hàng</p>
-                                <p>(Ký, họ tên)</p>
+                                {/* Chữ ký */}
+                                <div className="signatures">
+                                    <div>
+                                        <p>Khách hàng</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                    <div>
+                                        <p>Nhân viên thu ngân</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                    <div>
+                                        <p>Bác sĩ điều trị</p>
+                                        <p>(Ký, họ tên)</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p>Nhân viên thu ngân</p>
-                                <p>(Ký, họ tên)</p>
-                            </div>
-                            <div>
-                                <p>Bác sĩ điều trị</p>
-                                <p>(Ký, họ tên)</p>
-                            </div>
-                            </div>
-                        </div>
                         )}
                     </DialogContent>
                     <DialogActions className="dialog-actions">
                         <Button onClick={closeViewModal} color="secondary">
-                        Đóng
+                            Đóng
                         </Button>
-                        <Button onClick={() => window.print()} color="primary">
-                        In
+                        <Button
+                            onClick={() => {
+                                const modalContent = document.querySelector('.MuiDialog-container').innerHTML; // Lấy nội dung modal
+                                const newWindow = window.open('', '_blank', 'width=800,height=600'); // Mở cửa sổ mới
+
+                                // Viết nội dung HTML vào cửa sổ mới
+                                newWindow.document.write(`
+            <html>
+            <head>
+                <link rel="stylesheet" href="../../assets/css/admin/MedicalRecordModal.css" /> <!-- Đường dẫn CSS -->
+                <style>
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .MuiDialog-container {
+            padding: 16px;
+            border: 1px solid #ccc;
+            font-family: Arial, sans-serif;
+        }
+        /* Căn chỉnh thông tin phòng khám sát trái */
+        .clinic-header {
+            display: flex;
+            align-items: center; /* Căn giữa theo chiều dọc */
+            justify-content: right-start; /* Căn lề trái */
+        }
+        .clinic-header img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 16px;
+        }
+        .clinic-info {
+            text-align: right;
+        }
+        .clinic-info h3 {
+            margin: 0; /* Loại bỏ margin */
+        }
+        .xray-img {
+            max-width: 300px; /* Giảm kích thước ảnh X-Quang */
+            height: auto;     /* Đảm bảo giữ nguyên tỷ lệ ảnh */
+        }
+        .service-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .service-table th, .service-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+        .signatures div {
+            text-align: center;
+        }
+        /* Ẩn các nút khi in */
+        .dialog-actions {
+            display: none;
+        }
+    }
+</style>
+            </head>
+            <body>
+                ${modalContent} <!-- Nội dung modal -->
+            </body>
+            </html>
+        `);
+
+                                newWindow.document.close();
+                                newWindow.print(); // Kích hoạt in
+                                newWindow.close(); // Đóng cửa sổ in
+                            }}
+                            color="primary"
+                        >
+                            In
                         </Button>
+
+
                     </DialogActions>
-                    </Dialog>
+
+                </Dialog>
             </TableContainer>
             
         </div>

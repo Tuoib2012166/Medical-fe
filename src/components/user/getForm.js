@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // Import SweetAlert2
-import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, MenuItem, Select, InputLabel, Box } from '@mui/material';
+import { TextField, Button, Radio, RadioGroup, FormControlLabel, Typography, FormControl, FormLabel, MenuItem, Select, InputLabel, Box } from '@mui/material';
 
 const GetForm = () => {
   const [formData, setFormData] = useState({
@@ -175,7 +175,7 @@ const GetForm = () => {
 
   return (
     <div>
-            <h4 className="text-center mb-4">Đặt lịch ngay</h4>
+            <Typography variant="h4" sx={{ textAlign: 'center', my: 4 }}>Đặt lịch ngay</Typography>
     <section id="contact" className="contact container mb-4">
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <input type="hidden" name="userId" value={formData.userId} />

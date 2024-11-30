@@ -80,22 +80,6 @@ function Appointments() {
           </Typography>
         </Box>
 
-        {/* DatePicker component */}
-        <div style={{ marginBottom: "20px", textAlign: "center" }}>
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            showTimeSelect
-            timeIntervals={15}
-            minDate={new Date()} // Disable past dates
-            minTime={new Date(currentDateTime.setMinutes(currentMinute + 1))} // Disable times before current time
-            dateFormat="yyyy/MM/dd HH:mm"
-            timeCaption="Giờ"
-            placeholderText="Chọn thời gian"
-            filterTime={isTimeDisabled} // Disable past hours
-          />
-        </div>
-
         <TableContainer
           component={Paper}
           sx={{

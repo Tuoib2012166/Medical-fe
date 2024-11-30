@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import useUserStore from '../../store/userStore';
-import { AppBar, Toolbar, Button, IconButton, Box, Menu, MenuItem, Avatar, Typography, Divider } from '@mui/material';
-import { ListAlt, MedicalServices, Person, ExitToApp, AccessTime, LocalHospital, AttachMoney, AccountBox, Login , PersonAdd } from '@mui/icons-material';
+import { AppBar, Toolbar, Button, IconButton, Box, Menu, MenuItem, Avatar, Typography, Divider, Drawer, useMediaQuery } from '@mui/material';
+import { ListAlt, MedicalServices, Person, ExitToApp, AccessTime, LocalHospital, AttachMoney, AccountBox, Login, PersonAdd, Menu as MenuIcon } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import '../../assets/css/header.css';
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isUserLoggedIn = useUserStore((state) => state.isUserLoggedIn());
   const userProfile = useUserStore((state) => state.user.profile);
   const clearUser = useUserStore((state) => state.clearUser);
@@ -17,37 +18,41 @@ function Header() {
   const [, , removeCookie] = useCookies(['token']);
   const setUser = useUserStore((state) => state.setUser);
   const isFirstRender = useRef(true);
-  
+
+  const isMobile = useMediaQuery('(max-width:768px)'); // For mobile responsiveness
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const menuItemStyle = {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  padding: "8px 16px",
-  "&:hover": {
-    backgroundColor: "#f5f5f5",
-    borderRadius: "8px",
-  },
-};
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-const iconStyle = {
-  fontSize: "20px",
-  color: "#1976d2", // Màu xanh chủ đạo cho icon
-};
+  const showLoginPrompt = () => {
+    Swal.fire({
+      title: 'Bạn chưa đăng nhập',
+      text: 'Bạn cần đăng nhập để đặt lịch khám. Vui lòng đăng nhập hoặc đăng ký',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Đăng nhập',
+      cancelButtonText: 'Đăng ký',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) navigate('/login');
+      else if (result.dismiss === Swal.DismissReason.cancel) navigate('/register');
+    });
+  };
 
-const linkStyle = {
-  textDecoration: "none",
-  color: "#333",
-  fontWeight: "500",
-  "&:hover": {
-    color: "#1976d2", // Đổi màu khi hover
-  },
-};
-
+  const handleLogout = () => {
+    removeCookie('token', { path: '/' });
+    localStorage.removeItem('token');
+    clearUser();
+    navigate('/');
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,38 +79,60 @@ const linkStyle = {
     }
   }, [navigate, setUser]);
 
-  const handleLogout = () => {
-    removeCookie('token', { path: '/' });
-    localStorage.removeItem('token');
-    clearUser();
-    navigate('/');
+  const menuItemStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    padding: "8px 16px",
+    "&:hover": {
+      backgroundColor: "#f5f5f5",
+      borderRadius: "8px",
+    },
   };
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const iconStyle = {
+    fontSize: "20px",
+    color: "#1976d2",
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const linkStyle = {
+    textDecoration: "none",
+    color: "#333",
+    fontWeight: "500",
+    "&:hover": {
+      color: "#1976d2",
+    },
   };
 
-  const showLoginPrompt = () => {
-    Swal.fire({
-      title: 'Bạn chưa đăng nhập',
-      text: 'Bạn cần đăng nhập để đặt lịch khám. Vui lòng đăng nhập hoặc đăng ký',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Đăng nhập',
-      cancelButtonText: 'Đăng ký',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) navigate('/login');
-      else if (result.dismiss === Swal.DismissReason.cancel) navigate('/register');
-    });
-  };
+  const drawerContent = (
+    <Box sx={{ width: 250 }}>
+      <MenuItem component={Link} to="/service" sx={menuItemStyle}>
+        <LocalHospital sx={iconStyle} /> Dịch vụ
+      </MenuItem>
+      <MenuItem component={Link} to="/priceList" sx={menuItemStyle}>
+        <AttachMoney sx={iconStyle} /> Bảng giá
+      </MenuItem>
+      <MenuItem component={Link} to="/doctorList" sx={menuItemStyle}>
+        <AccountBox sx={iconStyle} /> Thông tin bác sĩ
+      </MenuItem>
+      <MenuItem component={Link} to="/AppointmentForm" sx={menuItemStyle} onClick={(e) => {
+        if (!isUserLoggedIn) {
+          e.preventDefault();
+          showLoginPrompt();
+        }
+      }}>
+        <AccessTime sx={iconStyle} /> Đặt lịch khám
+      </MenuItem>
+      {isUserLoggedIn && (
+        <MenuItem sx={menuItemStyle} onClick={handleLogout}>
+          <ExitToApp sx={iconStyle} /> Đăng xuất
+        </MenuItem>
+      )}
+    </Box>
+  );
 
   return (
-    <AppBar position="static" className="app-bar" sx={{ backgroundColor: '#0099FF', boxShadow: 3 }}>
+    <AppBar position="static" className="app-bar" sx={{ backgroundColor: '#1E90FF', boxShadow: 3 }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/" style={{ display: 'inline-block' }}>
@@ -114,109 +141,94 @@ const linkStyle = {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button
-        component={Link}
-        to="/service"
-        className="header-button"
-        startIcon={<LocalHospital />}
-        sx={{
-          backgroundColor: '#1976d2', // Màu nền
-          color: 'white', // Màu chữ
-          '&:hover': {
-            backgroundColor: '#7b1fa2', // Màu khi hover
-          },
-          padding: '10px 20px', // Padding để nút đẹp hơn
-          borderRadius: '5px', // Bo góc nút
-          textTransform: 'none', // Không viết hoa chữ
-          boxShadow: 3, // Thêm hiệu ứng đổ bóng nhẹ
-          transition: 'background-color 0.3s ease, transform 0.2s', // Hiệu ứng chuyển động mượt mà
-          '&:active': {
-            transform: 'scale(0.98)', // Hiệu ứng thu nhỏ khi click
-          }
-        }}
-      >
-        Dịch vụ
-      </Button>
+          {isMobile ? (
+            <>
+              <IconButton onClick={() => setMobileMenuOpen(true)} sx={{ color: 'white' }}>
+                <MenuIcon />
+              </IconButton>
+              <Drawer
+                anchor="left" // Positioning the drawer to the left
+                open={mobileMenuOpen}
+                onClose={() => setMobileMenuOpen(false)}
+              >
+                {drawerContent}
+              </Drawer>
+            </>
+          ) : (
+            <>
+              <Button
+                component={Link}
+                to="/service"
+                startIcon={<LocalHospital />}
+                sx={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#00BFFF', color: 'white' },
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                  textTransform: 'none',
+                }}
+              >
+                Dịch vụ
+              </Button>
 
-            <Button
-              component={Link}
-              to="/priceList"
-              className="header-button"
-              startIcon={<AttachMoney />}
-              sx={{
-                backgroundColor: '#1976d2', // Màu nền
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#7b1fa2', // Màu khi hover
-                },
-                padding: '10px 20px',
-                borderRadius: '5px',
-                textTransform: 'none',
-                boxShadow: 3,
-                transition: 'background-color 0.3s ease, transform 0.2s',
-                '&:active': {
-                  transform: 'scale(0.98)',
-                }
-              }}
-            >
-              Bảng giá
-            </Button>
+              <Button
+                component={Link}
+                to="/priceList"
+                startIcon={<AttachMoney />}
+                sx={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#00BFFF', color: 'white' },
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                  textTransform: 'none',
+                }}
+              >
+                Bảng giá
+              </Button>
 
-            <Button
-              component={Link}
-              to="/doctorList"
-              className="header-button"
-              startIcon={<AccountBox />}
-              sx={{
-                backgroundColor: '#1976d2',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#7b1fa2',
-                },
-                padding: '10px 20px',
-                borderRadius: '5px',
-                textTransform: 'none',
-                boxShadow: 3,
-                transition: 'background-color 0.3s ease, transform 0.2s',
-                '&:active': {
-                  transform: 'scale(0.98)',
-                }
-              }}
-            >
-              Thông tin bác sĩ
-            </Button>
+              <Button
+                component={Link}
+                to="/doctorList"
+                startIcon={<AccountBox />}
+                sx={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#00BFFF', color: 'white' },
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                  textTransform: 'none',
+                }}
+              >
+                Thông tin bác sĩ
+              </Button>
 
-            <Button
-              component={Link}
-              to="/AppointmentForm"
-              className="header-button"
-              onClick={(e) => {
-                if (!isUserLoggedIn) {
-                  e.preventDefault();
-                  showLoginPrompt();
-                }
-              }}
-              startIcon={<AccessTime />}
-              sx={{
-                backgroundColor: '#1976d2',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#7b1fa2',
-                },
-                padding: '10px 20px',
-                borderRadius: '5px',
-                textTransform: 'none',
-                boxShadow: 3,
-                transition: 'background-color 0.3s ease, transform 0.2s',
-                '&:active': {
-                  transform: 'scale(0.98)',
-                }
-              }}
-            >
-              Đặt lịch khám
-          </Button>
-        <Box>
-  {isUserLoggedIn ? (
+              <Button
+                component={Link}
+                to="/AppointmentForm"
+                startIcon={<AccessTime />}
+                onClick={(e) => {
+                  if (!isUserLoggedIn) {
+                    e.preventDefault();
+                    showLoginPrompt();
+                  }
+                }}
+                sx={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#00BFFF', color: 'white' },
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                  textTransform: 'none',
+                }}
+              >
+                Đặt lịch khám
+              </Button>
+            </>
+          )}
+        </Box>
+        {isUserLoggedIn ? (
     <IconButton onClick={handleMenuClick} sx={{ p: 0 }}>
       <Avatar
         alt={userProfile.name}
@@ -236,48 +248,59 @@ const linkStyle = {
       />
     </IconButton>
   ) : (
-    <Box sx={{ display: "flex", gap: 2 }}>
-      <Button
-        component={Link}
-        to="/login"
-        variant="contained"
-        startIcon={<Login />}
-        sx={{
-          bgcolor: "#00bcd4",
-          color: "#fff",
-          padding: "10px 20px",
-          fontWeight: "bold",
-          borderRadius: "50px",
-          "&:hover": {
-            bgcolor: "#0097a7",
-            boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)",
-          },
-        }}
-      >
-        Đăng nhập
-      </Button>
-      <Button
-        component={Link}
-        to="/register"
-        variant="outlined"
-        startIcon={<PersonAdd />}
-        sx={{
-          borderColor: "#00bcd4",
-          bgcolor: "#00bcd4",
-          color: "#fff",
-          padding: "10px 20px",
-          fontWeight: "bold",
-          borderRadius: "50px",
-          "&:hover": {
-            borderColor: "#0097a7",
-            color: "#0097a7",
-            boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
-          },
-        }}
-      >
-        Đăng ký
-      </Button>
-    </Box>
+    <Box
+  sx={{
+    display: "flex",
+    gap: 2,
+    flexDirection: { xs: "column", sm: "row" }, // Stack buttons vertically on small screens
+    alignItems: "center", // Center items horizontally on smaller screens
+    justifyContent: "center", // Center the content
+  }}
+>
+  <Button
+    component={Link}
+    to="/login"
+    variant="contained"
+    startIcon={<Login />}
+    sx={{
+      bgcolor: "#00bcd4",
+      color: "#fff",
+      padding: { xs: "8px 16px", sm: "10px 20px" }, // Smaller padding on mobile
+      fontWeight: "bold",
+      borderRadius: "50px",
+      width: { xs: "100%", sm: "auto" }, // Full width on small screens, auto width on larger screens
+      "&:hover": {
+        bgcolor: "#0097a7",
+        boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)",
+      },
+    }}
+  >
+    Đăng nhập
+  </Button>
+
+  <Button
+    component={Link}
+    to="/register"
+    variant="outlined"
+    startIcon={<PersonAdd />}
+    sx={{
+      borderColor: "#00bcd4",
+      bgcolor: "#00bcd4",
+      color: "#fff",
+      padding: { xs: "8px 16px", sm: "10px 20px" }, // Smaller padding on mobile
+      fontWeight: "bold",
+      borderRadius: "50px",
+      width: { xs: "100%", sm: "auto" }, // Full width on small screens, auto width on larger screens
+      "&:hover": {
+        borderColor: "#0097a7",
+        color: "#0097a7",
+        boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
+      },
+    }}
+  >
+    Đăng ký
+  </Button>
+</Box>
   )}
 
   <Menu
@@ -357,9 +380,6 @@ const linkStyle = {
       </>
     )}
   </Menu>
-</Box>
-
-      </Box>
       </Toolbar>
     </AppBar>
   );

@@ -12,7 +12,7 @@ import AppointmentList from './AppointmentList';
 
 const AdminPage = () => {
     const { setUser, user } = useUserStore();
-
+    
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage

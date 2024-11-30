@@ -90,11 +90,7 @@
 }
 
 .news-section .logo {
-    width: 200px;
     height: auto;
-    margin-left: 10px;
-    border-radius: 5px;
-    border: 1px solid rgb(0, 0, 0);
 }
 
 .news-section p {

@@ -78,7 +78,7 @@ const Register = () => {
     <>
       <Header />
       <section id="register" style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
-        <img src="img/logo.png" alt="Logo" style={{ width: '300px' }} />
+        <img src="img/logo.png" alt="Logo" style={{ width: '200px' }} />
         <h4 >Đăng ký tài khoản</h4>
 
         {/* Form */}

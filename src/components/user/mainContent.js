@@ -15,7 +15,7 @@ function MainContent() {
       {/* Phần Hero */}
       <section id="home" className="hero">
         <h1 className="hero-title">Chào mừng đến với Phòng Khám Nha Khoa</h1>
-        <p className="hero-description">Chăm sóc nụ cười của bạn, tận tâm từng phút giây</p>
+        
       </section>
 
       <section id="News" className="news-section">
@@ -109,9 +109,9 @@ function MainContent() {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Paper elevation={3} sx={{ padding: 3, textAlign: 'center' }}>
-                <Typography variant="h6" gutterBottom color="primary">Được cấp phép hoạt động bởi Sở Y tế</Typography>
+                <Typography variant="h6" gutterBottom color="primary">Được cấp phép bởi Sở Y tế</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Các chi nhánh của VIET SMILE đều được cấp phép hoạt động chính thức bởi Sở Y tế với giấy phép đầy đủ.
+                  Các chi nhánh đều được cấp phép hoạt động chính thức bởi Sở Y tế với giấy phép đầy đủ.
                 </Typography>
               </Paper>
             </Grid>

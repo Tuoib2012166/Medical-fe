@@ -11,58 +11,94 @@ const SpecialtyList = () => {
     const [specialties, setSpecialties] = useState([]);
     const [services, setServices] = useState([]);
     const [formData, setFormData] = useState({
-        specialty_id: '',   
+        specialty_id: '',
         name: '',
         description: '',
         price: '',
         image: null,
     });
-    const [editingSpecialty, setEditingSpecialty] = useState(null);
-    const [editingService, setEditingService] = useState(null);
+    const [editingItem, setEditingItem] = useState(null);
+    const [isService, setIsService] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [isSubService, setIsSubService] = useState(false); // Xác định loại dịch vụ (chính/phụ)
 
     useEffect(() => {
-        const fetchSpecialties = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/specialties');
-                setSpecialties(response.data);
+                const [specialtiesRes, servicesRes] = await Promise.all([
+                    axios.get('http://localhost:8080/specialties'),
+                    axios.get('http://localhost:8080/services'),
+                ]);
+                setSpecialties(specialtiesRes.data);
+                setServices(servicesRes.data);
             } catch (error) {
-                console.error('Error fetching specialties:', error);
+                console.error('Error fetching data:', error);
             }
         };
-
-        const fetchServices = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/services');
-                setServices(response.data);
-            } catch (error) {
-                console.error('Error fetching services:', error);
-            }
-        };
-
-        fetchSpecialties();
-        fetchServices();
+        fetchData();
     }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, image: e.target.files[0] });
+        setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
     };
 
-    const handleDelete = async (id, isService) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa dịch vụ này không?')) {
+    const openDialogHandler = (type, item = null) => {
+        setIsService(type === 'service');
+        setEditingItem(item);
+        setFormData({
+            specialty_id: item?.specialty_id || '',
+            name: item?.name || '',
+            description: item?.description || '',
+            price: item?.price || '',
+            image: null,
+        });
+        setOpenDialog(true);
+    };
+
+    const handleSubmit = async () => {
+        const data = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+            if (value) data.append(key, value);
+        });
+
+        try {
+            const url = isService
+                ? `http://localhost:8080/services${editingItem ? `/${editingItem.id}` : ''}`
+                : `http://localhost:8080/specialties${editingItem ? `/${editingItem.id}` : ''}`;
+
+            if (editingItem) {
+                await axios.put(url, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+            } else {
+                await axios.post(url, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+            }
+
+            const [specialtiesRes, servicesRes] = await Promise.all([
+                axios.get('http://localhost:8080/specialties'),
+                axios.get('http://localhost:8080/services'),
+            ]);
+            setSpecialties(specialtiesRes.data);
+            setServices(servicesRes.data);
+
+            setOpenDialog(false);
+            setEditingItem(null);
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        }
+    };
+
+    const handleDelete = async (id, type) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa mục này không?')) {
             try {
-                const url = isService
+                const url = type === 'service'
                     ? `http://localhost:8080/services/${id}`
                     : `http://localhost:8080/specialties/${id}`;
-
                 await axios.delete(url);
-                if (isService) {
+
+                if (type === 'service') {
                     setServices(services.filter((service) => service.id !== id));
                 } else {
                     setSpecialties(specialties.filter((specialty) => specialty.id !== id));
@@ -73,57 +109,6 @@ const SpecialtyList = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const data = new FormData();
-        data.append('name', formData.name);
-        data.append('description', formData.description);
-        data.append('price', formData.price);
-        data.append('specialty_id', formData.specialty_id); // Thêm field để tạo dịch vụ phụ
-        if (formData.image) {
-            data.append('image', formData.image);
-        }
-
-        try {
-            const url = isSubService
-                ? 'http://localhost:8080/services' // API cho dịch vụ phụ
-                : 'http://localhost:8080/specialties'; // API cho dịch vụ chính
-
-            if (editingService) {
-                await axios.put(`${url}/${editingService.id}`, data, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-            } else {
-                await axios.post(url, data, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-            }
-
-            setOpenDialog(false);
-            setFormData({ specialty_id: '', name: '', description: '', price: '', image: null });
-            setEditingSpecialty(null);
-            setEditingService(null);
-            // Re-fetch the specialties and services
-            await Promise.all([
-                axios.get('http://localhost:8080/specialties').then((res) => setSpecialties(res.data)),
-                axios.get('http://localhost:8080/services').then((res) => setServices(res.data)),
-            ]);
-        } catch (error) {
-            console.error('Error saving specialty or service:', error);
-        }
-    };
-
-    const openDialogHandler = (isSub, specialtyId = null) => {
-        setFormData({ specialty_id: '', name: '', description: '', price: '', image: null });
-        setEditingSpecialty(null);
-        setEditingService(null);
-        setIsSubService(isSub); // Đặt trạng thái là dịch vụ phụ hay chính
-        if (isSub && specialtyId) {
-            setFormData({ ...formData, specialty_id: specialtyId });
-        }
-        setOpenDialog(true);
-    };
-
     return (
         <div>
             <h3>Quản lý Dịch Vụ</h3>
@@ -131,115 +116,115 @@ const SpecialtyList = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<Add />}
-                onClick={() => openDialogHandler(false)}
+                onClick={() => openDialogHandler('specialty')}
             >
-                Thêm Dịch Vụ
+                Thêm Dịch Vụ 
             </Button>
 
-            {/* Table for Specialties with Subservices listed in a new column */}
-            <h4>Dịch Vụ Chính</h4>
             <TableContainer component={Paper} style={{ marginTop: 20 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{
-                                backgroundColor: '#007bff',
-                                color: 'white',
-                                width: '200px', // Giới hạn chiều rộng của cột
-                                overflow: 'hidden', // Ẩn phần nội dung ngoài giới hạn
-                                textOverflow: 'ellipsis', // Thêm dấu chấm ba nếu nội dung quá dài
-                                whiteSpace: 'nowrap', // Ngăn chặn nội dung xuống dòng
-                            }}>Tên</TableCell>
-                            <TableCell style={{
-                                backgroundColor: '#007bff',
-                                color: 'white',
-                                width: '800px', // Giới hạn chiều rộng của cột
-                                overflow: 'hidden', // Ẩn phần nội dung ngoài giới hạn
-                                textOverflow: 'ellipsis', // Thêm dấu chấm ba nếu nội dung quá dài
-                                whiteSpace: 'nowrap', // Ngăn chặn nội dung xuống dòng
-                            }}>Mô tả</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hình ảnh</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch Vụ Phụ</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Thao tác</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Tên</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Mô tả</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Hình ảnh</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Giá (VNĐ)</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Thao tác</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {specialties.map((specialty) => {
-                            const subServices = services.filter(service => service.specialty_id === specialty.id);
-                            return (
-                                <TableRow key={specialty.id}>
-                        <TableCell>{specialty.name}</TableCell>
-                        <TableCell>{specialty.description}</TableCell>
-                        <TableCell>
-                            <img
-                            src={`http://localhost:8080/${specialty.image}`}
-                            alt="Specialty"
-                            style={{ width: 50, height: 50, objectFit: 'cover' }}
-                            />
-                        </TableCell>
-                        <TableCell>
-                            {subServices.length > 0 ? subServices.map((service, index) => (
-                            <div
-                                key={service.id}
-                                style={{
-                                borderBottom: '1px solid #ddd',  // Dòng kẻ dưới mỗi dịch vụ
-                                padding: '5px 0',  // Khoảng cách giữa các dịch vụ phụ
-                                backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#87CEFA'  // Đổi màu nền luân phiên
-                                }}
-                            >
-                                {service.name}
-                            </div>
-                            )) : <span>Chưa có</span>}
-                        </TableCell>
-                        <TableCell>
-                            <Tooltip title="Sửa">
-                            <IconButton
-                                color="primary"
-                                onClick={() => setEditingSpecialty(specialty)}
-                            >
-                                <Edit />
-                            </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Xóa">
-                            <IconButton
-                                color="error"
-                                onClick={() => handleDelete(specialty.id, false)}
-                            >
-                                <Delete />
-                            </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Thêm Dịch Vụ Phụ">
-                            <IconButton
-                                color="secondary"
-                                onClick={() => openDialogHandler(true, specialty.id)}
-                            >
-                                <Add />
-                            </IconButton>
-                            </Tooltip>
-                        </TableCell>
-                        </TableRow>
-                            );
-                        })}
+                        {specialties.map((specialty) => (
+                            <React.Fragment key={specialty.id}>
+                                <TableRow align="center" style={{ backgroundColor: '#ADD8E6', color: 'white' }}>
+                                    <TableCell>{specialty.name}</TableCell>
+                                    <TableCell>{specialty.description}</TableCell>
+                                    <TableCell>
+                                        <img
+                                            src={`http://localhost:8080/${specialty.image}`}
+                                            alt="Specialty"
+                                            style={{ width: 50, height: 50 }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>-</TableCell>
+                                    <TableCell>
+                                        <Tooltip title="Sửa">
+                                            <IconButton
+                                                color="primary"
+                                                onClick={() => openDialogHandler('specialty', specialty)}
+                                            >
+                                                <Edit />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Xóa">
+                                            <IconButton
+                                                color="error"
+                                                onClick={() => handleDelete(specialty.id, 'specialty')}
+                                            >
+                                                <Delete />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Thêm Dịch Vụ Phụ">
+                                            <IconButton
+                                                color="secondary"
+                                                onClick={() =>
+                                                    openDialogHandler('service', { specialty_id: specialty.id })
+                                                }
+                                            >
+                                                <Add />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </TableCell>
+                                </TableRow>
+                                {services
+                                    .filter((service) => service.specialty_id === specialty.id)
+                                    .map((service) => (
+                                        <TableRow key={service.id} style={{ backgroundColor: '#f9f9f9' }}>
+                                            <TableCell style={{ paddingLeft: 40 }}>{service.name}</TableCell>
+                                            <TableCell>{service.description}</TableCell>
+                                            <TableCell>-</TableCell>
+                                            <TableCell>{service.price}</TableCell>
+                                            <TableCell>
+                                                <Tooltip title="Sửa">
+                                                    <IconButton
+                                                        color="primary"
+                                                        onClick={() => openDialogHandler('service', service)}
+                                                    >
+                                                        <Edit />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Xóa">
+                                                    <IconButton
+                                                        color="error"
+                                                        onClick={() => handleDelete(service.id, 'service')}
+                                                    >
+                                                        <Delete />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                            </React.Fragment>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
 
-            {/* Dialog for Adding/Editing Services */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>{editingSpecialty || editingService ? 'Chỉnh sửa dịch vụ' : 'Thêm dịch vụ'}</DialogTitle>
+                <DialogTitle>
+                    {editingItem ? 'Chỉnh sửa' : 'Thêm'} {isService ? 'Dịch Vụ Phụ' : 'Dịch Vụ Chính'}
+                </DialogTitle>
                 <DialogContent>
-                    {isSubService && !editingService && (
+                    {isService && (
                         <FormControl fullWidth margin="normal">
                             <InputLabel>Dịch Vụ Chính</InputLabel>
                             <Select
                                 value={formData.specialty_id}
                                 name="specialty_id"
                                 onChange={handleInputChange}
-                                required
-                                disabled={editingService}  // Không cho phép chọn dịch vụ chính khi chỉnh sửa dịch vụ phụ
+                                disabled={!!editingItem}
                             >
                                 {specialties.map((specialty) => (
-                                    <MenuItem value={specialty.id} key={specialty.id}>
+                                    <MenuItem key={specialty.id} value={specialty.id}>
                                         {specialty.name}
                                     </MenuItem>
                                 ))}
@@ -264,22 +249,23 @@ const SpecialtyList = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Giá"
-                        name="price"
-                        type="number"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        required
-                    />
+                    {isService && (
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Giá"
+                            name="price"
+                            type="number"
+                            value={formData.price}
+                            onChange={handleInputChange}
+                        />
+                    )}
                     <input type="file" onChange={handleFileChange} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenDialog(false)}>Hủy</Button>
                     <Button variant="contained" color="primary" onClick={handleSubmit}>
-                        {editingSpecialty || editingService ? 'Lưu' : 'Thêm'}
+                        {editingItem ? 'Lưu' : 'Thêm'}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -14,7 +14,7 @@ import axios from "axios";
 
 const Admin = () => {
     const { setUser } = useUserStore();
-
+    
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage

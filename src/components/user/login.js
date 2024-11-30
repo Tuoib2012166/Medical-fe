@@ -73,7 +73,7 @@ function Login() {
             mb: 3,
           }}
         >
-          <img src="img/logo.png" alt="Logo" style={{ width: "150px" }} />
+          <img src="img/logo.png" alt="Logo" style={{ width: "200px" }} />
         </Box>
         <Typography variant="h4" align="center" gutterBottom>
           Đăng nhập

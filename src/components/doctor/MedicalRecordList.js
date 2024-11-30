@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import useUserStore from '../../store/userStore';
 import '../../assets/css/admin/MedicalRecordModal.css'; // Đảm bảo đường dẫn đúng
+
 import {
     TextField,
     Select,
@@ -25,7 +26,8 @@ import {
     Autocomplete,
     Paper
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+
 
 const MedicalRecordList = () => {
     // Khai báo các state để lưu trữ dữ liệu và trạng thái của các yếu tố trong component
@@ -73,6 +75,48 @@ const MedicalRecordList = () => {
     const closeViewModal = () => {
         setViewingRecord(null); // Xóa dữ liệu khi đóng modal
     };
+    const [additionalServices, setAdditionalServices] = useState([]);
+    const addAdditionalService = () => {
+    setAdditionalServices([...additionalServices, { service: '', quantity: 1, unit_price: 0, total_price: 0 }]);
+};
+const removeAdditionalService = (index) => {
+    const newServices = additionalServices.filter((_, i) => i !== index);
+    setAdditionalServices(newServices);
+};
+const handleAdditionalServiceChange = (index, e) => {
+    const { name, value } = e.target;
+    const newServices = [...additionalServices];
+    
+    if (name === 'service') {
+        const selectedService = services.find(service => service.id === value);
+        newServices[index] = {
+            ...newServices[index],
+            service: value,
+            unit_price: selectedService.price,
+            total_price: selectedService.price * newServices[index].quantity
+        };
+    } else {
+        newServices[index][name] = value;
+        if (name === 'quantity') {
+            newServices[index].total_price = value * newServices[index].unit_price;
+        }
+    }
+    
+    setAdditionalServices(newServices);
+};
+// Assuming you have a function to calculate the total amount
+const calculateTotalAmount = () => {
+    return additionalServices.reduce((total, service) => {
+        // Calculate total for each service
+        const serviceTotal = (service.quantity || 0) * (service.unit_price || 0);
+        return total + serviceTotal;
+    }, 0);
+};
+
+// In your render method or functional component
+const totalAmount = calculateTotalAmount();
+
+// Render the total amount in the TextField
 
 
 
@@ -178,6 +222,21 @@ const MedicalRecordList = () => {
             if (formData.record_date) {
                 formData.record_date = new Date()
             }
+            // Kiểm tra các trường bắt buộc
+            if (!formData.appointment_id) {
+                toast.error('Vui lòng chọn bệnh nhân!');
+                return;
+            }
+
+            if (!formData.diagnosis.trim()) {
+                toast.error('Vui lòng nhập chẩn đoán!');
+                return;
+            }
+
+            if (!formData.service) {
+                toast.error('Vui lòng chọn dịch vụ!');
+                return;
+            }
 
             const patient_id = patients.find(x => x.appointment_id == formData.appointment_id)?.patient_id
             // Gửi toàn bộ dữ liệu formData
@@ -218,265 +277,342 @@ const MedicalRecordList = () => {
     return (
         <div>
             <button className="btn btn-primary my-3" onClick={() => setShowForm(true)}>Thêm Bệnh án</button>
-            <Dialog open={showForm} onClose={() => setShowForm(false)}>
+            <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="lg" fullWidth >
                 <DialogTitle>Quản lý Bệnh án</DialogTitle>
                 <DialogContent>
-                    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+            {/* Cột 1 */}
+            <Grid item xs={12} sm={3}>
+                {/* Mã Bệnh nhân */}
+                <FormControl fullWidth margin="normal" error={!formData.appointment_id}>
+                    <InputLabel id="appointment_id">Mã Bệnh nhân</InputLabel>
+                    <Select
+                        labelId="appointment_id"
+                        id="appointment_id"
+                        name="appointment_id"
+                        value={formData.appointment_id}
+                        onChange={handleChange}
+                        required
+                    >
+                        <MenuItem value="">
+                            <em>Chọn Bệnh nhân</em>
+                        </MenuItem>
+                        {patients.map((patient) => (
+                            <MenuItem key={patient.appointment_id} value={patient.appointment_id}>
+                                {patient.fullname}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    {!formData.appointment_id && <p className="error-text">Bắt buộc chọn bệnh nhân!</p>}
+                </FormControl>
+
+                {/* Mã Bác sĩ */}
+                <TextField
+                    label="Mã Bác sĩ"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={user?.profile?.fullname || 'Chưa đăng nhập'}
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                />
+
+                {/* Chẩn đoán */}
+                <TextField
+                    label="Chẩn đoán"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    name="diagnosis"
+                    value={formData.diagnosis}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                />
+
+                {/* Địa chỉ */}
+                <TextField
+                    label="Địa chỉ"
+                    variant="outlined"
+                    fullWidth
+                    name="address"
+                    value={formData.address || ''}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                />
+            </Grid>
+
+            {/* Cột 2 */}
+            <Grid item xs={12} sm={3}>
+                {/* Điều trị */}
+                <TextField
+                    label="Điều trị"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    name="treatment"
+                    value={formData.treatment}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                />
+
+                {/* Số điện thoại */}
+                <TextField
+                    label="Số điện thoại"
+                    variant="outlined"
+                    fullWidth
+                    name="phone"
+                    value={formData.phone || ''}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                />
+
+                {/* Giới tính */}
+                <FormControl fullWidth margin="normal">
+                    <InputLabel id="gender">Giới tính</InputLabel>
+                    <Select
+                        labelId="gender"
+                        id="gender"
+                        name="gender"
+                        value={formData.gender || ''}
+                        onChange={handleChange}
+                        required
+                    >
+                        <MenuItem value="">
+                            <em>Chọn giới tính</em>
+                        </MenuItem>
+                        <MenuItem value="male">Nam</MenuItem>
+                        <MenuItem value="female">Nữ</MenuItem>
+                        <MenuItem value="other">Khác</MenuItem>
+                    </Select>
+                </FormControl>
+
+                {/* Năm sinh */}
+                <TextField
+                    label="Năm sinh"
+                    variant="outlined"
+                    type="number"
+                    fullWidth
+                    name="birth_year"
+                    value={formData.birth_year || ''}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                />
+                {/* Ngày ghi nhận */}
+                <TextField
+                    label="Ngày ghi nhận"
+                    variant="outlined"
+                    type="date"
+                    fullWidth
+                    name="record_date"
+                    value={formData.record_date}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    inputProps={{
+                        min: new Date().toISOString().split("T")[0], // Giới hạn ngày tối thiểu
+                    }}
+                />
+
+            </Grid>
+
+            {/* Cột 3 */}
+            <Grid item xs={12} sm={3}>
+                {/* Dịch vụ chính */}
+                <FormControl fullWidth margin="normal">
+                    <InputLabel id="specialty">Dịch vụ</InputLabel>
+                    <Select
+                        labelId="specialty"
+                                               id="specialty"
+                        name="specialty"
+                        value={formData.specialty || ''}
+                        onChange={handleChange}
+                        required
+                    >
+                        <MenuItem value="">
+                            <em>Chọn dịch vụ</em>
+                        </MenuItem>
+                        {specialties.map(specialty => (
+                            <MenuItem key={specialty.id} value={specialty.name}>
+                                {specialty.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+
+                {/* Dịch vụ phụ */}
+                <FormControl fullWidth margin="normal">
+                    <InputLabel id="service">Dịch vụ phụ</InputLabel>
+                    <Select
+                        labelId="service"
+                        id="service"
+                        name="service"
+                        value={formData.service || ''}
+                        onChange={handleChange}
+                        required
+                    >
+                        <MenuItem value="">
+                            <em>Chọn dịch vụ phụ</em>
+                        </MenuItem>
+                        {services.map(service => (
+                            <MenuItem key={service.id} value={service.id}>
+                                {service.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                
+                <Grid container spacing={2}>
+                {/* Số lượng */}
+                <Grid item xs={6} sx={{ mt: -1 }}>
+                <TextField
+                    label="Số lượng"
+                    variant="outlined"
+                    type="number"
+                    fullWidth
+                    name="quantity"
+                    value={formData.quantity || ''}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                />
+                </Grid>
+                {/* Đơn giá */}
+                <Grid item xs={6} sx={{ mt: -1 }}>
+                <TextField
+                    label="Giá dịch vụ"
+                    value={
+                        formData.service
+                            ? services.find(service => service.id === formData.service)?.price || ''
+                            : ''
+                    }
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    InputProps={{ readOnly: true }} // Make it read-only as per original intent
+                />
+                </Grid>
+                {/* Thành tiền */}
+                <Grid item xs={6} sx={{ mt: -3 }}>
+                <TextField
+                    label="Thành tiền"
+                    variant="outlined"
+                    type="number"
+                    fullWidth
+                    name="total_price"
+                    value={formData.total_price || ''}
+                    margin="normal"
+                />
+                </Grid>
+                <Grid item xs={6}>
+                    <IconButton title="Thêm Dịch Vụ Phụ" type="button" color="primary" variant="contained" onClick={addAdditionalService}><AddIcon /></IconButton >
+                </Grid>
+                </Grid>
+            </Grid>
+
+            {/* Cột 4 - Dịch vụ phụ */}
+            <Grid item xs={12} sm={3}>
+                {/* Thêm dịch vụ phụ */}
+
+
+                {additionalServices.map((service, index) => (
+                    <Grid item xs={12} key={index}>
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel id={`additional_service_${index}`}>Dịch vụ phụ</InputLabel>
+                            <Select
+                                labelId={`additional_service_${index}`}
+                                name="service"
+                                value={service.service}
+                                onChange={(e) => handleAdditionalServiceChange(index, e)}
+                            >
+                                <MenuItem value="">
+                                    <em>Chọn dịch vụ phụ</em>
+                                </MenuItem>
+                                {services.map(serviceOption => (
+                                    <MenuItem key={serviceOption.id} value={serviceOption.id}>
+                                        {serviceOption.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
                         <Grid container spacing={2}>
-                            {/* Cột 1 */}
-                            <Grid item xs={12} sm={6}>
-                                {/* Mã Bệnh nhân */}
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel id="appointment_id">Mã Bệnh nhân</InputLabel>
-                                    <Select
-                                        labelId="appointment_id"
-                                        id="appointment_id"
-                                        name="appointment_id"
-                                        value={formData.appointment_id}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <MenuItem value="">
-                                            <em>Chọn Bệnh nhân</em>
-                                        </MenuItem>
-                                        {patients.map(patient => (
-                                            <MenuItem key={patient.appointment_id} value={patient.appointment_id}>
-                                                {patient.fullname}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-
-                                {/* Mã Bác sĩ */}
-                                <TextField
-                                    label="Mã Bác sĩ"
-                                    variant="outlined"
-                                    fullWidth
-                                    margin="normal"
-                                    value={user?.profile?.fullname || 'Chưa đăng nhập'}
-                                    InputProps={{
-                                        readOnly: true,
-                                    }}
-                                />
-
-                                {/* Chẩn đoán */}
-                                <TextField
-                                    label="Chẩn đoán"
-                                    variant="outlined"
-                                    fullWidth
-                                    multiline
-                                    rows={4}
-                                    name="diagnosis"
-                                    value={formData.diagnosis}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                />
-
-                                {/* Điều trị */}
-                                <TextField
-                                    label="Điều trị"
-                                    variant="outlined"
-                                    fullWidth
-                                    multiline
-                                    rows={4}
-                                    name="treatment"
-                                    value={formData.treatment}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                />
-
-                                <TextField
-                                    label="Ngày ghi nhận"
-                                    variant="outlined"
-                                    type="date"
-                                    fullWidth
-                                    name="record_date"
-                                    value={formData.record_date}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    inputProps={{
-                                        min: new Date().toISOString().split("T")[0], // Giới hạn ngày tối thiểu
-                                    }}
-                                />
-                            </Grid>
-
-                            {/* Cột 2 */}
-                            <Grid item xs={12} sm={6}>
-                                {/* Địa chỉ */}
-                                <TextField
-                                    label="Địa chỉ"
-                                    variant="outlined"
-                                    fullWidth
-                                    name="address"
-                                    value={formData.address || ''}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                />
-
-                                {/* Số điện thoại */}
-                                <TextField
-                                    label="Số điện thoại"
-                                    variant="outlined"
-                                    fullWidth
-                                    name="phone"
-                                    value={formData.phone || ''}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                />
-
-                                {/* Giới tính */}
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel id="gender">Giới tính</InputLabel>
-                                    <Select
-                                        labelId="gender"
-                                        id="gender"
-                                        name="gender"
-                                        value={formData.gender || ''}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <MenuItem value="">
-                                            <em>Chọn giới tính</em>
-                                        </MenuItem>
-                                        <MenuItem value="male">Nam</MenuItem>
-                                        <MenuItem value="female">Nữ</MenuItem>
-                                        <MenuItem value="other">Khác</MenuItem>
-                                    </Select>
-                                </FormControl>
-
-                                {/* Năm sinh */}
-                                <TextField
-                                    label="Năm sinh"
-                                    variant="outlined"
-                                    type="number"
-                                    fullWidth
-                                    name="birth_year"
-                                    value={formData.birth_year || ''}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                />
-
-                                {/* Dịch vụ chính */}
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel id="specialty">Dịch vụ</InputLabel>
-                                    <Select
-                                        labelId="specialty"
-                                        id="specialty"
-                                        name="specialty"
-                                        value={formData.specialty || ''}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <MenuItem value="">
-                                            <em>Chọn dịch vụ</em>
-                                        </MenuItem>
-                                        {specialties.map(specialty => (
-                                            <MenuItem key={specialty.id} value={specialty.name}>
-                                                {specialty.name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-
-                                {/* Dịch vụ phụ */}
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel id="service">Dịch vụ phụ</InputLabel>
-                                    <Select
-                                        labelId="service"
-                                        id="service"
-                                        name="service"
-                                        value={formData.service || ''}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <MenuItem value="">
-                                            <em>Chọn dịch vụ phụ</em>
-                                        </MenuItem>
-                                        {services.map(service => (
-                                            <MenuItem key={service.id} value={service.id}>
-                                                {service.name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-
-                                {/* Số lượng */}
+                            <Grid item xs={6} sx={{ mt: 2 }}>
                                 <TextField
                                     label="Số lượng"
-                                    variant="outlined"
                                     type="number"
-                                    fullWidth
                                     name="quantity"
-                                    value={formData.quantity || ''}
-                                    onChange={handleChange}
-                                    required
-                                    margin="normal"
-                                />
-
-                                {/* Đơn giá */}
-                                <div>
-                                    <TextField
-                                        label="Giá dịch vụ"
-                                        value={
-                                            formData.service
-                                                ? services.find(service => service.id === formData.service)?.price || ''
-                                                : ''
-                                        }
-                                        InputProps={{
-
-                                        }}
-                                        variant="outlined"
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                </div>
-                                {/* Thành tiền */}
-                                <TextField
-                                    label="Thành tiền"
-                                    variant="outlined"
-                                    type="number"
-                                    fullWidth
-                                    name="total_price"
-                                    value={formData.total_price || ''}
-                                    margin="normal"
-                                />
-
-
-                                {/* Đơn thuốc */}
-                                <TextField
-                                    label="Đơn thuốc"
-                                    variant="outlined"
-                                    fullWidth
-                                    multiline
-                                    rows={4}
-                                    name="prescription"
-                                    value={formData.prescription || ''}
-                                    onChange={handleChange}
-                                    margin="normal"
+                                    value={service.quantity}
+                                    onChange={(e) => handleAdditionalServiceChange(index, e)}
                                 />
                             </Grid>
+                            <Grid item xs={6} sx={{ mt: 2 }}>
+                                <TextField
+                                    label="Đơn giá"
+                                    value={service.unit_price}
+                                    readOnly
+                                />
+                            </Grid>
+                            <Grid item xs={6} >
+                                <TextField
+                                    label="Thành tiền"
+                                    value={service.total_price}
+                                    readOnly
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <IconButton title="Xóa Dịch Vụ Phụ" type="button" color="primary" variant="contained" onClick={() => removeAdditionalService(index)}><DeleteIcon/></IconButton>
+                            </Grid>
                         </Grid>
+                    </Grid>
+                ))}
 
-                    </form>
-                </DialogContent>
+                <Grid item xs={12} sx={{ mt: 2 }} >
+                    <TextField
+                        label="Tổng thành tiền"
+                        value={totalAmount}
+                        readOnly
+                        fullWidth
+                    />
+                </Grid>
+
+                {/* Đơn thuốc */}
+                <Grid item xs={12}>
+                    <TextField
+                        label="Đơn thuốc"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        name="prescription"
+                        value={formData.prescription || ''}
+                        onChange={handleChange}
+                        margin="normal"
+                    />
+                </Grid>
+            </Grid>
+        </Grid>
+    </form>
+</DialogContent>
                 <DialogActions>
                     <form onSubmit={handleSubmit}>
                         {/* Các input trong form */}
                         <DialogActions>
-                            <Button onClick={() => setShowForm(false)} color="secondary">
+                            <Button onClick={() => setShowForm(false)} variant="contained" color="secondary">
                                 Hủy
                             </Button>
-                            <Button type="submit" color="primary">
+                            <Button type="submit" variant="contained" color="primary">
                                 {editingRecord ? 'Cập nhật' : 'Thêm'} Bệnh án
                             </Button>
                         </DialogActions>

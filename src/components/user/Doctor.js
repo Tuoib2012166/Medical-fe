@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Box, Container } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Box, Container, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import Sidebar from './sidebar'; // Sidebar nếu cần
 import '../../assets/css/doctorList.css'; // Tùy chọn nếu bạn cần thêm CSS tùy chỉnh
 
 function DoctorList() {
     const [doctors, setDoctors] = useState([]);
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
+    const [selectedSpecialty, setSelectedSpecialty] = useState(''); // Trạng thái lưu dịch vụ chuyên môn đã chọn
+    const [specialties, setSpecialties] = useState([]); // Trạng thái lưu danh sách dịch vụ chuyên môn
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -14,6 +17,9 @@ function DoctorList() {
             try {
                 const response = await axios.get('http://localhost:8080/doctors');
                 setDoctors(response.data);
+                setFilteredDoctors(response.data); // Khởi tạo danh sách bác sĩ lọc
+                const specialtiesSet = new Set(response.data.map(doctor => doctor.specialty_name));
+                setSpecialties([...specialtiesSet]); // Lấy tất cả các dịch vụ chuyên môn duy nhất
             } catch (error) {
                 console.error('Error fetching doctors:', error);
             }
@@ -24,9 +30,20 @@ function DoctorList() {
 
     // Hàm xử lý khi nhấn vào bác sĩ
     const handleDoctorClick = (doctor) => {
-    navigate(`/${doctor.fullname.replace(/ /g, '-').toLowerCase()}`);
-};
+        navigate(`/${doctor.fullname.replace(/ /g, '-').toLowerCase()}`);
+    };
 
+    // Hàm lọc bác sĩ theo dịch vụ chuyên môn
+    const handleSpecialtyChange = (event) => {
+        setSelectedSpecialty(event.target.value);
+
+        if (event.target.value === '') {
+            setFilteredDoctors(doctors); // Nếu không chọn dịch vụ chuyên môn, hiển thị tất cả bác sĩ
+        } else {
+            const filtered = doctors.filter(doctor => doctor.specialty_name === event.target.value);
+            setFilteredDoctors(filtered); // Lọc bác sĩ theo dịch vụ chuyên môn
+        }
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -34,9 +51,30 @@ function DoctorList() {
                 <Typography variant="h4" sx={{ textAlign: 'center', my: 4 }}>
                     Danh Sách Bác Sĩ
                 </Typography>
+                
+                {/* Dropdown lọc theo dịch vụ chuyên môn */}
+                <FormControl fullWidth sx={{ mb: 4, maxWidth: 390, width: '100%' }}>
+                    <InputLabel id="specialty-select-label">Chọn Dịch Vụ Chuyên Môn</InputLabel>
+                    <Select
+                        labelId="specialty-select-label"
+                        id="specialty-select"
+                        value={selectedSpecialty}
+                        label="Chọn Dịch Vụ Chuyên Môn"
+                        onChange={handleSpecialtyChange}
+                    >
+                        <MenuItem value="">Tất cả</MenuItem>
+                        {specialties.map((specialty, index) => (
+                            <MenuItem key={index} value={specialty}>
+                                {specialty}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+
+                {/* Grid chứa danh sách bác sĩ */}
                 <Grid container spacing={3}>
-                    {doctors.map((doctor, index) => (
-                        <Grid item xs={12} sm={6} md={4} key={index}>
+                    {filteredDoctors.map((doctor, index) => (
+                        <Grid item xs={12} sm={6} md={4} key={index}> 
                             <Card onClick={() => handleDoctorClick(doctor)} sx={{ cursor: 'pointer' }}>
                                 <CardActionArea>
                                     <CardMedia

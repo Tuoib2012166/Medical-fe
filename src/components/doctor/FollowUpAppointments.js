@@ -127,7 +127,7 @@ const FollowUpAppointments = () => {
     return (
         <div>
             <h3>Lịch tái khám</h3>
-            <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
+            <Button variant="contained"  color="primary" onClick={() => setOpenDialog(true)}>
                 Thêm lịch tái khám
             </Button>
 
@@ -152,7 +152,7 @@ const FollowUpAppointments = () => {
                                 <TableCell>{appointment.time}</TableCell>
                                 <TableCell>{appointment.notes}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleEdit(appointment)} color="primary" title="Sửa">
+                                    <IconButton onClick={() => handleEdit(appointment)} color="primary" variant="contained" title="Sửa">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton
@@ -161,6 +161,7 @@ const FollowUpAppointments = () => {
                                                 handleDelete(appointment.id);
                                             }
                                         }}
+                                        variant="contained"
                                         color="secondary"
                                         title="Xóa"
                                     >
@@ -271,10 +272,10 @@ const FollowUpAppointments = () => {
                         />
 
                         <DialogActions>
-                            <Button onClick={handleCloseDialog} color="primary">
+                            <Button onClick={handleCloseDialog} variant="contained" color="secondary">
                                 Hủy
                             </Button>
-                            <Button type="submit" color="primary">
+                            <Button type="submit" variant="contained" color="primary">
                                 {isEditing ? 'Cập nhật' : 'Thêm'}
                             </Button>
                         </DialogActions>
