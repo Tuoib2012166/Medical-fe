@@ -77,7 +77,9 @@ const SpecialtyList = () => {
             if (!isService & editingItem?.id) {
                 method = "put"
                 url = `http://localhost:8080/specialties${editingItem ? `/${editingItem.id}` : ''}`;
-            } else {
+            }
+            
+            if (!!editingItem & !isService) {
                 method = "post"
                 url = `http://localhost:8080/specialties`;
             }
