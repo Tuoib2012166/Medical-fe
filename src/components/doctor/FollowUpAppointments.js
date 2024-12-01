@@ -31,7 +31,7 @@ const FollowUpAppointments = () => {
     useEffect(() => {
         const fetchBookedTimes = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`);
+                const response = await axios.get(`http://localhost:8080/appointments?doctorId=${user.profile.id}`);
                 const hours = response.data.map(i => i.hour);
                 const patientFromAppt = response.data.map(x => ({ appointment_id: x.id, fullname: x.fullname, patient_id: x.user_id }))
 
