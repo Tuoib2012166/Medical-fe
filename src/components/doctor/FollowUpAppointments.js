@@ -29,13 +29,11 @@ const FollowUpAppointments = () => {
     }, []);
 
     useEffect(() => {
-        const fetchBookedTimes = async () => {
+        const fetchPatients = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/appointments?doctorId=${user.profile.id}`);
-                const hours = response.data.map(i => i.hour);
                 const patientFromAppt = response.data.map(x => ({ appointment_id: x.id, fullname: x.fullname, patient_id: x.user_id }))
 
-                setBookedTimes(hours);
                 setPatients(patientFromAppt);
             } catch (error) {
                 console.error('Error fetching booked times:', error);
@@ -43,9 +41,26 @@ const FollowUpAppointments = () => {
         };
 
         if (form.followUpDate) {
-            fetchBookedTimes();
+            fetchPatients();
         }
     }, [form.followUpDate]);
+
+    useEffect(() => {
+        const fetchBookedTimes = async () => {
+          try {
+            const response = await axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user?.profile.id}`);
+            const hours = response.data.map(i => i.hour);
+            setBookedTimes(hours);
+          } catch (error) {
+            console.error('Error fetching booked times:', error);
+          }
+        };
+    
+        if (form.followUpDate) {
+            fetchBookedTimes();
+        }
+      }, [form.followUpDate]);
+    
 
     const fetchAppointments = async () => {
         try {

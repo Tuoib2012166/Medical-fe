@@ -173,12 +173,15 @@ const MedicalRecordList = () => {
 
 
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (appt_id, record_id) => {
         try {
-            await axios.delete(`http://localhost:8080/medical-records/${id}`);
+            await axios.delete(`http://localhost:8080/medical-records/${record_id}`);
+            await axios.delete(`http://localhost:8080/appointments/${appt_id}`);
             toast.success('Xóa bệnh án thành công');
             fetchRecords();
         } catch (error) {
+
+            
             toast.error('Không thể xóa bệnh án');
         }
     };
@@ -208,7 +211,7 @@ const MedicalRecordList = () => {
 
         if (name === 'appointment_id') {
             const patient = patients.find(x => x.appointment_id == value);
-            setFormData(patient);
+            setFormData({...formData, ...patient, appointment_id: value});
         } else {
             toast.error('Không tìm thấy thông tin cuộc hẹn của bệnh nhân');
         }
@@ -690,7 +693,7 @@ const MedicalRecordList = () => {
                                         color="secondary"
                                         onClick={() => {
                                             if (window.confirm('Bạn có chắc chắn muốn xóa bệnh án này không?')) {
-                                                handleDelete(record.id);
+                                                handleDelete(record.appointment_id, record.id);
                                             }
                                         }}
                                         title="Xóa"
