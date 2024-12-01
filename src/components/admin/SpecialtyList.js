@@ -59,23 +59,35 @@ const SpecialtyList = () => {
         setOpenDialog(true);
     };
 
-    const handleSubmit = async () => {
-        const data = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-            if (value) data.append(key, value);
-        });
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const url = isService
-                ? `http://localhost:8080/services${editingItem ? `/${editingItem.id}` : ''}`
-                : `http://localhost:8080/specialties${editingItem ? `/${editingItem.id}` : ''}`;
+            let url = "";
+            let method = ""
+            if (isService) {
+                method = "post"
+                url = "http://localhost:8080/services"
 
-            if (editingItem) {
-                await axios.put(url, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+                if (!!editingItem['id']) {
+                    method = "put";
+                    url = "http://localhost:8080/services" + `/${editingItem.id}`
+                }
+            } 
+            
+            if (!isService & editingItem?.id) {
+                method = "put"
+                url = `http://localhost:8080/specialties${editingItem ? `/${editingItem.id}` : ''}`;
             } else {
-                await axios.post(url, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+                method = "post"
+                url = `http://localhost:8080/specialties`;
             }
 
+            await axios({
+                method,
+                url,
+                data: formData
+            });
+            // Refresh data
             const [specialtiesRes, servicesRes] = await Promise.all([
                 axios.get('http://localhost:8080/specialties'),
                 axios.get('http://localhost:8080/services'),
@@ -213,61 +225,63 @@ const SpecialtyList = () => {
                 <DialogTitle>
                     {editingItem ? 'Chỉnh sửa' : 'Thêm'} {isService ? 'Dịch Vụ Phụ' : 'Dịch Vụ Chính'}
                 </DialogTitle>
-                <DialogContent>
-                    {isService && (
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel>Dịch Vụ Chính</InputLabel>
-                            <Select
-                                value={formData.specialty_id}
-                                name="specialty_id"
-                                onChange={handleInputChange}
-                                disabled={!!editingItem}
-                            >
-                                {specialties.map((specialty) => (
-                                    <MenuItem key={specialty.id} value={specialty.id}>
-                                        {specialty.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Tên"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Mô tả"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        required
-                    />
-                    {isService && (
+                <form onSubmit={handleSubmit}>
+                    <DialogContent>
+                        {isService && (
+                            <FormControl fullWidth margin="normal">
+                                <InputLabel>Dịch Vụ Chính</InputLabel>
+                                <Select
+                                    value={formData.specialty_id}
+                                    name="specialty_id"
+                                    onChange={handleInputChange}
+                                    disabled={!!editingItem}
+                                >
+                                    {specialties.map((specialty) => (
+                                        <MenuItem key={specialty.id} value={specialty.id}>
+                                            {specialty.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )}
                         <TextField
                             fullWidth
                             margin="normal"
-                            label="Giá"
-                            name="price"
-                            type="number"
-                            value={formData.price}
+                            label="Tên"
+                            name="name"
+                            value={formData.name}
                             onChange={handleInputChange}
+                            required
                         />
-                    )}
-                    <input type="file" onChange={handleFileChange} />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>Hủy</Button>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>
-                        {editingItem ? 'Lưu' : 'Thêm'}
-                    </Button>
-                </DialogActions>
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Mô tả"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        {isService && (
+                            <TextField
+                                fullWidth
+                                margin="normal"
+                                label="Giá"
+                                name="price"
+                                type="number"
+                                value={formData.price}
+                                onChange={handleInputChange}
+                            />
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDialog(false)}>Hủy</Button>
+                        <Button type="submit" variant="contained" color="primary">
+                            {editingItem ? 'Lưu' : 'Thêm'}
+                        </Button>
+                    </DialogActions>
+                </form>
+
             </Dialog>
         </div>
     );
