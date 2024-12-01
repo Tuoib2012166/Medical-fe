@@ -72,16 +72,14 @@ const SpecialtyList = () => {
                     method = "put";
                     url = "http://localhost:8080/services" + `/${editingItem.id}`
                 }
-            } 
-            
-            if (!isService & editingItem?.id) {
-                method = "put"
-                url = `http://localhost:8080/specialties${editingItem ? `/${editingItem.id}` : ''}`;
-            }
-            
-            if (!!editingItem & !isService) {
-                method = "post"
-                url = `http://localhost:8080/specialties`;
+            } else {
+                if (editingItem?.id) {
+                    method = "put"
+                    url = `http://localhost:8080/specialties${editingItem ? `/${editingItem.id}` : ''}`;
+                } else {
+                    method = "post"
+                    url = `http://localhost:8080/specialties`;
+                }
             }
 
             await axios({
