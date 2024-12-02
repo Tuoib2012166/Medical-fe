@@ -83,7 +83,7 @@ const FollowUpAppointments = () => {
 
     const fetchAppointments = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${form.followUpDate}`, { withCredentials: true });
+            const response = await axios.get(`http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${todayString}`, { withCredentials: true });
 
             setAppointments(response.data);
         } catch (error) {
