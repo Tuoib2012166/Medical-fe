@@ -4,7 +4,7 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Button, TextField, MenuItem, Select, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Snackbar, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useUserStore from '../../store/userStore';
-import { Radio, RadioGroup, FormControlLabel, FormLabel } from '@mui/material';
+import DatePicker from 'react-datepicker';
 
 
 const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" }));
@@ -19,6 +19,7 @@ const FollowUpAppointments = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const { user } = useUserStore();
+    const [selectedDate, setSelectedDate] = useState(new Date()); // Mặc định là ngày hôm nay
 
     const [bookedTimes, setBookedTimes] = useState([]);
 
@@ -26,7 +27,7 @@ const FollowUpAppointments = () => {
         if (user.profile?.id) {
             fetchAppointments();
         }
-    }, [user?.profile?.id]);
+    }, [user?.profile?.id, selectedDate]);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -83,7 +84,7 @@ const FollowUpAppointments = () => {
 
     const fetchAppointments = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${todayString}`, { withCredentials: true });
+            const response = await axios.get(`http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${selectedDate.toISOString().split("T")[0]}`, { withCredentials: true });
 
             setAppointments(response.data);
         } catch (error) {
@@ -157,14 +158,22 @@ const FollowUpAppointments = () => {
         setOpenDialog(false);
     };
 
-    // Generate available times from 8 AM to 5 PM
-    console.log("bookedTimes: ", patients)
     return (
         <div>
             <h3>Lịch tái khám</h3>
             <Button variant="contained"  color="primary" onClick={() => setOpenDialog(true)}>
                 Thêm lịch tái khám
             </Button>
+            <div>
+                <DatePicker
+                    selected={selectedDate}
+                    onChange={date => setSelectedDate(date)} // Cập nhật ngày khi người dùng chọn
+                    dateFormat="yyyy/MM/dd"
+                    placeholderText="Chọn ngày"
+                    isClearable
+                    
+                />
+            </div>
 
             <TableContainer component={Paper} className="mt-3">
                 <Table>
