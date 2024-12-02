@@ -23,15 +23,15 @@ const FollowUpAppointments = () => {
     const [bookedTimes, setBookedTimes] = useState([]);
 
     useEffect(() => {
-        if (user.profile) {
+        if (user.profile?.id) {
             fetchAppointments();
         }
-    }, []);
+    }, [user?.profile?.id]);
 
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/appointments?doctorId=${user.profile.id}`);
+                const response = await axios.get(`http://localhost:8080/appointments?doctorId=${user.profile?.id}`);
                 const patientFromAppt = response.data.map(x => ({ appointment_id: x.id, fullname: x.fullname, patient_id: x.user_id }))
 
                 setPatients(patientFromAppt);
@@ -40,26 +40,45 @@ const FollowUpAppointments = () => {
             }
         };
 
-        if (form.followUpDate) {
+        if (form.followUpDate && user.profile?.id) {
             fetchPatients();
         }
-    }, [form.followUpDate]);
+    }, [form.followUpDate, user.profile?.id]);
 
+    // useEffect(() => {
+    //     const fetchBookedTimes = async () => {
+    //       try {
+    //         const response = await axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user?.profile?.id}`);
+    //         const hours = response.data.map(i => i.hour);
+    //         setBookedTimes(hours);
+    //       } catch (error) {
+    //         console.error('Error fetching booked times:', error);
+    //       }
+    //     };
+    
+    //     if (form.followUpDate) {
+    //         fetchBookedTimes();
+    //     }
+    //   }, [form.followUpDate, user.profile?.id]);
     useEffect(() => {
         const fetchBookedTimes = async () => {
+          if (!user.profile?.id) {
+            console.warn("Doctor ID is not available yet.");
+            return;
+          }
+    
           try {
-            const response = await axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user?.profile.id}`);
-            const hours = response.data.map(i => i.hour);
-            setBookedTimes(hours);
+            const response = await axios.get(
+              `http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`
+            );
+            setBookedTimes(response.data);
           } catch (error) {
-            console.error('Error fetching booked times:', error);
+            console.error("Error fetching booked times:", error);
           }
         };
     
-        if (form.followUpDate) {
-            fetchBookedTimes();
-        }
-      }, [form.followUpDate]);
+        fetchBookedTimes();
+      }, [user.profile?.id]); 
     
 
     const fetchAppointments = async () => {
@@ -94,6 +113,7 @@ const FollowUpAppointments = () => {
                 patient_id: patient_id
             };
             if (isEditing) {
+                console.log('run inside hre: ', isEditing)
                 await axios.put(`http://localhost:8080/follow-up-appointments/${form.id}`, data, { withCredentials: true });
                 setSnackbarMessage('Lịch tái khám đã được cập nhật');
             } else {
