@@ -123,16 +123,17 @@ function Appointments() {
               {appointments.map((appointment) => (
                 <TableRow
                   key={appointment.id}
-                  sx={{
-                    bgcolor:
-                      appointment.status === "reject"
-                        ? "#edcaca"
-                        : appointment.status === "pending"
-                        ? "#def4ff"
-                        : "#ffffff",
-                  }}
-                >
-                  <TableCell>{appointment.fullname}</TableCell>
+                  style={
+                                    appointment.status === 'reject' 
+                                        ? { backgroundColor: '#edcaca', color: '#800000' } 
+                                        : appointment.status === 'pending' 
+                                        ? { backgroundColor: '#def4ff', color: '#004085' } 
+                                        : appointment.status === 'accept' 
+                                        ? { backgroundColor: '#a1ffaf', color: '#004085' } 
+                                        : {}
+                                }
+             
+                >     <TableCell>{appointment.fullname}</TableCell>
                   <TableCell>{appointment.phone}</TableCell>
                   <TableCell>{appointment.email}</TableCell>
                   <TableCell>{appointment.address}</TableCell>
@@ -150,7 +151,7 @@ function Appointments() {
                   </TableCell>
                   <TableCell>
                     {appointment.status === "accept"
-                      ? "Đã xác nhận"
+                      ? "Đã Khám"
                       : appointment.status === "reject"
                       ? "Đã hủy"
                       : "Đã xác nhận"}

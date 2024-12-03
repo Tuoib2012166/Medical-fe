@@ -350,6 +350,10 @@ function Header() {
           gap="12px"
           bgcolor="#F0F0F0"
           sx={{
+            backgroundImage: "url('img/sidebar/bgLogin2.jpg')", // Đường dẫn ảnh nền
+            backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+            backgroundPosition: "center", // Căn giữa ảnh
+            backgroundRepeat: "no-repeat", // Không lặp ảnh
             borderBottom: "1px solid #e0e0e0",
             borderRadius: "8px",
           }}
@@ -362,16 +366,28 @@ function Header() {
           <Typography
             variant="h6"
             sx={{
+              fontFamily: "Arial, sans-serif",
               fontWeight: "bold",
-              color: "#00bcd4",
+              color: "#000000",
               textTransform: "capitalize",
+              textShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)", // Đổ bóng chữ
             }}
           >
             Xin chào, {userProfile.fullname}
           </Typography>
         </Box>
         <Divider />
-
+        
+        <Box
+          // sx={{
+          //   backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+          //   backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+          //   backgroundPosition: "center", // Căn giữa ảnh
+          //   backgroundRepeat: "no-repeat", // Không lặp ảnh
+          //   borderBottom: "1px solid #e0e0e0",
+          //   borderRadius: "8px",
+          // }}
+        >
         {/* Các menu item */}
         <MenuItem onClick={handleMenuClose} sx={{ ...menuItemStyle, '&:hover': { backgroundColor: '#AFEEEE' } }}>
           <ListAlt sx={iconStyle} />
@@ -407,9 +423,11 @@ function Header() {
             Đăng xuất
           </Typography>
         </MenuItem>
+        </Box>
       </>
     )}
   </Menu>
+  
       </Toolbar>
     </AppBar>
   );

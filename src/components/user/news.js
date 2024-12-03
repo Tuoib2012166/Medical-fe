@@ -17,7 +17,7 @@ const NewsPage = () => {
             <Header />
             <Container maxWidth="lg">
                 <Box my={4}>
-                    <Typography variant="h4" align="center" gutterBottom color="primary">
+                    <Typography variant="h4" sx={{ textAlign: 'center', my: 4, color: "#A52A2A"}}>
                         Kiến Thức Nha Khoa
                     </Typography>
 

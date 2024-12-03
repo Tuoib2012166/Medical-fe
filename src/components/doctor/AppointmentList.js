@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip  } from '@mui/material';
 import DatePicker from 'react-datepicker'; // Import thư viện DatePicker
 import "react-datepicker/dist/react-datepicker.css"; // Import CSS cho DatePicker
 import useUserStore from "../../store/userStore";
@@ -69,16 +69,16 @@ const AppointmentList = () => {
         );
     };
 
-    // const confirmAppointment = async (id) => {
-    //     try {
-    //         await axios.put(`http://localhost:8080/appointments/${id}/confirm`);
-    //         setAppointments(appointments.map(appointment =>
-    //             appointment.id === id ? { ...appointment, status: 'accept' } : appointment
-    //         ));
-    //     } catch (error) {
-    //         console.error('Error confirming appointment:', error);
-    //     }
-    // };
+    const confirmAppointment = async (id) => {
+        try {
+            await axios.put(`http://localhost:8080/appointments/${id}/confirm`);
+            setAppointments(appointments.map(appointment =>
+                appointment.id === id ? { ...appointment, status: 'accept' } : appointment
+            ));
+        } catch (error) {
+            console.error('Error confirming appointment:', error);
+        }
+    };
 
     const rejectAppointment = async (id) => {
     try {
@@ -126,7 +126,7 @@ const AppointmentList = () => {
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Nội dung</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Ngày tạo</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Trạng thái</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Hủy</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Thao tác</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -138,6 +138,8 @@ const AppointmentList = () => {
                                         ? { backgroundColor: '#edcaca', color: '#800000' } 
                                         : appointment.status === 'pending' 
                                         ? { backgroundColor: '#def4ff', color: '#004085' } 
+                                        : appointment.status === 'accept' 
+                                        ? { backgroundColor: '#a1ffaf', color: '#004085' } 
                                         : {}
                                 }
                                  >
@@ -155,31 +157,58 @@ const AppointmentList = () => {
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{new Date(appointment.appointment_date).toLocaleString('en-GB')}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>
                                     {appointment.status === 'accept' 
-                                        ? 'Đã xác nhận' 
+                                        ? 'Đã khám' 
                                         : appointment.status === 'reject' 
                                         ? "Đã hủy"
                                         : "Đã xác nhận"}
                                 </TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>
                                     {appointment.status !== 'accept' && appointment.status !== 'reject' && (
-                                        <FaTimes 
-                                            onClick={() => {
-                                                Swal.fire({
-                                                    title: 'Bạn có chắc chắn muốn hủy lịch hẹn này và gửi gmail thông báo cho bệnh nhân?',
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonText: 'Xác nhận hủy',
-                                                    cancelButtonText: 'Quay lại',
-                                                    reverseButtons: true, // Đảo vị trí các nút
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        rejectAppointment(appointment.id); // Gọi API từ đây
-                                                        Swal.fire('Đã hủy!', 'Lịch hẹn đã bị hủy.', 'success');
-                                                    }
-                                                });
-                                            }} 
-                                            style={{ cursor: 'pointer', color: 'red' }} 
-                                        />
+                                        <>
+                                            {/* Nút Accept */}
+                                            <Tooltip title="Bệnh nhân đã đến khám">
+                                                <FaCheck
+                                                    onClick={() => {
+                                                        Swal.fire({
+                                                            title: 'Bệnh nhân đã đến khám?',
+                                                            icon: 'question',
+                                                            showCancelButton: true,
+                                                            confirmButtonText: 'Xác nhận',
+                                                            cancelButtonText: 'Hủy',
+                                                            reverseButtons: true, // Đảo vị trí các nút
+                                                        }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                confirmAppointment(appointment.id); // Gọi API từ đây
+                                                                Swal.fire('Đã xác nhận!', 'Lịch hẹn đã được xác nhận.', 'success');
+                                                            }
+                                                        });
+                                                    }}
+                                                    style={{ cursor: 'pointer', color: 'green', marginRight: '10px' }}
+                                                />
+                                            </Tooltip>
+
+                                            {/* Nút Reject */}
+                                            <Tooltip title="Hủy lịch hẹn">
+                                                <FaTimes
+                                                    onClick={() => {
+                                                        Swal.fire({
+                                                            title: 'Bạn có chắc chắn muốn hủy lịch hẹn này và gửi email thông báo cho bệnh nhân?',
+                                                            icon: 'warning',
+                                                            showCancelButton: true,
+                                                            confirmButtonText: 'Xác nhận hủy',
+                                                            cancelButtonText: 'Quay lại',
+                                                            reverseButtons: true, // Đảo vị trí các nút
+                                                        }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                rejectAppointment(appointment.id); // Gọi API từ đây
+                                                                Swal.fire('Đã hủy!', 'Lịch hẹn đã bị hủy.', 'success');
+                                                            }
+                                                        });
+                                                    }}
+                                                    style={{ cursor: 'pointer', color: 'red' }}
+                                                />
+                                            </Tooltip>
+                                        </>
                                     )}
                                 </TableCell>
                             </TableRow>

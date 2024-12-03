@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, RadioGroup, FormControl, FormControlLabel, Radio, Typography, CircularProgress, Link } from '@mui/material';
+import { Box, TextField, Button, RadioGroup, FormControl, FormControlLabel, Radio, Typography, CircularProgress, Link } from '@mui/material';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Header from './header';
@@ -83,9 +83,40 @@ const Register = () => {
   return (
     <>
       <Header />
-      <section id="register" style={{ maxWidth: '600px', margin: 'auto', padding: '20px', border: "1px solid #ddd", borderRadius: "8px", padding: 20, marginTop: '50px', marginBottom: '50px' }}>
-        <img src="img/logo.png" alt="Logo" style={{ width: '200px' }} />
-        <h4 align="center">Đăng ký tài khoản</h4>
+      <Box
+      sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+      backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+      backgroundPosition: "center", // Căn giữa ảnh
+      backgroundRepeat: "no-repeat", // Không lặp ảnh
+    }}
+    >
+      {/* Box bao ngoài */}
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: '600px',
+          padding: '20px',
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          backgroundColor: '#F0F0F0',
+          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+          marginTop: '50px', // Cách header ra
+          marginBottom: '50px', // Cách footer ra
+        }}
+      >
+        {/* Logo */}
+        <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
+          <img src="img/logo.png" alt="Logo" style={{ width: '200px' }} />
+        </Box>
+
+        <Typography variant="h4" align="center" gutterBottom>
+          Đăng ký tài khoản
+        </Typography>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
@@ -203,13 +234,14 @@ const Register = () => {
               {loading ? <CircularProgress size={24} /> : 'Đăng ký'}
             </Button>
             <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          <Link href="/login" underline="hover">
-            Bạn đã có tài khoản?
-          </Link>
-        </Typography>
+              <Link href="/login" underline="hover">
+                Bạn đã có tài khoản?
+              </Link>
+            </Typography>
           </div>
         </form>
-      </section>
+      </Box>
+    </Box>
       <Footer />
     </>
   );

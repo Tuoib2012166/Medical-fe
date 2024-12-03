@@ -78,7 +78,7 @@ function Pricelist() {
 
     {/* Bảng giá dịch vụ */}
     <section id="price-list">
-      <Typography variant="h4" sx={{ textAlign: 'center', my: 4 }}>Bảng Giá Dịch Vụ</Typography>
+      <Typography variant="h4" sx={{ textAlign: 'center', my: 4, color: "#A52A2A"}}>Bảng Giá Dịch Vụ</Typography>
       <Paper sx={{ overflow: 'hidden' }}>
         <Table>
           <TableHead>

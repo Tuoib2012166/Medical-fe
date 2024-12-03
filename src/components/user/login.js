@@ -65,68 +65,83 @@ function Login() {
 
   return (
     <>
-      <Header />
-      <Container maxWidth="sm" sx={{ mt: 5, mb: 5,
-      border: "1px solid #ddd",  // Thêm viền
-      borderRadius: "8px",        // Bo góc
-      padding: 3,                 // Thêm padding trong
-    }}>
-        <Box
-          sx={{
-            textAlign: "center",
-            mb: 3,
-          }}
-        >
-          <img src="img/logo.png" alt="Logo" style={{ width: "200px" }} />
+  <Header />
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+      backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+      backgroundPosition: "center", // Căn giữa ảnh
+      backgroundRepeat: "no-repeat", // Không lặp ảnh
+    }}
+  >
+    <Container
+      maxWidth="sm"
+      sx={{
+        mt: 5,
+        mb: 5,
+        border: "1px solid #ddd", // Thêm viền
+        borderRadius: "8px", // Bo góc
+        padding: 3, // Thêm khoảng cách bên trong
+        backgroundColor: "#F0F0F0", // Nền trắng mờ
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", // Hiệu ứng đổ bóng
+  
+      }}
+    >
+      <Box
+        sx={{
+          textAlign: "center",
+          mb: 3,
+        }}
+      >
+        <img src="img/logo.png" alt="Logo" style={{ width: "200px" }} />
+      </Box>
+      <Typography variant="h4" align="center" gutterBottom>
+        Đăng nhập
+      </Typography>
+      <form onSubmit={onFinish}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            label="Tài khoản"
+            name="username"
+            fullWidth
+            required
+            variant="outlined"
+          />
+          <TextField
+            label="Mật khẩu"
+            name="password"
+            type="password"
+            fullWidth
+            required
+            variant="outlined"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={loading}
+            sx={{ py: 1.5 }}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng nhập"}
+          </Button>
         </Box>
-        <Typography variant="h4" align="center" gutterBottom>
-          Đăng nhập
-        </Typography>
-        <form onSubmit={onFinish}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField
-              label="Tài khoản"
-              name="username"
-              fullWidth
-              required
-              variant="outlined"
-            />
-            <TextField
-              label="Mật khẩu"
-              name="password"
-              type="password"
-              fullWidth
-              required
-              variant="outlined"
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={loading}
-              sx={{ py: 1.5 }}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng nhập"}
-            </Button>
-          </Box>
-        </form>
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Bạn chưa có tài khoản?{" "}
-          <Link href="/register" underline="hover">
-            Đăng ký ngay
-          </Link>
-        </Typography>
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          <Link href="/ForgotPassword" underline="hover">
-            Quên mật khẩu?
-          </Link>
-        </Typography>
-      </Container>
-      
-      
-      <Footer />
-    </>
+      </form>
+      <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        Bạn chưa có tài khoản?{" "}
+        <Link href="/register" underline="hover">
+          Đăng ký ngay
+        </Link>
+      </Typography>
+    </Container>
+  </Box>
+  <Footer />
+</>
+
   );
 }
 

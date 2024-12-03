@@ -44,9 +44,22 @@ function DoctorList() {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box 
+        display="flex"
+          alignItems="center"
+          padding="16px"
+          gap="12px"
+          bgcolor="#F0F0F0"
+          sx={{
+            backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+            backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+            backgroundPosition: "center", // Căn giữa ảnh
+            backgroundRepeat: "no-repeat", // Không lặp ảnh
+            borderBottom: "1px solid #e0e0e0",
+            borderRadius: "8px",
+          }}>
             <Container>
-                <Typography variant="h4" sx={{ textAlign: 'center', my: 4 }}>
+                <Typography variant="h4" sx={{ textAlign: 'center', my: 4, color: "#A52A2A"}}>
                     Danh Sách Bác Sĩ
                 </Typography>
                 

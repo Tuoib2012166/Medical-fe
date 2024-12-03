@@ -183,6 +183,32 @@ const GetForm = () => {
 
   return (
     <div sx={{ textAlign: 'center', my: 4 }}>
+      <Box
+      sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+      backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+      backgroundPosition: "center", // Căn giữa ảnh
+      backgroundRepeat: "no-repeat", // Không lặp ảnh
+    }}
+    >
+      {/* Box bao ngoài */}
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: '600px',
+          padding: '20px',
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          backgroundColor: '#F0F0F0',
+          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+          marginTop: '50px', // Cách header ra
+          marginBottom: '50px', // Cách footer ra
+        }}
+      >
             <Typography variant="h4" sx={{ textAlign: 'center', my: 4 }}>Đặt lịch ngay</Typography>
     <section id="contact" className="contact container mb-4">
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -205,7 +231,7 @@ const GetForm = () => {
         />
 
         <TextField
-        label="Gmail"
+        label="Email"
         name="email"
         required
         value={formData.email}
@@ -297,50 +323,55 @@ const GetForm = () => {
             min: today,
           }}
         />
+      <FormControl required>
+        <FormLabel>Chọn giờ</FormLabel>
+        <RadioGroup
+        row
+        name="appointmentTime"
+        value={formData.appointmentTime}
+        onChange={handleChange}
+        sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '10px' }}
+      >
+        {[...Array(10)].map((_, index) => {
+          const hour = 8 + index; // Tạo giờ từ 08:00 đến 17:00
+          const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
 
+          // Chuyển đổi mảng bookedTimes từ dạng [9, 0] thành mảng ['09:00'] để so sánh
+          const bookedTimesFormatted = bookedTimes.map(
+            time => `${time.toString().padStart(2, '0')}:00`
+          );
 
-<FormControl required>
-  <FormLabel>Chọn giờ</FormLabel>
-  <RadioGroup
-    row
-    name="appointmentTime"
-    value={formData.appointmentTime}
-    onChange={handleChange}
-    sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '10px' }}
-  >
-    {[...Array(10)].map((_, index) => {
-      const hour = 8 + index; // Tạo giờ từ 08:00 đến 17:00
-      const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
+          // Kiểm tra nếu giờ hiện tại có trong bookedTimesFormatted
+          const isDisabled = bookedTimesFormatted.includes(timeLabel) && formData.doctorId;
 
-      // Chuyển đổi mảng bookedTimes từ dạng [9, 0] thành mảng ['09:00'] để so sánh
-      const bookedTimesFormatted = bookedTimes.map(
-        time => `${time.toString().padStart(2, '0')}:00`
-      );
-
-      // Kiểm tra nếu giờ hiện tại có trong bookedTimesFormatted
-      const isDisabled = bookedTimesFormatted.includes(timeLabel) && formData.doctorId;
-
-      return (
-        <FormControlLabel
-          key={timeLabel}
-          value={timeLabel}
-          control={<Radio />}
-          label={timeLabel}
-          disabled={isDisabled} // Disable nếu giờ đã có trong `bookedTimesFormatted`
-          sx={{ margin: '5px' }}
-        />
-      );
-    })}
-  </RadioGroup>
-</FormControl>
-
-
-
-
+          return (
+            <Button
+              key={timeLabel}
+              variant={formData.appointmentTime === timeLabel ? "contained" : "outlined"} // Thêm kiểu active
+              color={isDisabled ? "default" : "primary"} // Màu nút nếu không bị disable
+              onClick={() => !isDisabled && handleChange({ target: { name: 'appointmentTime', value: timeLabel } })} // Chỉ cho phép chọn nếu không bị disable
+              disabled={isDisabled} // Disable nếu giờ đã có trong `bookedTimesFormatted`
+              sx={{
+                padding: '10px 20px',
+                margin: '5px',
+                borderRadius: '20px',
+                textTransform: 'none', // Để chữ không bị in hoa
+                fontWeight: 500,
+                boxShadow: isDisabled ? 'none' : '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                '&:hover': {
+                  backgroundColor: isDisabled ? 'transparent' : 'rgba(0, 0, 0, 0.08)',
+                },
+              }}
+            >
+              {timeLabel}
+            </Button>
+          );
+        })}
+      </RadioGroup>
+      </FormControl>
         <TextField
           label="Nội dung"
           name="content"
-          required
           multiline
           rows={4}
           value={formData.content}
@@ -352,6 +383,8 @@ const GetForm = () => {
         </Button>
       </Box>
     </section>
+    </Box>
+    </Box>
     </div>
   );
 };

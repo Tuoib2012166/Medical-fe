@@ -108,6 +108,8 @@ const AppointmentList = () => {
                                         ? { backgroundColor: '#edcaca', color: '#800000' } 
                                         : appointment.status === 'pending' 
                                         ? { backgroundColor: '#def4ff', color: '#004085' } 
+                                        : appointment.status === 'accept' 
+                                        ? { backgroundColor: '#a1ffaf', color: '#004085' } 
                                         : {}
                                 }
                                  >
@@ -125,7 +127,7 @@ const AppointmentList = () => {
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>{new Date(appointment.appointment_date).toLocaleString('en-GB')}</TableCell>
                                 <TableCell className={checkForDuplicates(appointment, index) ? 'highlight' : ''}>
                                     {appointment.status === 'accept' 
-                                        ? 'Đã xác nhận' 
+                                        ? 'Đã khám' 
                                         : appointment.status === 'reject' 
                                         ? "Đã hủy"
                                         : "Đã xác nhận"}
