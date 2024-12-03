@@ -41,7 +41,7 @@ function FollowUpAppointments() {
   return (
     <div>
       <Header />
-      <Container>
+      <Container maxWidth="xl">
         <Box mb={4}>
           <Typography
             variant="h4"
@@ -57,7 +57,8 @@ function FollowUpAppointments() {
           sx={{
             boxShadow: 3,
             borderRadius: 2,
-            overflow: "hidden",
+            overflowX: "auto",  // Cho phép cuộn ngang
+            maxWidth: "100%",  // Đảm bảo bảng không vượt quá màn hình
           }}
         >
           <Table>

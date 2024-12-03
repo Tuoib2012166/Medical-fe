@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, RadioGroup, FormControl, FormControlLabel, Radio, CircularProgress } from '@mui/material';
+import { TextField, Button, RadioGroup, FormControl, FormControlLabel, Radio, Typography, CircularProgress, Link } from '@mui/material';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Header from './header';
 import Footer from './footer';
 import '../../assets/css/login.css';
@@ -10,6 +11,7 @@ const Register = () => {
     username: '',
     fullname: '',
     phone: '',
+    email: '',
     address: '',
     gender: 1,
     birthYear: '',
@@ -18,6 +20,7 @@ const Register = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Hàm xử lý thay đổi của từng input
   const handleInputChange = (e) => {
@@ -62,6 +65,9 @@ const Register = () => {
           icon: 'success',
           title: 'Đăng ký thành công',
           text: 'Bạn có thể đăng nhập ngay bây giờ!',
+        }).then(() => {
+          // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
+          navigate('/login'); // Điều hướng tới trang đăng nhập
         });
       })
       .catch(error => {
@@ -77,9 +83,9 @@ const Register = () => {
   return (
     <>
       <Header />
-      <section id="register" style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
+      <section id="register" style={{ maxWidth: '600px', margin: 'auto', padding: '20px', border: "1px solid #ddd", borderRadius: "8px", padding: 20, marginTop: '50px', marginBottom: '50px' }}>
         <img src="img/logo.png" alt="Logo" style={{ width: '200px' }} />
-        <h4 >Đăng ký tài khoản</h4>
+        <h4 align="center">Đăng ký tài khoản</h4>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
@@ -110,6 +116,17 @@ const Register = () => {
               label="Số điện thoại"
               name="phone"
               value={formData.phone}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              label="Email"
+              name="email"
+              value={formData.email}
               onChange={handleInputChange}
               fullWidth
               required
@@ -185,6 +202,11 @@ const Register = () => {
             >
               {loading ? <CircularProgress size={24} /> : 'Đăng ký'}
             </Button>
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+          <Link href="/login" underline="hover">
+            Bạn đã có tài khoản?
+          </Link>
+        </Typography>
           </div>
         </form>
       </section>

@@ -32,6 +32,14 @@ function Header() {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const showLoginPrompt = () => {
     Swal.fire({
       title: 'Bạn chưa đăng nhập',
@@ -115,6 +123,9 @@ function Header() {
       <MenuItem component={Link} to="/doctorList" sx={menuItemStyle}>
         <AccountBox sx={iconStyle} /> Thông tin bác sĩ
       </MenuItem>
+      <MenuItem component={Link} to="/doctorList" sx={menuItemStyle}>
+        <AccountBox sx={iconStyle} /> Kiến thức nha khoa
+      </MenuItem>
       <MenuItem component={Link} to="/AppointmentForm" sx={menuItemStyle} onClick={(e) => {
         if (!isUserLoggedIn) {
           e.preventDefault();
@@ -132,7 +143,7 @@ function Header() {
   );
 
   return (
-    <AppBar position="static" className="app-bar" sx={{ backgroundColor: '#1E90FF', boxShadow: 3 }}>
+    <AppBar position="static" className="app-bar" sx={{ backgroundColor: '#E8E8E8', boxShadow: 3 }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/" style={{ display: 'inline-block' }}>
@@ -202,6 +213,22 @@ function Header() {
                 }}
               >
                 Thông tin bác sĩ
+              </Button>
+
+              <Button
+                component={Link}
+                to="/News"
+                startIcon={<AccountBox />}
+                sx={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#00BFFF', color: 'white' },
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                  textTransform: 'none',
+                }}
+              >
+                Kiến thức nha khoa
               </Button>
 
               <Button
@@ -321,7 +348,7 @@ function Header() {
           alignItems="center"
           padding="16px"
           gap="12px"
-          bgcolor="#f2f2f2"
+          bgcolor="#F0F0F0"
           sx={{
             borderBottom: "1px solid #e0e0e0",
             borderRadius: "8px",
@@ -346,25 +373,28 @@ function Header() {
         <Divider />
 
         {/* Các menu item */}
-        <MenuItem onClick={handleMenuClose} sx={menuItemStyle}>
+        <MenuItem onClick={handleMenuClose} sx={{ ...menuItemStyle, '&:hover': { backgroundColor: '#AFEEEE' } }}>
           <ListAlt sx={iconStyle} />
           <Link to="/appointments" style={linkStyle}>
             Danh sách đặt lịch
           </Link>
         </MenuItem>
-        <MenuItem onClick={handleMenuClose} sx={menuItemStyle}>
+
+        <MenuItem onClick={handleMenuClose} sx={{ ...menuItemStyle, '&:hover': { backgroundColor: '#AFEEEE' } }}>
           <AccessTime sx={iconStyle} />
           <Link to="/FollowUpAppointments" style={linkStyle}>
             Lịch tái khám
           </Link>
         </MenuItem>
-        <MenuItem onClick={handleMenuClose} sx={menuItemStyle}>
+
+        <MenuItem onClick={handleMenuClose} sx={{ ...menuItemStyle, '&:hover': { backgroundColor: '#AFEEEE' } }}>
           <MedicalServices sx={iconStyle} />
           <Link to="/MedicalRecords" style={linkStyle}>
             Xem hồ sơ bệnh án
           </Link>
         </MenuItem>
-        <MenuItem onClick={handleMenuClose} sx={menuItemStyle}>
+
+        <MenuItem onClick={handleMenuClose} sx={{ ...menuItemStyle, '&:hover': { backgroundColor: '#AFEEEE' } }}>
           <Person sx={iconStyle} />
           <Link to="/UserForm" style={linkStyle}>
             Thông tin cá nhân

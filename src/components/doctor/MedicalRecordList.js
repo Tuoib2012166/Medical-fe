@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import useUserStore from '../../store/userStore';
 import '../../assets/css/admin/MedicalRecordModal.css'; // Đảm bảo đường dẫn đúng
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 import {
     TextField,
@@ -47,7 +48,7 @@ const MedicalRecordList = () => {
         doctor_id: '',
         diagnosis: '',
         treatment: '',
-        record_date: '',
+        record_date: new Date().toISOString().split("T")[0],
         address: '',
         phone: '',
         gender: '',
@@ -58,9 +59,15 @@ const MedicalRecordList = () => {
         unit_price: '',
         total_price: '',
         prescription: '',
+        amount: '',
         services: []
     });
     const [showForm, setShowForm] = useState(false); // Trạng thái hiển thị form
+
+    const getCombinedValue = () => {
+    return `${formData.amount || ''} ${calculateTotalAmount()}`;
+};
+
 
     // Dùng useEffect để fetch dữ liệu khi component được render lần đầu
     useEffect(() => {
@@ -110,12 +117,14 @@ const MedicalRecordList = () => {
     };
     // Assuming you have a function to calculate the total amount
     const calculateTotalAmount = () => {
-        return additionalServices.reduce((total, service) => {
-            // Calculate total for each service
-            const serviceTotal = (service.quantity || 0) * (service.unit_price || 0);
-            return total + serviceTotal;
-        }, 0);
-    };
+    const mainServiceTotal = formData.total_price || 0;
+    const additionalServicesTotal = additionalServices.reduce((total, service) => {
+        return total + (service.quantity || 0) * (service.unit_price || 0);
+    }, 0);
+
+    return mainServiceTotal + additionalServicesTotal;
+};
+    formData.amount = calculateTotalAmount();
 
     // In your render method or functional component
     const totalAmount = calculateTotalAmount();
@@ -177,7 +186,12 @@ const MedicalRecordList = () => {
         try {
             await axios.delete(`http://localhost:8080/medical-records/${record_id}`);
             await axios.delete(`http://localhost:8080/appointments/${appt_id}`);
-            toast.success('Xóa bệnh án thành công');
+            Swal.fire({
+            title: 'Xóa bệnh án thành công!',
+            icon: 'success',
+            }).then(() => {
+                window.location.reload(); // Tải lại trang sau khi thêm thành công
+            });
             fetchRecords();
         } catch (error) {
 
@@ -190,7 +204,7 @@ const MedicalRecordList = () => {
         const { name, value } = e.target;
         if (name === "specialty") {
             const id = specialties.filter(x => x.name === value)[0].id
-            fetchServices(id)
+            fetchServices(id) 
         }
 
 
@@ -202,6 +216,7 @@ const MedicalRecordList = () => {
             const total_price = formData.quantity || 1 * service.price;
             setFormData({ ...formData, [name]: value, total_price, unit_price: service.price, name: service.name })
         }
+        
 
         if (name === 'quantity') {
             const service = services.find(x => x.id === formData.service);
@@ -255,7 +270,13 @@ const MedicalRecordList = () => {
                 url,
                 data: { ...formData, patient_id },
             });
-
+            formData.amount = calculateTotalAmount();
+            Swal.fire({
+            title: 'Thêm bệnh án thành công!',
+            icon: 'success',
+            }).then(() => {
+                window.location.reload(); // Tải lại trang sau khi thêm thành công
+            });
             toast.success(`${editingRecord ? 'Cập nhật' : 'Thêm'} bệnh án thành công`);
             setEditingRecord(null);
             setFormData({
@@ -263,7 +284,7 @@ const MedicalRecordList = () => {
                 doctor_id: '',
                 diagnosis: '',
                 treatment: '',
-                record_date: '',
+                record_date: new Date().toISOString().split("T")[0],
                 address: '',
                 phone: '',
                 gender: '',
@@ -273,7 +294,8 @@ const MedicalRecordList = () => {
                 quantity: '',
                 unit_price: '',
                 total_price: '',
-                prescription: ''
+                prescription: '',
+                amount: ''
             });
             setShowForm(false);
             setAdditionalServices([]);
@@ -421,8 +443,9 @@ const MedicalRecordList = () => {
                                 <TextField
                                     label="Ngày ghi nhận"
                                     variant="outlined"
-                                    type="date"
+                                    
                                     fullWidth
+                                    readOnly
                                     name="record_date"
                                     value={formData.record_date}
                                     onChange={handleChange}
@@ -497,6 +520,7 @@ const MedicalRecordList = () => {
                                             onChange={handleChange}
                                             required
                                             margin="normal"
+                                            inputProps={{ min: 0 }}
                                         />
                                     </Grid>
                                     {/* Đơn giá */}
@@ -566,6 +590,7 @@ const MedicalRecordList = () => {
                                                     name="quantity"
                                                     value={service.quantity}
                                                     onChange={(e) => handleAdditionalServiceChange(index, e)}
+                                                    inputProps={{ min: 0 }}
                                                 />
                                             </Grid>
                                             <Grid item xs={6} sx={{ mt: 2 }}>
@@ -588,13 +613,16 @@ const MedicalRecordList = () => {
                                         </Grid>
                                     </Grid>
                                 ))}
-
-                                <Grid item xs={12} sx={{ mt: 2 }} >
+                                <Grid item xs={12}>
                                     <TextField
                                         label="Tổng thành tiền"
-                                        value={totalAmount}
-                                        readOnly
+                                        variant="outlined"
                                         fullWidth
+                                        multiline
+                                        name="amount"
+                                        value={calculateTotalAmount()}
+                                        onChange={handleChange}
+                                        margin="normal"
                                     />
                                 </Grid>
 
@@ -631,6 +659,7 @@ const MedicalRecordList = () => {
 
                 </DialogActions>
             </Dialog>
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -644,13 +673,14 @@ const MedicalRecordList = () => {
                             <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Số điện thoại</TableCell>
                             <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Giới tính</TableCell>
                             <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Năm sinh</TableCell>
-                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Chuyên Dịch vụ</TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ</TableCell>
                             <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>
-                                <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Dịch vụ phụ</TableCell>
+                                <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white', width: '150px'}}>Dịch vụ phụ</TableCell>
                                 <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Số lượng</TableCell>
                                 <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Đơn giá</TableCell>
                                 <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Thành tiền</TableCell>
                             </TableCell>
+                            <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Tổng tiền (VNĐ)</TableCell>
                             <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Đơn thuốc</TableCell>
                             <TableCell align="center" style={{ backgroundColor: '#007bff', color: 'white' }}>Hành động</TableCell>
                         </TableRow>
@@ -674,10 +704,10 @@ const MedicalRecordList = () => {
                                         <TableBody>
                                             {record?.services?.length && record.services.map((service, index) => (
                                                 <TableRow key={index}>
-                                                    <TableCell align="center">{service.name}</TableCell>
-                                                    <TableCell align="center">{service.quantity}</TableCell>
-                                                    <TableCell align="center">{service.unit_price}</TableCell>
-                                                    <TableCell align="center">{service.total_price}</TableCell>
+                                                    <TableCell align="left" style={{ backgroundColor: '#E0FFFF'}}>{service.name}</TableCell>
+                                                    <TableCell align="left" style={{ backgroundColor: '#AFEEEE'}}>{service.quantity}</TableCell>
+                                                    <TableCell align="left" style={{ backgroundColor: '#E0FFFF'}}>{service.unit_price}</TableCell>
+                                                    <TableCell align="left" style={{ backgroundColor: '#AFEEEE'}}>{service.total_price}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -687,6 +717,7 @@ const MedicalRecordList = () => {
                                 <TableCell align="center">{record.quantity}</TableCell>
                                 <TableCell align="center">{record.unit_price}</TableCell>
                                 <TableCell align="center">{record.total_price}</TableCell> */}
+                                <TableCell align="center">{record.amount}</TableCell>
                                 <TableCell align="center">{record.prescription}</TableCell>
                                 <TableCell align="center">
                                     <IconButton
@@ -741,29 +772,38 @@ const MedicalRecordList = () => {
                                         <tr>
                                             <th>STT</th>
                                             <th>Dịch vụ</th>
+                                            <th>Dịch vụ phụ</th>
                                             <th>Số lượng</th>
                                             <th>Đơn giá</th>
-                                            <th>Giảm giá</th>
                                             <th>Thành tiền</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* Đây là ví dụ, bạn cần map dữ liệu từ backend */}
-                                        <tr>
-                                            <td>1</td>
-                                            <td>{viewingRecord.service_name}</td>
-                                            <td>{viewingRecord.quantity}</td>
-                                            <td>{viewingRecord.unit_price}</td>
-                                            <td>{viewingRecord.discount || 0}</td>
-                                            <td>{viewingRecord.total_price}</td>
-                                        </tr>
+                                        {viewingRecord?.services?.length > 0 ? (
+                                            viewingRecord.services.map((service, index) => (
+                                                <tr key={index}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{viewingRecord.specialty_name || 'N/A'}</td>
+                                                    <td>{service.name || 'N/A'}</td>
+                                                    <td>{service.quantity || 0}</td>
+                                                    <td>{service.unit_price || 0}</td>
+                                                    <td>{service.total_price || 0}</td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" style={{ textAlign: 'center' }}>Không có dữ liệu dịch vụ</td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </table>
-
                                 {/* Đơn thuốc */}
+                                <div className="total_price">
+                                    <p><strong>Tổng tiền:</strong></p>
+                                    <p>{viewingRecord.amount} VNĐ</p>
+                                </div>
                                 <div className="prescription">
-                                    <p><strong>Đơn thuốc</strong></p>
-                                    <p>{viewingRecord.prescription}</p>
+                                    <p><strong>Đơn thuốc:</strong><p>{viewingRecord.prescription}</p></p>
                                 </div>
 
                                 {/* Phim X-Quang */}
@@ -801,70 +841,70 @@ const MedicalRecordList = () => {
 
                                 // Viết nội dung HTML vào cửa sổ mới
                                 newWindow.document.write(`
-            <html>
-            <head>
-                <link rel="stylesheet" href="../../assets/css/admin/MedicalRecordModal.css" /> <!-- Đường dẫn CSS -->
-                <style>
-    @media print {
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        .MuiDialog-container {
-            padding: 16px;
-            border: 1px solid #ccc;
-            font-family: Arial, sans-serif;
-        }
-        /* Căn chỉnh thông tin phòng khám sát trái */
-        .clinic-header {
-            display: flex;
-            align-items: center; /* Căn giữa theo chiều dọc */
-            justify-content: right-start; /* Căn lề trái */
-        }
-        .clinic-header img {
-            max-width: 100px;
-            height: auto;
-            margin-right: 16px;
-        }
-        .clinic-info {
-            text-align: right;
-        }
-        .clinic-info h3 {
-            margin: 0; /* Loại bỏ margin */
-        }
-        .xray-img {
-            max-width: 300px; /* Giảm kích thước ảnh X-Quang */
-            height: auto;     /* Đảm bảo giữ nguyên tỷ lệ ảnh */
-        }
-        .service-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .service-table th, .service-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-        }
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 24px;
-        }
-        .signatures div {
-            text-align: center;
-        }
-        /* Ẩn các nút khi in */
-        .dialog-actions {
-            display: none;
-        }
-    }
-</style>
-            </head>
-            <body>
-                ${modalContent} <!-- Nội dung modal -->
-            </body>
-            </html>
-        `);
+                                        <html>
+                                        <head>
+                                            <link rel="stylesheet" href="../../assets/css/admin/MedicalRecordModal.css" /> <!-- Đường dẫn CSS -->
+                                            <style>
+                                @media print {
+                                    body {
+                                        margin: 0;
+                                        padding: 0;
+                                    }
+                                    .MuiDialog-container {
+                                        padding: 16px;
+                                        border: 1px solid #ccc;
+                                        font-family: Arial, sans-serif;
+                                    }
+                                    /* Căn chỉnh thông tin phòng khám sát trái */
+                                    .clinic-header {
+                                        display: flex;
+                                        align-items: center; /* Căn giữa theo chiều dọc */
+                                        justify-content: right-start; /* Căn lề trái */
+                                    }
+                                    .clinic-header img {
+                                        max-width: 100px;
+                                        height: auto;
+                                        margin-right: 16px;
+                                    }
+                                    .clinic-info {
+                                        text-align: right;
+                                    }
+                                    .clinic-info h3 {
+                                        margin: 0; /* Loại bỏ margin */
+                                    }
+                                    .xray-img {
+                                        max-width: 300px; /* Giảm kích thước ảnh X-Quang */
+                                        height: auto;     /* Đảm bảo giữ nguyên tỷ lệ ảnh */
+                                    }
+                                    .service-table {
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                    }
+                                    .service-table th, .service-table td {
+                                        border: 1px solid #ccc;
+                                        padding: 8px;
+                                        text-align: left;
+                                    }
+                                    .signatures {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        margin-top: 24px;
+                                    }
+                                    .signatures div {
+                                        text-align: center;
+                                    }
+                                    /* Ẩn các nút khi in */
+                                    .dialog-actions {
+                                        display: none;
+                                    }
+                                }
+                            </style>
+                                        </head>
+                                        <body>
+                                            ${modalContent} <!-- Nội dung modal -->
+                                        </body>
+                                        </html>
+                                    `);
 
                                 newWindow.document.close();
                                 newWindow.print(); // Kích hoạt in

@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import Dashboard from '../doctor/Dashboard';
 import MedicalRecordList from '../doctor/MedicalRecordList';
 import FollowUpAppointments from './FollowUpAppointments';
+import PatientList from './PatientList';
 import AppointmentList from './AppointmentList';
 
 const AdminPage = () => {
@@ -54,6 +55,7 @@ const AdminPage = () => {
                         <Route path="/" element={<Dashboard />} />
                         <Route path="medical-records" element={<MedicalRecordList />} />
                         <Route path="appointments" element={<AppointmentList />} />
+                        <Route path="PatientList" element={<PatientList />} />
                         <Route path="follow-up-appointments" element={<FollowUpAppointments />} />
                     </Routes>
                 </div>

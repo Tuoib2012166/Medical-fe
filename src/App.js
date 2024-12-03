@@ -28,6 +28,7 @@ import DoctorDetail from './components/user/doctors/DoctorDetail';
 import UserForm from './components/user/UserForm';
 import MedicalRecords from './components/user/MedicalRecords';
 import FollowUpAppointments from './components/user/FollowUpAppointments';
+import ForgotPassword from './components/user/ForgotPassword';
 
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
           <Route path="/MedicalRecords" element={<MedicalRecords />} />
           <Route path="/FollowUpAppointments" element={<FollowUpAppointments />} />
           <Route path="/:doctorName" element={<DoctorDetail />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
         </Routes>
         <TopScroll />
       </div>

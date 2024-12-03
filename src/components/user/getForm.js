@@ -40,7 +40,9 @@ const GetForm = () => {
           userId: response.data.profile.id,
           fullname: response.data.profile.fullname,
           phone: response.data.profile.phone,
+          email: response.data.profile.email,
           address: response.data.profile.address
+          
         }));
       } catch (error) {
         // Handle error here
@@ -67,17 +69,22 @@ const GetForm = () => {
   }, []);
 
   useEffect(() => {
-    const fetchUniqueAppointments = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/appointments/appointmenthavebook');
-        setUniqueAppointments(response.data);
-      } catch (error) {
-        console.error('Error fetching unique appointments:', error);
-      }
-    };
+  const fetchUniqueAppointments = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/appointments/appointmenthavebook');
+      
+      // Filter appointments with status 'pending'
+      const filteredAppointments = response.data.filter(appointment => appointment.status === 'pending');
+      
+      setUniqueAppointments(filteredAppointments);
+    } catch (error) {
+      console.error('Error fetching unique appointments:', error);
+    }
+  };
 
-    fetchUniqueAppointments();
-  }, []);
+  fetchUniqueAppointments();
+}, []);
+
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -123,6 +130,7 @@ const GetForm = () => {
         setFormData({
           fullname: '',
           phone: '',
+          email: '',
           address: '',
           gender: '',
           birthYear: '',
@@ -174,7 +182,7 @@ const GetForm = () => {
   }, [formData.appointmentDate, formData.doctorId]);
 
   return (
-    <div>
+    <div sx={{ textAlign: 'center', my: 4 }}>
             <Typography variant="h4" sx={{ textAlign: 'center', my: 4 }}>Đặt lịch ngay</Typography>
     <section id="contact" className="contact container mb-4">
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -195,6 +203,15 @@ const GetForm = () => {
           value={formData.phone}
           onChange={handleChange}
         />
+
+        <TextField
+        label="Gmail"
+        name="email"
+        required
+        value={formData.email}
+        onChange={handleChange}
+        fullWidth
+      />
 
         <TextField
           label="Địa chỉ"

@@ -6,6 +6,7 @@ import {
     IconButton, Tooltip, MenuItem, Select, InputLabel, FormControl
 } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const SpecialtyList = () => {
     const [specialties, setSpecialties] = useState([]);
@@ -94,7 +95,12 @@ const SpecialtyList = () => {
             ]);
             setSpecialties(specialtiesRes.data);
             setServices(servicesRes.data);
-
+            Swal.fire({
+            title: 'Thêm dịch vụ thành công!',
+            icon: 'success',
+            }).then(() => {
+            window.location.reload(); // Tải lại trang sau khi thêm thành công
+            });
             setOpenDialog(false);
             setEditingItem(null);
         } catch (error) {

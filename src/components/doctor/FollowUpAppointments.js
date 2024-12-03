@@ -5,7 +5,7 @@ import { Button, TextField, MenuItem, Select, InputLabel, FormControl, Table, Ta
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useUserStore from '../../store/userStore';
 import DatePicker from 'react-datepicker';
-
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" }));
 const todayString = today.toISOString().split("T")[0]; // "YYYY-MM-DD" format
@@ -83,14 +83,26 @@ const FollowUpAppointments = () => {
     
 
     const fetchAppointments = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${selectedDate.toISOString().split("T")[0]}`, { withCredentials: true });
+    try {
+        // Kiểm tra nếu selectedDate có giá trị, thêm tham số ngày vào API
+        const dateToFetch = selectedDate ? selectedDate.toISOString().split("T")[0] : '';
+        const url = selectedDate
+            ? `http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${dateToFetch}`
+            : `http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}`;
+        
+        const response = await axios.get(url, { withCredentials: true });
+        setAppointments(response.data);
+    } catch (error) {
+        console.error('Error fetching follow-up appointments:', error);
+    }
+};
 
-            setAppointments(response.data);
-        } catch (error) {
-            console.error('Error fetching follow-up appointments:', error);
-        }
-    };
+useEffect(() => {
+    if (user.profile?.id) {
+        fetchAppointments();
+    }
+}, [user?.profile?.id, selectedDate]);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -119,7 +131,13 @@ const FollowUpAppointments = () => {
                 setSnackbarMessage('Lịch tái khám đã được cập nhật');
             } else {
                 await axios.post('http://localhost:8080/follow-up-appointments', data, { withCredentials: true });
-                setSnackbarMessage('Lịch tái khám đã được thêm mới');
+                
+                Swal.fire({
+                title: 'Lịch tái khám đã được thêm mới!',
+                icon: 'success',
+                }).then(() => {
+                    window.location.reload(); // Tải lại trang sau khi thêm thành công
+                });
             }
 
 
@@ -143,7 +161,13 @@ const FollowUpAppointments = () => {
         try {
             await axios.delete(`http://localhost:8080/follow-up-appointments/${id}`, { withCredentials: true });
             fetchAppointments();
-            setSnackbarMessage('Lịch tái khám đã được xóa');
+            
+            Swal.fire({
+            title: 'Lịch tái khám đã được xóa!',
+            icon: 'success',
+            }).then(() => {
+                window.location.reload(); // Tải lại trang sau khi thêm thành công
+            });
             setOpenSnackbar(true);
         } catch (error) {
             console.error('Error deleting follow-up appointment:', error);
@@ -166,13 +190,12 @@ const FollowUpAppointments = () => {
             </Button>
             <div>
                 <DatePicker
-                    selected={selectedDate}
-                    onChange={date => setSelectedDate(date)} // Cập nhật ngày khi người dùng chọn
-                    dateFormat="yyyy/MM/dd"
-                    placeholderText="Chọn ngày"
-                    isClearable
-                    
-                />
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)} // Khi xóa ngày, date sẽ là null
+                dateFormat="yyyy/MM/dd"
+                placeholderText="Chọn ngày"
+                isClearable
+            />
             </div>
 
             <TableContainer component={Paper} className="mt-3">
@@ -268,9 +291,10 @@ const FollowUpAppointments = () => {
                             fullWidth
                             margin="normal"
                             InputLabelProps={{ shrink: true }}
+                            inputProps={{
+                                min: new Date().toISOString().split("T")[0], // Chỉ cho phép chọn ngày từ hôm nay trở đi
+                            }}
                         />
-
-
                         <FormControl fullWidth margin="normal" required>
                             <InputLabel>Chọn giờ</InputLabel>
                             <Select

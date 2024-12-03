@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Box, Container, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import Sidebar from './sidebar'; // Sidebar nếu cần
-import '../../assets/css/doctorList.css'; // Tùy chọn nếu bạn cần thêm CSS tùy chỉnh
 
 function DoctorList() {
     const [doctors, setDoctors] = useState([]);
@@ -74,7 +72,7 @@ function DoctorList() {
                 {/* Grid chứa danh sách bác sĩ */}
                 <Grid container spacing={3}>
                     {filteredDoctors.map((doctor, index) => (
-                        <Grid item xs={12} sm={6} md={4} key={index}> 
+                        <Grid item xs={2.4} sm={2.4} md={2.4} key={index}> 
                             <Card onClick={() => handleDoctorClick(doctor)} sx={{ cursor: 'pointer' }}>
                                 <CardActionArea>
                                     <CardMedia

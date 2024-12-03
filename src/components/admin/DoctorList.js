@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, TextField, Select, MenuItem, Grid, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { MdEdit, MdDelete } from 'react-icons/md';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 const DoctorList = () => {
     const [doctors, setDoctors] = useState([]);
     const [specialties, setSpecialties] = useState([]);
@@ -83,6 +84,10 @@ const DoctorList = () => {
             await axios.post('http://localhost:8080/doctors', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
+            Swal.fire({
+            title: 'Thêm bác sĩ thành công!',
+            icon: 'success',
+            })
             fetchDoctors(); // Làm mới danh sách
             setShowAddForm(false);
         } catch (error) {

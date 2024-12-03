@@ -63,11 +63,10 @@ function Footer() {
                     </div>
                     {/* Cột Opening Hours */}
                     <div className="col-lg-4 col-md-6 mb-4">
-                        <h5 className="mb-3">Opening Hours</h5>
+                        <h5 className="mb-3">Giờ làm việc</h5>
                         <table className="table">
                             <tbody>
-                                <tr><td>Mon - Fri:</td><td>8:00 - 17:00</td></tr>
-                                <tr><td>Sat - Sun:</td><td>8:00 - 17:00</td></tr>
+                                <tr><td>Thứ 2 - Chủ Nhật:</td><td>8:00 - 17:00</td></tr>
                             </tbody>
                         </table>
                     </div>

@@ -66,7 +66,11 @@ function Login() {
   return (
     <>
       <Header />
-      <Container maxWidth="sm" sx={{ mt: 5, mb: 5 }}>
+      <Container maxWidth="sm" sx={{ mt: 5, mb: 5,
+      border: "1px solid #ddd",  // Thêm viền
+      borderRadius: "8px",        // Bo góc
+      padding: 3,                 // Thêm padding trong
+    }}>
         <Box
           sx={{
             textAlign: "center",
@@ -113,7 +117,13 @@ function Login() {
             Đăng ký ngay
           </Link>
         </Typography>
+        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+          <Link href="/ForgotPassword" underline="hover">
+            Quên mật khẩu?
+          </Link>
+        </Typography>
       </Container>
+      
       
       <Footer />
     </>

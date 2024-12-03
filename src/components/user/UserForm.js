@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react';
 import { TextField, Button, MenuItem, Container, Box, Typography } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Header from './header';
 import Footer from './footer';
 import useUserStore from '../../store/userStore';
-import dayjs from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
@@ -25,11 +22,15 @@ const validationSchema = yup.object({
   address: yup.string().required('Địa chỉ là bắt buộc'),
   gender: yup.string().required('Giới tính là bắt buộc'),
   birth_year: yup
-    .date()
-    .max(new Date(), 'Năm sinh không hợp lệ') // Birth year should not be in the future
-    .min('1900-01-01', 'Năm sinh không hợp lệ') // Optional: Set a lower boundary for birth year
-    .required('Năm sinh là bắt buộc')
-    .nullable(),
+    .number()
+    .typeError('Năm sinh phải là số')
+    .max(new Date().getFullYear(), 'Năm sinh không hợp lệ')
+    .min(1900, 'Năm sinh không hợp lệ')
+    .required('Năm sinh là bắt buộc'),
+  email: yup
+    .string()
+    .email('Gmail không hợp lệ')
+    .required('Gmail là bắt buộc'),
 });
 
 const UserForm = ({ onSubmit }) => {
@@ -40,7 +41,8 @@ const UserForm = ({ onSubmit }) => {
       phone: user?.profile?.phone || '',
       address: user?.profile?.address || '',
       gender: user?.profile?.gender ? 'Nam' : 'Nữ',
-      birth_year: dayjs(user?.profile?.birth_year || null) || null,
+      birth_year: user?.profile?.birth_year || '',
+      email: user?.profile?.email || '',
     },
     resolver: yupResolver(validationSchema),
   });
@@ -51,7 +53,8 @@ const UserForm = ({ onSubmit }) => {
       setValue('phone', user?.profile?.phone);
       setValue('address', user?.profile?.address);
       setValue('gender', user?.profile?.gender ? 'Nam' : 'Nữ');
-      setValue('birth_year',   null);
+      setValue('birth_year', user?.profile?.birth_year);
+      setValue('email', user?.profile?.email);
     }
   }, [user, setValue]);
 
@@ -62,7 +65,6 @@ const UserForm = ({ onSubmit }) => {
     const requestData = {
       ...data,
       gender: data.gender === 'Nam' ? 1 : 0,
-      birth_year: +data.birth_year,
     };
 
     try {
@@ -71,9 +73,7 @@ const UserForm = ({ onSubmit }) => {
         url,
         data: requestData,
       });
-      toast.success('Cập nhật bệnh án thành công', {
-        autoClose: 3000,
-      });
+      toast.success('Cập nhật thông tin thành công', { autoClose: 3000 });
       console.log('Update successful:', response.data);
     } catch (error) {
       console.error('Error updating user information:', error);
@@ -185,17 +185,35 @@ const UserForm = ({ onSubmit }) => {
             name="birth_year"
             control={control}
             render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Năm sinh"
-                  type="number"
-                  inputProps={{ maxLength: 4 }}
-                  fullWidth
-                  margin="normal"
-                  error={!!errors.birth_year}
-                  helperText={errors.birth_year?.message}
-                  required
-                />
+              <TextField
+                {...field}
+                label="Năm sinh"
+                type="number"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.birth_year}
+                helperText={errors.birth_year?.message}
+                required
+              />
+            )}
+          />
+
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Email"
+                type="email"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                required
+              />
             )}
           />
 

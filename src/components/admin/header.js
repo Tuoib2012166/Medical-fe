@@ -37,8 +37,8 @@ const DoctorHeader = () => {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '0 30px' }}>
         {/* Logo - Bên trái */}
         <Box sx={{ display: 'flex', alignItems: 'center', transition: 'all 0.3s ease' }}>
-          <Typography variant="h6" className="logo-text" sx={{ fontWeight: 'bold', color: '#fff', fontFamily: 'Poppins' }}>
-            Doctor Dashboard
+          <Typography variant="h6" className="logo-text" >
+            Admin Dashboard
           </Typography>
         </Box>
 

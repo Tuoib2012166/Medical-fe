@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
-import { Dashboard as DashboardIcon, MedicalServices as MedicalServicesIcon, EventNote as EventNoteIcon, Schedule as ScheduleIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Dashboard as DashboardIcon, MedicalServices as MedicalServicesIcon, EventNote as EventNoteIcon,People as PeopleIcon, Schedule as ScheduleIcon, Close as CloseIcon } from '@mui/icons-material';
 import '../../assets/css/admin/sidebar.css';
 
 const Sidebar = () => {
@@ -95,6 +95,24 @@ const Sidebar = () => {
                                 </IconButton>
                             </ListItemIcon>
                             <ListItemText primary="Quản trị" />
+                        </ListItem>
+
+                        {/* Quản lý bệnh nhân */}
+                        <ListItem button component={Link} to="/doctor/PatientList" selected={location.pathname === '/admin/patients'}>
+                            <ListItemIcon>
+                                <IconButton sx={{
+                                    fontSize: 28, 
+                                    padding: 1, 
+                                    backgroundColor: '#2196f3', // Blue background
+                                    color: 'white',
+                                    '&:hover': {
+                                        backgroundColor: '#1976d2', // Darker blue on hover
+                                    }
+                                }}>
+                                    <PeopleIcon />
+                                </IconButton>
+                            </ListItemIcon>
+                            <ListItemText primary="Quản lý bệnh nhân" />
                         </ListItem>
 
                         {/* Quản lý bệnh án */}
