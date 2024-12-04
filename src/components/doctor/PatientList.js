@@ -165,7 +165,8 @@ const PatientList = () => {
             <Button variant="contained" color="primary" onClick={() => setShowAddUserForm(!showAddUserForm)}>Thêm bệnh nhân mới</Button>
             
             {/* Dialog thêm người dùng */}
-            <Dialog open={showAddUserForm} onClose={() => setShowAddUserForm(false)}>
+            <Dialog open={showAddUserForm} onClose={() => setShowAddUserForm(false)}
+                >
                 <DialogTitle>Thêm bệnh nhân mới</DialogTitle>
                 <DialogContent>
                     <form onSubmit={handleAddUser}>

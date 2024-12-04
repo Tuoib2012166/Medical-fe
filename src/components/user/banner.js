@@ -27,10 +27,10 @@ const Banner = () => {
             speed={1500}
         >
             <div>
-                <img src="./img/banner/slide1.jpg" alt="banner cua trang chu"  />
+                <img src="./img/banner/slide2.jpg" alt="banner cua trang chu"  />
             </div>
             <div>
-                <img src="./img/banner/slide2.jpg" alt="banner cua trang chu"  />
+                <img src="./img/banner/slide1.jpg" alt="banner cua trang chu"  />
             </div>
             <div>
                 <img src='./img/banner/slide3.jpg' alt="banner cua trang chu"  />

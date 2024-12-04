@@ -23,6 +23,9 @@ const GetForm = () => {
   const [uniqueAppointments, setUniqueAppointments] = useState([]);
   const [bookedTimes, setBookedTimes] = useState([]);
   const isFirstRender = useRef(true);
+  const now = new Date();
+  const currentTime = now.getHours() + ':' + now.getMinutes();
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -114,44 +117,47 @@ const GetForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8080/appointments/book-appointment', formData);
-      if (response.status === 200) {
-        // Sử dụng SweetAlert2 để hiển thị thông báo thành công
-        Swal.fire({
-          title: 'Thành công!',
-          text: 'Bạn đã đặt lịch khám thành công! Vui lòng tới trung tâm đúng ngày và giờ hẹn.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        });
+  e.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:8080/appointments/book-appointment', formData);
+    if (response.status === 200) {
+      // Sử dụng SweetAlert2 để hiển thị thông báo thành công
+      Swal.fire({
+        title: 'Thành công!',
+        text: 'Bạn đã đặt lịch khám thành công! Vui lòng tới trung tâm đúng ngày và giờ hẹn.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then(() => {
+        // Reload lại trang sau khi người dùng nhấn "OK"
+        window.location.reload();
+      });
 
-        // Reset form sau khi gửi thành công
-        setFormData({
-          fullname: '',
-          phone: '',
-          email: '',
-          address: '',
-          gender: '',
-          birthYear: '',
-          content: '',
-          appointmentDate: '',
-          appointmentTime: '',
-          doctorId: '',
-          specialtyId: '',
-          userId: '',
-        });
-      } else {
-        // Thông báo lỗi nếu có vấn đề
-        Swal.fire({
-          title: 'Lỗi!',
-          text: 'Không thể gửi form, vui lòng thử lại!',
-          icon: 'error',
-          confirmButtonText: 'OK',
-        });
-      }
-    } catch (error) {
-      // Xử lý lỗi và hiển thị thông báo lỗi
+      // Reset form (nếu cần trong quá trình thực thi)
+      setFormData({
+        fullname: '',
+        phone: '',
+        email: '',
+        address: '',
+        gender: '',
+        birthYear: '',
+        content: '',
+        appointmentDate: '',
+        appointmentTime: '',
+        doctorId: '',
+        specialtyId: '',
+        userId: '',
+      });
+    }
+  } catch (error) {
+    // Kiểm tra lỗi từ API
+    if (error.response && error.response.status === 400) {
+      Swal.fire({
+        title: 'Lịch hẹn đã tồn tại!',
+        text: 'Lịch hẹn đã tồn tại. Vui lòng chọn thời gian khác!',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
+    } else {
       Swal.fire({
         title: 'Lỗi!',
         text: 'Có lỗi xảy ra khi gửi form, vui lòng thử lại!',
@@ -159,27 +165,50 @@ const GetForm = () => {
         confirmButtonText: 'OK',
       });
     }
-  };
+  }
+};
+
 
   const today = new Date().toISOString().split('T')[0];
   console.log("bookedTimes", bookedTimes);
 
   useEffect(() => {
-    const fetchBookedTimes = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/appointments?today=${formData.appointmentDate}&doctorId=${formData.doctorId}`);
-        const hours = response.data.map(i => i.hour);
-       
-        setBookedTimes(hours);
-      } catch (error) {
-        console.error('Error fetching booked times:', error);
-      }
-    };
-
-    if (formData.appointmentDate) {
-      fetchBookedTimes();
+  const fetchBookedTimes = async () => {
+    if (!formData.doctorId) {
+      console.warn("Doctor ID is not available yet.");
+      return;
     }
-  }, [formData.appointmentDate, formData.doctorId]);
+
+    try {
+      const [resAppointments, resFollowUpAppointments] = await Promise.all([
+        axios.get(`http://localhost:8080/appointments?today=${formData.appointmentDate}&doctorId=${formData.doctorId}`),
+        axios.get(`http://localhost:8080/follow-up-appointments?today=${formData.appointmentDate}&doctorId=${formData.doctorId}`),
+      ]);
+
+      const appointments = resAppointments.data.map((appointment) => ({
+        date: appointment.appointment_date,
+        time: appointment.appointment_time,
+      }));
+
+      const followUpAppointments = resFollowUpAppointments.data.map((followUp) => ({
+        date: followUp.follow_up_date,
+        time: followUp.time,
+      }));
+
+      const combinedBookedTimes = [...appointments, ...followUpAppointments].map((entry) =>
+        `${entry.time.substring(0, 5)}`
+      );
+
+      setBookedTimes(combinedBookedTimes);
+    } catch (error) {
+      console.error("Error fetching booked times:", error);
+    }
+  };
+
+  if (formData.appointmentDate && formData.doctorId) {
+    fetchBookedTimes();
+  }
+}, [formData.appointmentDate, formData.doctorId]);
 
   return (
     <div sx={{ textAlign: 'center', my: 4 }}>
@@ -326,50 +355,47 @@ const GetForm = () => {
       <FormControl required>
         <FormLabel>Chọn giờ</FormLabel>
         <RadioGroup
-        row
-        name="appointmentTime"
-        value={formData.appointmentTime}
-        onChange={handleChange}
-        sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '10px' }}
-      >
-        {[...Array(10)].map((_, index) => {
-          const hour = 8 + index; // Tạo giờ từ 08:00 đến 17:00
-          const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
+          row
+          name="appointmentTime"
+          value={formData.appointmentTime}
+          onChange={handleChange}
+          sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '10px' }}
+        >
+          {[...Array(10)].map((_, index) => {
+            const hour = 8 + index; // Giờ từ 08:00 đến 17:00
+            const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
 
-          // Chuyển đổi mảng bookedTimes từ dạng [9, 0] thành mảng ['09:00'] để so sánh
-          const bookedTimesFormatted = bookedTimes.map(
-            time => `${time.toString().padStart(2, '0')}:00`
-          );
+            // Kiểm tra nếu giờ đã đặt hoặc giờ đã qua
+            const isDisabled = 
+              bookedTimes.includes(timeLabel) || 
+              (formData.appointmentDate === today && hour <= now.getHours());
 
-          // Kiểm tra nếu giờ hiện tại có trong bookedTimesFormatted
-          const isDisabled = bookedTimesFormatted.includes(timeLabel) && formData.doctorId;
-
-          return (
-            <Button
-              key={timeLabel}
-              variant={formData.appointmentTime === timeLabel ? "contained" : "outlined"} // Thêm kiểu active
-              color={isDisabled ? "default" : "primary"} // Màu nút nếu không bị disable
-              onClick={() => !isDisabled && handleChange({ target: { name: 'appointmentTime', value: timeLabel } })} // Chỉ cho phép chọn nếu không bị disable
-              disabled={isDisabled} // Disable nếu giờ đã có trong `bookedTimesFormatted`
-              sx={{
-                padding: '10px 20px',
-                margin: '5px',
-                borderRadius: '20px',
-                textTransform: 'none', // Để chữ không bị in hoa
-                fontWeight: 500,
-                boxShadow: isDisabled ? 'none' : '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  backgroundColor: isDisabled ? 'transparent' : 'rgba(0, 0, 0, 0.08)',
-                },
-              }}
-            >
-              {timeLabel}
-            </Button>
-          );
-        })}
-      </RadioGroup>
+            return (
+              <Button
+                key={timeLabel}
+                variant={formData.appointmentTime === timeLabel ? "contained" : "outlined"}
+                color={isDisabled ? "default" : "primary"}
+                onClick={() => !isDisabled && handleChange({ target: { name: 'appointmentTime', value: timeLabel } })}
+                disabled={isDisabled}
+                sx={{
+                  padding: '10px 20px',
+                  margin: '5px',
+                  borderRadius: '20px',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  boxShadow: isDisabled ? 'none' : '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  '&:hover': {
+                    backgroundColor: isDisabled ? 'transparent' : 'rgba(0, 0, 0, 0.08)',
+                  },
+                }}
+              >
+                {timeLabel}
+              </Button>
+            );
+          })}
+        </RadioGroup>
       </FormControl>
-        <TextField
+     <TextField
           label="Nội dung"
           name="content"
           multiline

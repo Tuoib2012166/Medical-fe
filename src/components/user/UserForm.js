@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Swal from "sweetalert2";
 
 // Validation schema using Yup
 const validationSchema = yup.object({
@@ -73,17 +74,35 @@ const UserForm = ({ onSubmit }) => {
         url,
         data: requestData,
       });
-      toast.success('Cập nhật thông tin thành công', { autoClose: 3000 });
+      Swal.fire({
+              title: "Cập nhật thành công",
+              icon: "success",
+            });
       console.log('Update successful:', response.data);
     } catch (error) {
       console.error('Error updating user information:', error);
-      toast.error('Cập nhật không thành công', { autoClose: 3000 });
+      Swal.fire({
+              title: "Cập nhật thất bại",
+              icon: "success",
+            });
     }
   };
 
   return (
     <div>
       <Header />
+      <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+        backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+        backgroundPosition: "center", // Căn giữa ảnh
+        backgroundRepeat: "no-repeat", // Không lặp ảnh
+      }}
+  >
       <Container
         maxWidth="sm"
         sx={{
@@ -105,7 +124,7 @@ const UserForm = ({ onSubmit }) => {
           }}
           onSubmit={handleSubmit(onFormSubmit)}
         >
-          <Typography variant="h4" mb={2}>
+          <Typography variant="h4" align="center" gutterBottom mb={2}>
             Cập nhật thông tin
           </Typography>
 
@@ -228,6 +247,7 @@ const UserForm = ({ onSubmit }) => {
           </Button>
         </Box>
       </Container>
+      </Box>
       <Footer />
     </div>
   );

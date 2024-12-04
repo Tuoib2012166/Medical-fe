@@ -97,7 +97,7 @@ function Appointments() {
                 {[
                   "Họ và tên",
                   "Số điện thoại",
-                  "Gmail",
+                  "Email",
                   "Địa chỉ",
                   "Giới tính",
                   "Năm sinh",

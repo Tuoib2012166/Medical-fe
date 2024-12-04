@@ -91,7 +91,9 @@ function Header() {
     display: "flex",
     alignItems: "center",
     gap: "10px",
+    color: "#A52A2A",
     padding: "8px 16px",
+    borderRadius: "8px",
     "&:hover": {
       backgroundColor: "#f5f5f5",
       borderRadius: "8px",
@@ -134,11 +136,7 @@ function Header() {
       }}>
         <AccessTime sx={iconStyle} /> Đặt lịch khám
       </MenuItem>
-      {isUserLoggedIn && (
-        <MenuItem sx={menuItemStyle} onClick={handleLogout}>
-          <ExitToApp sx={iconStyle} /> Đăng xuất
-        </MenuItem>
-      )}
+      
     </Box>
   );
 
@@ -154,7 +152,7 @@ function Header() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           {isMobile ? (
             <>
-              <IconButton onClick={() => setMobileMenuOpen(true)} sx={{ color: 'white' }}>
+              <IconButton onClick={() => setMobileMenuOpen(true)} sx={{ color: '000000' }}>
                 <MenuIcon />
               </IconButton>
               <Drawer
@@ -290,14 +288,14 @@ function Header() {
     variant="contained"
     startIcon={<Login />}
     sx={{
-      bgcolor: "#00bcd4",
+      bgcolor: "#CD5C5C",
       color: "#fff",
       padding: { xs: "8px 16px", sm: "10px 20px" }, // Smaller padding on mobile
       fontWeight: "bold",
       borderRadius: "50px",
       width: { xs: "100%", sm: "auto" }, // Full width on small screens, auto width on larger screens
       "&:hover": {
-        bgcolor: "#0097a7",
+        bgcolor: "#F08080",
         boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)",
       },
     }}
@@ -320,7 +318,8 @@ function Header() {
       width: { xs: "100%", sm: "auto" }, // Full width on small screens, auto width on larger screens
       "&:hover": {
         borderColor: "#0097a7",
-        color: "#0097a7",
+        color: "#fff",
+        bgcolor: "#1E90FF",
         boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
       },
     }}

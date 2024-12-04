@@ -306,18 +306,20 @@ const FollowUpAppointments = () => {
                                     const hour = 8 + index; // Generate hours from 08:00 to 17:00
                                     const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
                                     const normalizedSelectedDate = new Date(selectedDate).toISOString().split('T')[0]; // "2024-12-04"
-                                    console.log("normalizedSelectedDate: ", normalizedSelectedDate);
                                     // Lọc `bookedTimes` bằng cách chuẩn hóa `item.date` sang YYYY-MM-DD theo múi giờ địa phương
                                     const bookedTimesForDate = bookedTimes.filter(item => {
                                         const localDate = new Date(item.date).toLocaleDateString('en-CA'); // Chuyển sang định dạng YYYY-MM-DD
                                         return localDate === normalizedSelectedDate; // So sánh ngày
                                     }).map(item => item.time.split(':').slice(0, 2).join(':')); // Lấy giờ và phút từ `item.time`
 
-                                    console.log('bookedTimesForDate:', bookedTimesForDate);
+                                    // Xác định giờ đã trôi qua
+                                    const currentDateTime = new Date();
+                                    const currentHour = currentDateTime.getHours();
+                                    const currentMinute = currentDateTime.getMinutes();
+                                    const isPastTime = normalizedSelectedDate === todayString && (hour < currentHour || (hour === currentHour && currentMinute > 0));
 
-                                    // Check if the current time is booked
-                                    const isDisabled = bookedTimesForDate.includes(timeLabel);
-
+                                    // Check if the current time is booked or past
+                                    const isDisabled = bookedTimesForDate.includes(timeLabel) || isPastTime;
 
                                     return (
                                         <Button
@@ -325,7 +327,7 @@ const FollowUpAppointments = () => {
                                             variant={form.time === timeLabel ? "contained" : "outlined"} // Highlight selected time
                                             color={isDisabled ? "default" : "primary"} // Adjust color
                                             onClick={() => !isDisabled && handleInputChange({ target: { name: 'time', value: timeLabel } })} // Allow only if enabled
-                                            disabled={isDisabled} // Disable if booked
+                                            disabled={isDisabled} // Disable if booked or past
                                             sx={{
                                                 padding: '10px 20px',
                                                 margin: '5px',
@@ -344,9 +346,6 @@ const FollowUpAppointments = () => {
                                 })}
                             </RadioGroup>
                         </FormControl>
-
-
-
                         <TextField
                             label="Ghi chú"
                             name="notes"

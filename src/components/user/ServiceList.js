@@ -63,7 +63,21 @@ function ServiceList() {
             <Typography variant="h4" gutterBottom align="center">
                 Danh Sách Dịch Vụ
             </Typography>
-            <Grid container spacing={2} justifyContent="center">
+            <Grid container spacing={2} justifyContent="center"
+            display="flex"
+            alignItems="center"
+            padding="16px"
+            gap="12px"
+            bgcolor="#F0F0F0"
+            sx={{
+                backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+                backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+                backgroundPosition: "center", // Căn giữa ảnh
+                backgroundRepeat: "no-repeat", // Không lặp ảnh
+                borderBottom: "1px solid #e0e0e0",
+                borderRadius: "8px",
+            }}
+            >
                 {services.map((service, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
                         <Card sx={{ boxShadow: 3, borderRadius: 2, cursor: 'pointer', height: '100%' }} onClick={() => handleServiceClick(service)}>

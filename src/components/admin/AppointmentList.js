@@ -85,7 +85,7 @@ const AppointmentList = () => {
                         <TableRow>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Họ và tên</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Số điện thoại</TableCell>
-                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Gmail</TableCell>
+                            <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Email</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Địa chỉ</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Giới tính</TableCell>
                             <TableCell style={{ backgroundColor: '#007bff', color: 'white' }}>Năm sinh</TableCell>

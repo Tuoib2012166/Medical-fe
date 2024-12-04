@@ -67,7 +67,14 @@ function DoctorDetail() {
       <Box sx={{ padding: 4 }}>
         <Card sx={{ maxWidth: 900, margin: "auto", boxShadow: 3 }}>
           <CardContent>
-            <Grid container spacing={4} sx={{ backgroundColor: "#E0FFFF", padding: 3, borderRadius: 2 }}>
+            <Grid container spacing={4} sx={{ backgroundColor: "#E0FFFF", padding: 3, borderRadius: 2,
+            backgroundImage: "url('img/sidebar/bgLogin4.jpg')", // Đường dẫn ảnh nền
+            backgroundSize: "cover", // Ảnh bao phủ toàn màn hình
+            backgroundPosition: "center", // Căn giữa ảnh
+            backgroundRepeat: "no-repeat", // Không lặp ảnh
+            borderBottom: "1px solid #e0e0e0",
+            borderRadius: "8px",
+             }}>
               {/* Ảnh đại diện */}
               <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
                 <Avatar
@@ -75,6 +82,7 @@ function DoctorDetail() {
                   alt={`Ảnh của ${doctor.fullname}`}
                   sx={{
                     width: 150,
+                    backgroundColor: "#F0F0F0",
                     height: 150,
                     margin: "auto",
                     "&:hover": {
