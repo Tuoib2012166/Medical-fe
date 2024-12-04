@@ -54,12 +54,17 @@ const FollowUpAppointments = () => {
             }
 
             try {
-                const response = await axios.get(
-                    `http://localhost:8080/follow-up-appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`
-                );
+                const [resTimeFollowUpAppt, resTimeAppt] = await Promise.all([
+                    axios.get(`http://localhost:8080/follow-up-appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`),
+                    axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`),
+                ]);
 
-                console.log('run inside here: ', response.data, form.followUpDate)
-                setBookedTimes(response.data);
+                console.log('run inside here: ', resTimeFollowUpAppt.data, resTimeAppt.data);
+                const timeFollowUpAppt = resTimeFollowUpAppt.data?.map(x => ({ date: x.follow_up_date, time: x.time }));
+                const timeAppt = resTimeAppt.data?.map(x => ({ date: x.appointment_date, time: x.appointment_time }))
+
+                const totalTime = [].concat(timeFollowUpAppt, timeAppt);
+                setBookedTimes(totalTime);
             } catch (error) {
                 console.error("Error fetching booked times:", error);
             }
@@ -94,6 +99,9 @@ const FollowUpAppointments = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
+        if (name == "followUpDate") {
+            setSelectedDate(value)
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -297,22 +305,26 @@ const FollowUpAppointments = () => {
                                 {[...Array(10)].map((_, index) => {
                                     const hour = 8 + index; // Generate hours from 08:00 to 17:00
                                     const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
+                                    const normalizedSelectedDate = new Date(selectedDate).toISOString().split('T')[0]; // "2024-12-04"
+                                    console.log("normalizedSelectedDate: ", normalizedSelectedDate);
+                                    // Lọc `bookedTimes` bằng cách chuẩn hóa `item.date` sang YYYY-MM-DD theo múi giờ địa phương
+                                    const bookedTimesForDate = bookedTimes.filter(item => {
+                                        const localDate = new Date(item.date).toLocaleDateString('en-CA'); // Chuyển sang định dạng YYYY-MM-DD
+                                        return localDate === normalizedSelectedDate; // So sánh ngày
+                                    }).map(item => item.time.split(':').slice(0, 2).join(':')); // Lấy giờ và phút từ `item.time`
 
-                                    // Filter booked times for the selected date (assuming form.date stores the current date in ISO format)
-                                    const selectedDate = form.time; // Adjust to match your data structure
-                                    const bookedTimesForDate = bookedTimes
-                                        .filter(item => item.follow_up_date.startsWith(selectedDate)) // Match date only
-                                        .map(item => item.time);
+                                    console.log('bookedTimesForDate:', bookedTimesForDate);
 
-                                    // Check if the current timeLabel is booked
+                                    // Check if the current time is booked
                                     const isDisabled = bookedTimesForDate.includes(timeLabel);
+
 
                                     return (
                                         <Button
                                             key={timeLabel}
-                                            variant={form.time === timeLabel ? "contained" : "outlined"} // Highlight the selected time
-                                            color={isDisabled ? "default" : "primary"} // Adjust color based on availability
-                                            onClick={() => !isDisabled && handleInputChange({ target: { name: 'time', value: timeLabel } })} // Allow selection only if enabled
+                                            variant={form.time === timeLabel ? "contained" : "outlined"} // Highlight selected time
+                                            color={isDisabled ? "default" : "primary"} // Adjust color
+                                            onClick={() => !isDisabled && handleInputChange({ target: { name: 'time', value: timeLabel } })} // Allow only if enabled
                                             disabled={isDisabled} // Disable if booked
                                             sx={{
                                                 padding: '10px 20px',
