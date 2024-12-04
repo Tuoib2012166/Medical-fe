@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { Button, TextField, MenuItem, Select, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Snackbar, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, TextField, MenuItem, Select, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Snackbar, Dialog, DialogActions, DialogContent, DialogTitle, FormLabel, RadioGroup } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useUserStore from '../../store/userStore';
 import DatePicker from 'react-datepicker';
@@ -46,62 +46,49 @@ const FollowUpAppointments = () => {
         }
     }, [form.followUpDate, user.profile?.id]);
 
-    // useEffect(() => {
-    //     const fetchBookedTimes = async () => {
-    //       try {
-    //         const response = await axios.get(`http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user?.profile?.id}`);
-    //         const hours = response.data.map(i => i.hour);
-    //         setBookedTimes(hours);
-    //       } catch (error) {
-    //         console.error('Error fetching booked times:', error);
-    //       }
-    //     };
-    
-    //     if (form.followUpDate) {
-    //         fetchBookedTimes();
-    //     }
-    //   }, [form.followUpDate, user.profile?.id]);
     useEffect(() => {
         const fetchBookedTimes = async () => {
-          if (!user.profile?.id) {
-            console.warn("Doctor ID is not available yet.");
-            return;
-          }
-    
-          try {
-            const response = await axios.get(
-              `http://localhost:8080/appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`
-            );
-            setBookedTimes(response.data);
-          } catch (error) {
-            console.error("Error fetching booked times:", error);
-          }
+            if (!user.profile?.id) {
+                console.warn("Doctor ID is not available yet.");
+                return;
+            }
+
+            try {
+                const response = await axios.get(
+                    `http://localhost:8080/follow-up-appointments?today=${form.followUpDate}&doctorId=${user.profile.id}`
+                );
+
+                console.log('run inside here: ', response.data, form.followUpDate)
+                setBookedTimes(response.data);
+            } catch (error) {
+                console.error("Error fetching booked times:", error);
+            }
         };
-    
+
         fetchBookedTimes();
-      }, [user.profile?.id]); 
-    
+    }, [form.followUpDate, user.profile?.id]);
+
 
     const fetchAppointments = async () => {
-    try {
-        // Kiểm tra nếu selectedDate có giá trị, thêm tham số ngày vào API
-        const dateToFetch = selectedDate ? selectedDate.toISOString().split("T")[0] : '';
-        const url = selectedDate
-            ? `http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${dateToFetch}`
-            : `http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}`;
-        
-        const response = await axios.get(url, { withCredentials: true });
-        setAppointments(response.data);
-    } catch (error) {
-        console.error('Error fetching follow-up appointments:', error);
-    }
-};
+        try {
+            // Kiểm tra nếu selectedDate có giá trị, thêm tham số ngày vào API
+            const dateToFetch = selectedDate ? selectedDate.toISOString().split("T")[0] : '';
+            const url = selectedDate
+                ? `http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}&today=${dateToFetch}`
+                : `http://localhost:8080/follow-up-appointments?doctorId=${user?.profile?.id}`;
 
-useEffect(() => {
-    if (user.profile?.id) {
-        fetchAppointments();
-    }
-}, [user?.profile?.id, selectedDate]);
+            const response = await axios.get(url, { withCredentials: true });
+            setAppointments(response.data);
+        } catch (error) {
+            console.error('Error fetching follow-up appointments:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (user.profile?.id) {
+            fetchAppointments();
+        }
+    }, [user?.profile?.id, selectedDate]);
 
 
     const handleInputChange = (e) => {
@@ -131,10 +118,10 @@ useEffect(() => {
                 setSnackbarMessage('Lịch tái khám đã được cập nhật');
             } else {
                 await axios.post('http://localhost:8080/follow-up-appointments', data, { withCredentials: true });
-                
+
                 Swal.fire({
-                title: 'Lịch tái khám đã được thêm mới!',
-                icon: 'success',
+                    title: 'Lịch tái khám đã được thêm mới!',
+                    icon: 'success',
                 }).then(() => {
                     window.location.reload(); // Tải lại trang sau khi thêm thành công
                 });
@@ -161,10 +148,10 @@ useEffect(() => {
         try {
             await axios.delete(`http://localhost:8080/follow-up-appointments/${id}`, { withCredentials: true });
             fetchAppointments();
-            
+
             Swal.fire({
-            title: 'Lịch tái khám đã được xóa!',
-            icon: 'success',
+                title: 'Lịch tái khám đã được xóa!',
+                icon: 'success',
             }).then(() => {
                 window.location.reload(); // Tải lại trang sau khi thêm thành công
             });
@@ -182,20 +169,22 @@ useEffect(() => {
         setOpenDialog(false);
     };
 
+    console.log("this is bookedTimes: ", bookedTimes);
+
     return (
         <div>
             <h3>Lịch tái khám</h3>
-            <Button variant="contained"  color="primary" onClick={() => setOpenDialog(true)}>
+            <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
                 Thêm lịch tái khám
             </Button>
             <div>
                 <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)} // Khi xóa ngày, date sẽ là null
-                dateFormat="yyyy/MM/dd"
-                placeholderText="Chọn ngày"
-                isClearable
-            />
+                    selected={selectedDate}
+                    onChange={(date) => setSelectedDate(date)} // Khi xóa ngày, date sẽ là null
+                    dateFormat="yyyy/MM/dd"
+                    placeholderText="Chọn ngày"
+                    isClearable
+                />
             </div>
 
             <TableContainer component={Paper} className="mt-3">
@@ -295,37 +284,53 @@ useEffect(() => {
                                 min: new Date().toISOString().split("T")[0], // Chỉ cho phép chọn ngày từ hôm nay trở đi
                             }}
                         />
-                        <FormControl fullWidth margin="normal" required>
-                            <InputLabel>Chọn giờ</InputLabel>
-                            <Select
+
+                        <FormControl required>
+                            <FormLabel>Chọn giờ</FormLabel>
+                            <RadioGroup
+                                row
                                 name="time"
                                 value={form.time}
                                 onChange={handleInputChange}
-                                label="Chọn giờ"
+                                sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '10px' }}
                             >
                                 {[...Array(10)].map((_, index) => {
-                                    const hour = 8 + index; // Tạo giờ từ 08:00 đến 17:00
+                                    const hour = 8 + index; // Generate hours from 08:00 to 17:00
                                     const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
 
-                                    // Chuyển đổi mảng bookedTimes từ dạng [9, 0] thành mảng ['09:00'] để so sánh
-                                    const bookedTimesFormatted = bookedTimes.map(
-                                        time => `${time.toString().padStart(2, '0')}:00`
-                                    );
+                                    // Filter booked times for the selected date (assuming form.date stores the current date in ISO format)
+                                    const selectedDate = form.time; // Adjust to match your data structure
+                                    const bookedTimesForDate = bookedTimes
+                                        .filter(item => item.follow_up_date.startsWith(selectedDate)) // Match date only
+                                        .map(item => item.time);
 
-                                    // Kiểm tra nếu giờ hiện tại có trong bookedTimesFormatted
-                                    const isDisabled = bookedTimesFormatted.includes(timeLabel) && user?.profile?.id;
+                                    // Check if the current timeLabel is booked
+                                    const isDisabled = bookedTimesForDate.includes(timeLabel);
 
                                     return (
-                                        <MenuItem
+                                        <Button
                                             key={timeLabel}
-                                            value={timeLabel}
-                                            disabled={isDisabled} // Disable nếu giờ đã có trong `bookedTimesFormatted`
+                                            variant={form.time === timeLabel ? "contained" : "outlined"} // Highlight the selected time
+                                            color={isDisabled ? "default" : "primary"} // Adjust color based on availability
+                                            onClick={() => !isDisabled && handleInputChange({ target: { name: 'time', value: timeLabel } })} // Allow selection only if enabled
+                                            disabled={isDisabled} // Disable if booked
+                                            sx={{
+                                                padding: '10px 20px',
+                                                margin: '5px',
+                                                borderRadius: '20px',
+                                                textTransform: 'none',
+                                                fontWeight: 500,
+                                                boxShadow: isDisabled ? 'none' : '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                                                '&:hover': {
+                                                    backgroundColor: isDisabled ? 'transparent' : 'rgba(0, 0, 0, 0.08)',
+                                                },
+                                            }}
                                         >
                                             {timeLabel}
-                                        </MenuItem>
+                                        </Button>
                                     );
                                 })}
-                            </Select>
+                            </RadioGroup>
                         </FormControl>
 
 
